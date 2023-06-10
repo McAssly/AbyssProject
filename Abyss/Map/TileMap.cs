@@ -44,7 +44,7 @@ namespace Abyss.Map
         // The tileset layers to be loaded
         private List<MapLayer> layers = new List<MapLayer>();
         // The width and height of the map (default: 1x1)
-        private uint width, height = 1;
+        private int width, height = 1;
 
         /**
          * TileMap constructor loads a given map into a usable tilemap object
@@ -61,6 +61,10 @@ namespace Abyss.Map
             {
                 layers.Add(new MapLayer(map.TileLayers[i], map.TileSet));
             }
+
+            // get the width and height of the tile map
+            this.width = map.TileLayers.GetLength(1);
+            this.height = map.TileLayers.GetLength(0);
         }
     }
 }

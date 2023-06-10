@@ -15,9 +15,11 @@ namespace Abyss.Map
     internal struct Tile
     {
         public Rectangle rect;
-        public Tile(Rectangle Rect)
+        public bool NULL;
+        public Tile(Rectangle Rect, bool NULL)
         {
             this.rect = Rect;
+            this.NULL = NULL;
         }
     }
 }

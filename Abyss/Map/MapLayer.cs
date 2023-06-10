@@ -52,7 +52,7 @@ namespace Abyss.Map
         private List<Rectangle> tileTexture;
 
         // Main tile map
-        private Tile[,] tiles;
+        private List<List<Tile>> tiles;
 
         /** 
          * Constructor for a maplayer
@@ -78,6 +78,57 @@ namespace Abyss.Map
                      * And its width and height are the global tile size (16px)
                      */
                     tileTexture.Add(new Rectangle(x * Globals.TILE_SIZE, y * Globals.TILE_SIZE, Globals.TILE_SIZE, Globals.TILE_SIZE));
+                }
+            }
+
+            // Lastly set the actual tile map
+            for (int i = 0; i < layer.tiles.GetLength(0); i++)
+            {
+                tiles.Add(new List<Tile>());
+                for (int j = 0; j < layer.tiles.GetLength(1); j++)
+                {
+                    // Get the tile index from the layer of tiles
+                    int tileIndex = (int)layer.tiles[i, j] - 1;
+                    // if the tile index is valid insert the right tile
+                    if (tileIndex >= 0) 
+                    {
+                        tiles[i].Add(new Tile(tileTexture[tileIndex], false));
+                    } 
+                    // otherwise the tile will be empty
+                    else
+                    {
+                        tiles[i].Add(new Tile() { NULL = true });
+                    }
+                }
+            }
+        }
+
+
+        /**
+         * Draws the tile layer
+         * 
+         * @param   SpriteBatch     the spritebatch to draw to
+         * @param   Vector2         the position to map the layer to
+         */
+        public void Draw(SpriteBatch spriteBatch, Vector2 position)
+        {
+            // loop through the tile grid
+            for (int y = 0; y < tiles.Count; y++)
+            {
+                for (int x = 0; x < tiles[y].Count; x++)
+                {
+                    // if the tile is not null then it can be drawn
+                    if (!tiles[y][x].NULL)
+                    {
+                        // draw the tile
+                        spriteBatch.Draw
+                            (
+                                tileset,
+                                new Rectangle(x * Globals.TILE_SIZE + (int)position.X, y * Globals.TILE_SIZE + (int)position.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
+                                tiles[y][x].rect,
+                                Color.White
+                            );
+                    }
                 }
             }
         }
