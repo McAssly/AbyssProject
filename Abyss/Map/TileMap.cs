@@ -62,9 +62,34 @@ namespace Abyss.Map
                 layers.Add(new MapLayer(map.TileLayers[i], map.TileSet));
             }
 
-            // get the width and height of the tile map
-            this.width = map.TileLayers.GetLength(1);
-            this.height = map.TileLayers.GetLength(0);
+            // Next we need the width and height of the tilemap
+            // first grab any layer doesn't matter and grab their respective width/height
+            this.width = this.layers[0].GetWidth();
+            this.height = this.layers[0].GetHeight();
+        }
+
+        /**
+         * Draws the map to the screen
+         * 
+         * @param   SpriteBatch     the sprite batch to draw to
+         * @param   Vector2         the position to map the draw to
+         */
+        public void Draw(SpriteBatch spriteBatch, Vector2 Position)
+        {
+            foreach (MapLayer layer in layers)
+            {
+                layer.Draw(spriteBatch, Position);
+            }
+        }
+
+        public Vector2 getMax()
+        {
+            return new Vector2(width * Globals.TILE_SIZE - Globals.TILE_SIZE, height * Globals.TILE_SIZE - Globals.TILE_SIZE) + getMin();
+        }
+
+        public Vector2 getMin()
+        {
+            return new Vector2(Globals.WindowW / width, Globals.WindowH / height);
         }
     }
 }

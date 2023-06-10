@@ -49,10 +49,13 @@ namespace Abyss.Map
         private Texture2D tileset;
 
         // the list of tile textures at their corresponding index
-        private List<Rectangle> tileTexture;
+        private List<Rectangle> tileTexture = new List<Rectangle>();
 
         // Main tile map
-        private List<List<Tile>> tiles;
+        private List<List<Tile>> tiles = new List<List<Tile>>();
+
+        // Size (width, height)
+        private int width, height = 1;
 
         /** 
          * Constructor for a maplayer
@@ -101,6 +104,26 @@ namespace Abyss.Map
                     }
                 }
             }
+
+            // get the width/height
+            width = layer.tiles.GetLength(0);
+            height = layer.tiles.GetLength(1);
+        }
+
+        /** Gets the width of the layer
+         * 
+         */
+        public int GetWidth()
+        {
+            return width;
+        }
+
+        /** Gets the height of the layer
+         * 
+         */
+        public int GetHeight()
+        {
+            return height;
         }
 
 

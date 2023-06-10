@@ -1,6 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Abyss.Map;
+using System.Collections.Generic;
+using MonoGame.Extended;
+using MonoGame.Extended.ViewportAdapters;
 
 namespace Abyss
 {
@@ -8,6 +12,8 @@ namespace Abyss
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private OrthographicCamera camera;
 
         public Game()
         {
@@ -18,7 +24,15 @@ namespace Abyss
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            // Set screen size
+            _graphics.PreferredBackBufferWidth = Globals.WindowW;
+            _graphics.PreferredBackBufferHeight = Globals.WindowH;
+            _graphics.ApplyChanges(); // apply changes to the screen
+
+            Window.AllowUserResizing = false;
+            Window.AllowAltF4 = true;
+            // window title
+            Window.Title = "One of the Title's of All Time";
 
             base.Initialize();
         }
@@ -27,7 +41,12 @@ namespace Abyss
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // Load all maps
+            Levels.LoadTileSets(Content);
+            MapManager.TestMap = new TileMap(Levels.TESTLEVEL);
+
+            // Load all instances
+            MapManager.Manager = new MapManager(MapManager.TestMap);
         }
 
         protected override void Update(GameTime gameTime)
@@ -35,16 +54,28 @@ namespace Abyss
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            // TODO: Add update logic here
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black); // background color and clears after each frame
+            _spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                DepthStencilState.Default,
+                RasterizerState.CullCounterClockwise,
+                null,
+                Matrix.CreateScale(Globals.GAME_SCALE)
+                ) ; // start drawing through the sprite batch
 
-            // TODO: Add your drawing code here
+            // Draw the tile map
+            MapManager.Manager.GetCurrent().Draw(_spriteBatch, Vector2.Zero);
+
+            _spriteBatch.End(); // end the sprite batch
 
             base.Draw(gameTime);
         }
