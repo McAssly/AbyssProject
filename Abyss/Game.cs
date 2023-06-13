@@ -13,7 +13,7 @@ namespace Abyss
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private OrthographicCamera camera;
+        private Player player = new Player();
 
         public Game()
         {
@@ -41,9 +41,12 @@ namespace Abyss
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Load sprites
+            Globals.TESTBOX = Content.Load<Texture2D>("testbox");
+
             // Load all maps
             Levels.LoadTileSets(Content);
-            MapManager.TestMap = new TileMap(Levels.TESTLEVEL);
+            MapManager.TestMap = new TileMap(Levels.MP_START0);
 
             // Load all instances
             MapManager.Manager = new MapManager(MapManager.TestMap);
@@ -51,10 +54,18 @@ namespace Abyss
 
         protected override void Update(GameTime gameTime)
         {
+            double delta = gameTime.ElapsedGameTime.TotalSeconds * Globals.FRAME_SPEED;
+
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add update logic here
+            /** Player
+             * all player related update processes
+             */
+            player.CalcInputVector(Keyboard.GetState());
+            player.Move(delta);
+            player.UpdateDrawObj();
+            
 
             base.Update(gameTime);
         }
@@ -74,6 +85,9 @@ namespace Abyss
 
             // Draw the tile map
             MapManager.Manager.GetCurrent().Draw(_spriteBatch, Vector2.Zero);
+
+            // Draw the Player next
+            player.Draw(_spriteBatch);
 
             _spriteBatch.End(); // end the sprite batch
 
