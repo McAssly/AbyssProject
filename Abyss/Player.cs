@@ -55,11 +55,9 @@ namespace Abyss
         {
             // if the input vector is not zero then the player must be trying to move
             if (inputVec != Vector2.Zero)
-                vel = MathUtil.moveToward(vel, inputVec * MAX_SPEED, (int)(MAX_ACCEL * delta));
+                vel = MathUtil.moveToward(vel, inputVec * MAX_SPEED, MAX_ACCEL * delta);
             else
-                vel = MathUtil.moveToward(vel, Vector2.Zero, (int)(FRICTION * delta));
-
-            //Debug.WriteLine(vel.X + ", " + vel.Y);
+                vel = MathUtil.moveToward(vel, Vector2.Zero, FRICTION * delta);
 
             pos += vel;
         }

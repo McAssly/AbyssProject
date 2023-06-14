@@ -23,7 +23,7 @@ namespace Abyss
          * @param   Vector2     the second vector to move towards
          * @param   int         the speed to move by
          */
-        public static Vector2 moveToward(Vector2 vec1, Vector2 vec2, int delta)
+        public static Vector2 moveToward(Vector2 vec1, Vector2 vec2, double delta)
         {
             // get the direction to move in
             Vector2 direction = vec2 - vec1;
@@ -37,7 +37,7 @@ namespace Abyss
             if (delta >= distance)
                 return vec2;
             else // otherwise move in that direciton
-                return vec1 + direction * delta;
+                return vec1 + direction * (int)delta;
         }
 
         /**

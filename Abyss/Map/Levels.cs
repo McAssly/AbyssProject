@@ -42,7 +42,7 @@ namespace Abyss.Map
                     { 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9 }
                 }),
 
-                new Layer(true, new uint[,]
+                new Layer(true, new uint[,] // wall layer
                 {
                     {44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44},
                     {44, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 44},
@@ -62,7 +62,7 @@ namespace Abyss.Map
                     {44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44, 44}
                 }),
 
-                new Layer(true, new uint[,]
+                new Layer(true, new uint[,] // object layer
                 {
                     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
                     {0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 8, 0, 0, 0},
@@ -82,7 +82,7 @@ namespace Abyss.Map
                     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
                 }),
 
-                new Layer(false, new uint[,]
+                new Layer(false, new uint[,] // deco layer
                 {
                     {0, 42, 0, 33, 0, 0, 0, 0, 37, 34, 0, 0, 0, 33, 43, 0},
                     {0, 42, 0, 0, 0, 0, 33, 0, 37, 0, 0, 35, 0, 0, 43, 0},
