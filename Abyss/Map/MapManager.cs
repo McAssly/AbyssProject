@@ -13,9 +13,6 @@ namespace Abyss.Map
      */
     internal class MapManager
     {
-        // global map manager
-        public static MapManager Manager;
-
         // TileMaps to cycle between
         public static TileMap TestMap;
 

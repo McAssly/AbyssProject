@@ -52,7 +52,7 @@ namespace Abyss.Map
         private List<Rectangle> tileTexture = new List<Rectangle>();
 
         // Main tile map
-        private List<List<Tile>> tiles = new List<List<Tile>>();
+        private Tile[,] tiles = new Tile[16, 16];
 
         // Size (width, height)
         private int width, height = 1;
@@ -87,7 +87,6 @@ namespace Abyss.Map
             // Lastly set the actual tile map
             for (int i = 0; i < layer.tiles.GetLength(0); i++)
             {
-                tiles.Add(new List<Tile>());
                 for (int j = 0; j < layer.tiles.GetLength(1); j++)
                 {
                     // Get the tile index from the layer of tiles
@@ -95,12 +94,12 @@ namespace Abyss.Map
                     // if the tile index is valid insert the right tile
                     if (tileIndex >= 0) 
                     {
-                        tiles[i].Add(new Tile(tileTexture[tileIndex], false));
+                        tiles[i, j] = new Tile(tileTexture[tileIndex], false);
                     } 
                     // otherwise the tile will be empty
                     else
                     {
-                        tiles[i].Add(new Tile() { NULL = true });
+                        tiles[i, j] = new Tile() { NULL = true };
                     }
                 }
             }
@@ -126,6 +125,22 @@ namespace Abyss.Map
             return height;
         }
 
+        /**
+         * Gets whether the layer is blocked or not
+         */
+        public bool IsBlocked()
+        {
+            return blocked;
+        }
+
+        /**
+         * Returns the tile map
+         */
+        public Tile[,] GetTiles()
+        {
+            return tiles;
+        }
+
 
         /**
          * Draws the tile layer
@@ -136,19 +151,19 @@ namespace Abyss.Map
         public void Draw(SpriteBatch spriteBatch, Vector2 position)
         {
             // loop through the tile grid
-            for (int y = 0; y < tiles.Count; y++)
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < tiles[y].Count; x++)
+                for (int x = 0; x < width; x++)
                 {
                     // if the tile is not null then it can be drawn
-                    if (!tiles[y][x].NULL)
+                    if (!tiles[x, y].NULL)
                     {
                         // draw the tile
                         spriteBatch.Draw
                             (
                                 tileset,
                                 new Rectangle(x * Globals.TILE_SIZE + (int)position.X, y * Globals.TILE_SIZE + (int)position.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
-                                tiles[y][x].rect,
+                                tiles[x, y].rect,
                                 Color.White
                             );
                     }

@@ -82,6 +82,11 @@ namespace Abyss.Map
             }
         }
 
+        public List<MapLayer> GetLayers()
+        {
+            return layers;
+        }
+
         public Vector2 getMax()
         {
             return new Vector2(width * Globals.TILE_SIZE - Globals.TILE_SIZE, height * Globals.TILE_SIZE - Globals.TILE_SIZE) + getMin();

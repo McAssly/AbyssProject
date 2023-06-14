@@ -13,6 +13,7 @@ namespace Abyss
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private MapManager mapManager;
         private Player player = new Player();
 
         public Game()
@@ -49,7 +50,7 @@ namespace Abyss
             MapManager.TestMap = new TileMap(Levels.MP_START0);
 
             // Load all instances
-            MapManager.Manager = new MapManager(MapManager.TestMap);
+            mapManager = new MapManager(MapManager.TestMap);
         }
 
         protected override void Update(GameTime gameTime)
@@ -84,7 +85,7 @@ namespace Abyss
                 ) ; // start drawing through the sprite batch
 
             // Draw the tile map
-            MapManager.Manager.GetCurrent().Draw(_spriteBatch, Vector2.Zero);
+            mapManager.GetCurrent().Draw(_spriteBatch, Vector2.Zero);
 
             // Draw the Player next
             player.Draw(_spriteBatch);

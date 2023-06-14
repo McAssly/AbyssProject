@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Map;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Abyss
          * @param   Vector2     the second vector to move towards
          * @param   int         the speed to move by
          */
-        public static Vector2 moveToward(Vector2 vec1, Vector2 vec2, double delta)
+        public static Vector2 MoveToward(Vector2 vec1, Vector2 vec2, double delta)
         {
             // get the direction to move in
             Vector2 direction = vec2 - vec1;
@@ -52,6 +53,16 @@ namespace Abyss
                 return 1;
             else
                 return 0;
+        }
+
+        /**
+         * Converts coordinates to tile map coordinates
+         * 
+         * @param   Vector2     the current coordinates
+         */
+        public static Vector2 CoordsToTileCoords(Vector2 coords)
+        {
+            return coords / Globals.TILE_SIZE;
         }
     }
 }
