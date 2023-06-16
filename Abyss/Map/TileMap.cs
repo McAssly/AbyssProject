@@ -20,6 +20,7 @@ namespace Abyss.Map
         public Texture2D TileSet;
         // Represents the assortment of tiles within different layers (lower the layer the higher load priority)
         public Layer[] TileLayers;
+        public Layer CollisionLayer;
 
         /**
          * Constructs a Map structure for basic storage of levels (might be a bit slow)
@@ -28,11 +29,12 @@ namespace Abyss.Map
          * @param   Texture2D       Tileset for the level (Can be null)
          * @param   uint[,,]        3D array of tileIds, (1st element is the layer id)
          */
-        public Map(uint id, Texture2D tileSet , Layer[] tileLayers)
+        public Map(uint id, Texture2D tileSet , Layer[] tileLayers, Layer CollisionLayer)
         {
             Id = id;
             TileSet = tileSet;
             TileLayers = tileLayers;
+            this.CollisionLayer = CollisionLayer;
         }
     }
 
@@ -43,6 +45,8 @@ namespace Abyss.Map
 
         // The tileset layers to be loaded
         private List<MapLayer> layers = new List<MapLayer>();
+        // Set the collision layer
+        private MapLayer CollisionLayer;
         // The width and height of the map (default: 1x1)
         private int width, height = 1;
 
@@ -61,6 +65,9 @@ namespace Abyss.Map
             {
                 layers.Add(new MapLayer(map.TileLayers[i], map.TileSet));
             }
+
+            // set the collisoon layer
+            CollisionLayer = new MapLayer(map.CollisionLayer);
 
             // Next we need the width and height of the tilemap
             // first grab any layer doesn't matter and grab their respective width/height
@@ -82,6 +89,10 @@ namespace Abyss.Map
             }
         }
 
+        public MapLayer GetCollisionLayer() { return this.CollisionLayer; }
+
+        public int GetWidth() { return width; }
+        public int GetHeight() { return height; }
         public List<MapLayer> GetLayers()
         {
             return layers;

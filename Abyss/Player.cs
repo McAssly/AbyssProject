@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace Abyss
         private Vector2 inputVec = Vector2.Zero;
 
         // Declare the position variables
-        private Vector2 pos = Vector2.Zero;
+        private Vector2 pos = new Vector2(5*16, 5*16);
         private Vector2 vel = Vector2.Zero;
 
         public Player() { }
@@ -52,7 +53,7 @@ namespace Abyss
          * @param  double       the time it took for the last frame to load (seconds)
          * @param  Vector2      the input vector of the player
          */
-        public void Move(double delta)
+        public void Move(TileMap map, double delta)
         {
             // if the input vector is not zero then the player must be trying to move
             if (inputVec != Vector2.Zero)
@@ -60,48 +61,18 @@ namespace Abyss
             else
                 vel = MathUtil.MoveToward(vel, Vector2.Zero, FRICTION * delta);
 
-            pos += vel;
-        }
-
-        /**
-         * Gets the adjacent tiles that are blocked to the player
-         * 
-         * @param   TileMap     the current tilemap
-         */
-        public List<Tile> AdjacentTiles(TileMap tileMap)
-        {
-            // First get the layers that are blocked and not the ones that aren't
-            List<MapLayer> blockedLayers = new List<MapLayer>();
-            foreach (MapLayer layer in tileMap.GetLayers())
+            // collision
+            Vector2 tileCoords_TL = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
+            Vector2 tileCoords_BR = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(Globals.TILE_SIZE) + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
+            Vector2 tileCoords_TR = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(Globals.TILE_SIZE, 0) + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
+            Vector2 tileCoords_BL = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(0, Globals.TILE_SIZE) + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
+            if (map.GetCollisionLayer().GetTiles()[(int)tileCoords_TL.Y, (int)tileCoords_TL.X].NULL
+                && map.GetCollisionLayer().GetTiles()[(int)tileCoords_BR.Y, (int)tileCoords_BR.X].NULL
+                && map.GetCollisionLayer().GetTiles()[(int)tileCoords_TR.Y, (int)tileCoords_TR.X].NULL
+                && map.GetCollisionLayer().GetTiles()[(int)tileCoords_BL.Y, (int)tileCoords_BL.X].NULL)
             {
-                if (layer.IsBlocked())
-                    blockedLayers.Add(layer);
+                pos += vel;
             }
-            // if there are no blocked layers in the tile map there are no collidable tiles
-            if (blockedLayers.Count <= 0) return null;
-            // otherwise continue...
-            List<Tile> tiles = new List<Tile>();
-            // get the tile position of the player
-            Vector2 tPos = MathUtil.CoordsToTileCoords(this.pos);
-
-            foreach (MapLayer layer in blockedLayers)
-            {
-                // loop through 8 times there should only be about 8 tiles adjacent to the player's tile
-                for (int i = 0; i < 8; i++)
-                {
-                    // this loop will us a parametric equation to grab the adjacent tiles
-                    // since i = 4 means we're at 0,0 there is no need for it so skip:
-                    if (i == 4) continue;
-                    else
-                    {
-                        int x = (int)Math.Tan((i % 3) * Math.PI / 4 + Math.PI / 4); // repeating pattern of -1, 0, 1
-                        int y = (i / 3) + 1; // repeating pattern of 3x-1, 3x0, 3x1
-                        tiles.Add(layer.GetTiles()[(int)tPos.X+x, (int)tPos.Y+y]);
-                    }
-                }
-            }
-
-            return tiles;
         }
 
         /**
@@ -109,6 +80,7 @@ namespace Abyss
          */
         public void UpdateDrawObj()
         {
+            pos = Vector2.Clamp(pos, Vector2.Zero, new Vector2(16 * 16 - 16));
             // if the player's position updated then therefore so does the draw object's
             if (drawObj.X != pos.X)
                 drawObj.X = (int)pos.X;

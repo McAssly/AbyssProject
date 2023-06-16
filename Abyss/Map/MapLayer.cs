@@ -66,6 +66,7 @@ namespace Abyss.Map
         public MapLayer(Layer layer, Texture2D tileset) 
         {
             // First create the tileTexture array
+            this.blocked = layer.blocked;
             this.tileset = tileset;
             this.tileTexture = new List<Rectangle>();
             // loop through the each tile within the tileset and place them in order within the list
@@ -96,6 +97,35 @@ namespace Abyss.Map
                     {
                         tiles[i, j] = new Tile(tileTexture[tileIndex], false);
                     } 
+                    // otherwise the tile will be empty
+                    else
+                    {
+                        tiles[i, j] = new Tile() { NULL = true };
+                    }
+                }
+            }
+
+            // get the width/height
+            width = layer.tiles.GetLength(0);
+            height = layer.tiles.GetLength(1);
+        }
+
+        /** For the collision layer *kill me*
+         */
+        public MapLayer(Layer layer)
+        {
+            this.blocked = layer.blocked;
+            for (int i = 0; i < layer.tiles.GetLength(0); i++)
+            {
+                for (int j = 0; j < layer.tiles.GetLength(1); j++)
+                {
+                    // Get the tile index from the layer of tiles
+                    int tileIndex = (int)layer.tiles[i, j] - 1;
+                    // if the tile index is valid insert the right tile
+                    if (tileIndex >= 0)
+                    {
+                        tiles[i, j] = new Tile() { NULL = false };
+                    }
                     // otherwise the tile will be empty
                     else
                     {
@@ -156,14 +186,14 @@ namespace Abyss.Map
                 for (int x = 0; x < width; x++)
                 {
                     // if the tile is not null then it can be drawn
-                    if (!tiles[x, y].NULL)
+                    if (!tiles[y, x].NULL)
                     {
                         // draw the tile
                         spriteBatch.Draw
                             (
                                 tileset,
                                 new Rectangle(x * Globals.TILE_SIZE + (int)position.X, y * Globals.TILE_SIZE + (int)position.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
-                                tiles[x, y].rect,
+                                tiles[y, x].rect,
                                 Color.White
                             );
                     }

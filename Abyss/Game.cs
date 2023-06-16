@@ -64,7 +64,7 @@ namespace Abyss
              * all player related update processes
              */
             player.CalcInputVector(Keyboard.GetState());
-            player.Move(delta);
+            player.Move(mapManager.GetCurrent(), delta);
             player.UpdateDrawObj();
             
 

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Abyss
 {
@@ -62,7 +63,27 @@ namespace Abyss
          */
         public static Vector2 CoordsToTileCoords(Vector2 coords)
         {
-            return coords / Globals.TILE_SIZE;
+            Vector2 result = coords / Globals.TILE_SIZE;
+            result.Floor();
+            return result;
+        }
+
+        /**
+         * Detects if the given rectangle is colliding with the given tile and tile position
+         * 
+         */
+        public static bool IsColliding(Vector2 pos1, Vector2 pos2)
+        {
+            if (pos1.X < pos2.X + Globals.TILE_SIZE &&
+                pos1.X + Globals.TILE_SIZE > pos2.X &&
+                pos1.Y < pos2.Y + Globals.TILE_SIZE &&
+                pos1.Y + Globals.TILE_SIZE > pos2.Y)
+            {
+                Debug.WriteLine("SUCCESS");
+                return true;
+            }
+            Debug.WriteLine("KRILL YOURSELF");
+            return false;
         }
     }
 }
