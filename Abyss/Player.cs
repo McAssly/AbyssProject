@@ -57,22 +57,34 @@ namespace Abyss
         {
             // if the input vector is not zero then the player must be trying to move
             if (inputVec != Vector2.Zero)
+            {
                 vel = MathUtil.MoveToward(vel, inputVec * MAX_SPEED, MAX_ACCEL * delta);
+                // collision
+                for (int i=0; i < 4; i++) // loop through each offset (corner)
+                {
+                    Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(Globals.TILE_SIZE * Globals.TILE_SIZE - Globals.TILE_SIZE));
+                    Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
+
+                    // if the tile is a blocked space or a collision tile 
+                    if (!targetTile.NULL)
+                    {
+                        // If the target new position to move to is not passable subtract from the velocity until the target position is moveable
+                        while (targetTile.Colliding(pos + vel, new Vector2(Globals.TILE_SIZE)))
+                        {
+                            // Update the velocity
+                            vel = MathUtil.MoveToward(vel, Vector2.Zero, FRICTION * delta);
+
+                            // Update the target positions to test for
+                            tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(Globals.TILE_SIZE * Globals.TILE_SIZE - Globals.TILE_SIZE));
+                            targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
+                        }
+                    }
+                }
+            }
             else
                 vel = MathUtil.MoveToward(vel, Vector2.Zero, FRICTION * delta);
 
-            // collision
-            Vector2 tileCoords_TL = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
-            Vector2 tileCoords_BR = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(Globals.TILE_SIZE) + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
-            Vector2 tileCoords_TR = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(Globals.TILE_SIZE, 0) + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
-            Vector2 tileCoords_BL = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(0, Globals.TILE_SIZE) + vel), Vector2.Zero, new Vector2(16 * 16 - 16));
-            if (map.GetCollisionLayer().GetTiles()[(int)tileCoords_TL.Y, (int)tileCoords_TL.X].NULL
-                && map.GetCollisionLayer().GetTiles()[(int)tileCoords_BR.Y, (int)tileCoords_BR.X].NULL
-                && map.GetCollisionLayer().GetTiles()[(int)tileCoords_TR.Y, (int)tileCoords_TR.X].NULL
-                && map.GetCollisionLayer().GetTiles()[(int)tileCoords_BL.Y, (int)tileCoords_BL.X].NULL)
-            {
-                pos += vel;
-            }
+            pos += vel;
         }
 
         /**

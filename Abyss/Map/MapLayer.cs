@@ -95,7 +95,7 @@ namespace Abyss.Map
                     // if the tile index is valid insert the right tile
                     if (tileIndex >= 0) 
                     {
-                        tiles[i, j] = new Tile(tileTexture[tileIndex], false);
+                        tiles[i, j] = new Tile(tileTexture[tileIndex], new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), false);
                     } 
                     // otherwise the tile will be empty
                     else
@@ -124,7 +124,7 @@ namespace Abyss.Map
                     // if the tile index is valid insert the right tile
                     if (tileIndex >= 0)
                     {
-                        tiles[i, j] = new Tile() { NULL = false };
+                        tiles[i, j] = new Tile() { pos = new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), NULL = false };
                     }
                     // otherwise the tile will be empty
                     else
@@ -192,7 +192,7 @@ namespace Abyss.Map
                         spriteBatch.Draw
                             (
                                 tileset,
-                                new Rectangle(x * Globals.TILE_SIZE + (int)position.X, y * Globals.TILE_SIZE + (int)position.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
+                                new Rectangle((int)tiles[y, x].pos.X + (int)position.X, (int)tiles[y, x].pos.Y + (int)position.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
                                 tiles[y, x].rect,
                                 Color.White
                             );

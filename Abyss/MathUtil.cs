@@ -1,6 +1,7 @@
 ﻿using Abyss.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Collections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +18,15 @@ namespace Abyss
      */
     internal class MathUtil
     {
+        // any useful math variables
+        public static Vector2[] offsets = new Vector2[4]
+        {
+            Vector2.Zero,
+            new Vector2(Globals.TILE_SIZE),
+            new Vector2(Globals.TILE_SIZE, 0),
+            new Vector2(0, Globals.TILE_SIZE)
+        };
+
         /**
          * Moves the first input vector to the second\
          *  (does not account for frame rate)
@@ -69,21 +79,17 @@ namespace Abyss
         }
 
         /**
-         * Detects if the given rectangle is colliding with the given tile and tile position
+         * Returns true if the given position is within the bounds of the given four points
          * 
+         * @param   Vector2     the given position in question
+         * @param   float       left bound
+         * @param   float       right bound
+         * @param   float       top bound
+         * @param   float       bottom bound
          */
-        public static bool IsColliding(Vector2 pos1, Vector2 pos2)
+        public static bool IsWithin(Vector2 pos, float left, float right, float top, float bottom)
         {
-            if (pos1.X < pos2.X + Globals.TILE_SIZE &&
-                pos1.X + Globals.TILE_SIZE > pos2.X &&
-                pos1.Y < pos2.Y + Globals.TILE_SIZE &&
-                pos1.Y + Globals.TILE_SIZE > pos2.Y)
-            {
-                Debug.WriteLine("SUCCESS");
-                return true;
-            }
-            Debug.WriteLine("KRILL YOURSELF");
-            return false;
+            return pos.X >= left && pos.X <= right && pos.Y >= top && pos.Y <= bottom;
         }
     }
 }
