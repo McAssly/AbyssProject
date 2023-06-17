@@ -12,6 +12,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Abyss
 {
+    public enum SIDES {
+        LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3
+    }
     /**
      * This class simply operates as a place to store functions that simply do calculations
      * that is all
@@ -50,6 +53,28 @@ namespace Abyss
                 return vec2;
             else // otherwise move in that direciton
                 return vec1 + direction * (int)delta;
+        }
+
+        /**
+         * Moves the first input value to the second\
+         *  (does not account for frame rate)
+         * 
+         * @param   float       the first value
+         * @param   float       the second value to move towards
+         * @param   int         the speed to move by
+         */
+        public static float MoveTowardI(float val1, float val2, double delta)
+        {
+            // get the direction to move in
+            float direction = val2 - val1;
+            // get the distance they need to move in
+            float distance = Math.Abs(direction);
+
+            // if our speed is too fast then return the target position
+            if (delta >= distance)
+                return val2;
+            else // otherwise move in that direciton
+                return val1 + direction * (int)delta;
         }
 
         /**
