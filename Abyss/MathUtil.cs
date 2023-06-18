@@ -12,7 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Abyss
 {
-    public enum SIDES {
+    public enum SIDE {
         LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3
     }
     /**
@@ -22,12 +22,16 @@ namespace Abyss
     internal class MathUtil
     {
         // any useful math variables
-        public static Vector2[] offsets = new Vector2[4]
+        public static Vector2[] offsets = new Vector2[8]
         {
             Vector2.Zero,
             new Vector2(Globals.TILE_SIZE),
             new Vector2(Globals.TILE_SIZE, 0),
-            new Vector2(0, Globals.TILE_SIZE)
+            new Vector2(0, Globals.TILE_SIZE),
+            new Vector2(Globals.TILE_SIZE / 2, 0),
+            new Vector2(0, Globals.TILE_SIZE / 2),
+            new Vector2(Globals.TILE_SIZE, Globals.TILE_SIZE / 2),
+            new Vector2(Globals.TILE_SIZE / 2, Globals.TILE_SIZE)
         };
 
         /**

@@ -57,18 +57,30 @@ namespace Abyss
         {
             // if the input vector is not zero then the player must be trying to move
             if (inputVec != Vector2.Zero)
-            {
                 vel = MathUtil.MoveToward(vel, inputVec * MAX_SPEED, MAX_ACCEL * delta);
-                // collision
-                this.HandleCollision(map, delta);
-            }
             else
                 vel = MathUtil.MoveToward(vel, Vector2.Zero, FRICTION * delta);
 
             // Ensure they don't slip through cracks in walls somehow...
-            if (this.WillCollide(pos + vel, map)) // brute forcing it lmao
+            if (this.WillCollide(map) && vel != Vector2.Zero) // brute forcing it lmao
             {
-                this.HandleCollision(map, delta);
+                foreach (SIDE side in this.CollisionSide(map))
+                {
+                    Debug.WriteLine(side.ToString());
+                    switch (side)
+                    {
+                        case SIDE.LEFT:
+                            vel.X = 0; break;
+                        case SIDE.RIGHT:
+                            vel.X = 0; break;
+                        case SIDE.TOP:
+                            vel.Y = 0; break;
+                        case SIDE.BOTTOM:
+                            vel.Y = 0; break;
+                        default: break;
+                    }
+                }
+                pos += vel;
             } else
             {
                 pos += vel;
@@ -79,11 +91,11 @@ namespace Abyss
          * Determines if the player is about to collide with an collision tile
          * 
          */
-        public bool WillCollide(Vector2 targetPos, TileMap map)
+        public bool WillCollide(TileMap map)
         {
-            for (int i=0; i < 4; i++)
+            for (int i=0; i < 8; i++)
             {
-                Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(targetPos + MathUtil.offsets[i]), Vector2.Zero, new Vector2(Globals.TILE_SIZE * Globals.TILE_SIZE - Globals.TILE_SIZE));
+                Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
                 Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
                 if (!targetTile.NULL)
                 {
@@ -93,51 +105,25 @@ namespace Abyss
             return false;
         }
 
-        /**
-         * Handle collision for the player
+        /** determine which sides the player is colliding with
          * 
-         * 
-         * CURRENTLY JANKY, needs to be fixed
-         * TODO: the problem seems to be when the player is colliding with multiple objects at once
          */
-        public void HandleCollision(TileMap map, double delta)
+        public List<SIDE> CollisionSide(TileMap map)
         {
-            Vector2 tempVel = vel;
-            for (int i = 0; i < 4; i++) // loop through each offset (corner)
+            List<SIDE> sides = new List<SIDE>();
+            for (int i=0; i<8; i++)
             {
-                Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(Globals.TILE_SIZE * Globals.TILE_SIZE - Globals.TILE_SIZE));
+                Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
                 Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
 
-                // if the tile is a blocked space or a collision tile 
-                if (!targetTile.NULL)
+                SIDE ClosestSide = targetTile.ClosestSide(pos, new Vector2(Globals.TILE_SIZE), map);
+                if (!targetTile.ignores.Contains(ClosestSide))
                 {
-                    int iterations = 0;
-                    SIDES side = targetTile.ClosestSide(pos + vel, new Vector2(Globals.TILE_SIZE));
-                    // If the target new position to move to is not passable subtract from the velocity until the target position is moveable
-                    while (targetTile.Colliding(pos + vel, new Vector2(Globals.TILE_SIZE)) && iterations < 10)
-                    {
-                        // Update the velocity
-                        switch (side)
-                        {
-                            case SIDES.LEFT:
-                                vel.X = MathUtil.MoveTowardI(vel.X, 0, FRICTION * delta); break;
-                            case SIDES.RIGHT:
-                                vel.X = MathUtil.MoveTowardI(vel.X, 0, FRICTION * delta); break;
-                            case SIDES.TOP:
-                                vel.Y = MathUtil.MoveTowardI(vel.Y, 0, FRICTION * delta); break;
-                            case SIDES.BOTTOM:
-                                vel.Y = MathUtil.MoveTowardI(vel.Y, 0, FRICTION * delta); break;
-                            default:
-                                vel = -tempVel; break;
-                        }
-                        Debug.WriteLine(vel);
-                        // Update the target positions to test for
-                        tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(Globals.TILE_SIZE * Globals.TILE_SIZE - Globals.TILE_SIZE));
-                        targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
-                        iterations++;
-                    }
+                    sides.Add(targetTile.ClosestSide(pos, new Vector2(Globals.TILE_SIZE), map));
                 }
             }
+
+            return sides;
         }
 
         /**

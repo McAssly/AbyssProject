@@ -85,29 +85,12 @@ namespace Abyss.Map
                 }
             }
 
-            // Lastly set the actual tile map
-            for (int i = 0; i < layer.tiles.GetLength(0); i++)
-            {
-                for (int j = 0; j < layer.tiles.GetLength(1); j++)
-                {
-                    // Get the tile index from the layer of tiles
-                    int tileIndex = (int)layer.tiles[i, j] - 1;
-                    // if the tile index is valid insert the right tile
-                    if (tileIndex >= 0) 
-                    {
-                        tiles[i, j] = new Tile(tileTexture[tileIndex], new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), false);
-                    } 
-                    // otherwise the tile will be empty
-                    else
-                    {
-                        tiles[i, j] = new Tile() { NULL = true };
-                    }
-                }
-            }
-
             // get the width/height
             width = layer.tiles.GetLength(0);
             height = layer.tiles.GetLength(1);
+
+            // Lastly set the actual tile map
+            GenerateMapLayer(layer);
         }
 
         /** For the collision layer *kill me*
@@ -115,16 +98,38 @@ namespace Abyss.Map
         public MapLayer(Layer layer)
         {
             this.blocked = layer.blocked;
-            for (int i = 0; i < layer.tiles.GetLength(0); i++)
+            // get the width/height
+            width = layer.tiles.GetLength(0);
+            height = layer.tiles.GetLength(1);
+
+            // generate the actual tile map
+            this.GenerateMapLayer(layer, true);
+
+            // then add in where the collision tiles need to ignore during collision
+            for (int y = 0; y < height; y++)
             {
-                for (int j = 0; j < layer.tiles.GetLength(1); j++)
+                for (int x = 0; x < width; x++)
+                {
+                    this.tiles[y, x].SidesToIgnore(this);
+                }
+            }
+        }
+
+        /** generates the layer mapping
+         */
+        private void GenerateMapLayer(Layer layer, bool ignoreTexture = false)
+        {
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
                 {
                     // Get the tile index from the layer of tiles
                     int tileIndex = (int)layer.tiles[i, j] - 1;
                     // if the tile index is valid insert the right tile
                     if (tileIndex >= 0)
                     {
-                        tiles[i, j] = new Tile() { pos = new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), NULL = false };
+                        if (ignoreTexture) tiles[i, j] = new Tile() { pos = new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), NULL = false };
+                        else tiles[i, j] = new Tile(tileTexture[tileIndex], new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), false);
                     }
                     // otherwise the tile will be empty
                     else
@@ -133,10 +138,6 @@ namespace Abyss.Map
                     }
                 }
             }
-
-            // get the width/height
-            width = layer.tiles.GetLength(0);
-            height = layer.tiles.GetLength(1);
         }
 
         /** Gets the width of the layer
