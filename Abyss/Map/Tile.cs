@@ -11,9 +11,9 @@ namespace Abyss.Map
     internal struct SideDistance
     {
         public float dist;
-        public SIDE side;
+        public Side side;
 
-        public SideDistance(float dist, SIDE side)
+        public SideDistance(float dist, Side side)
         {
             this.dist = dist;
             this.side = side;
@@ -30,7 +30,7 @@ namespace Abyss.Map
         public readonly Rectangle rect;
         public readonly Vector2 pos;
         public readonly bool NULL;
-        public List<SIDE> ignores = new List<SIDE>();
+        public List<Side> ignores = new List<Side>();
         public Tile(bool NULL, Vector2 pos = new Vector2(), Rectangle rect = new Rectangle())
         {
             this.rect = rect;
@@ -70,7 +70,7 @@ namespace Abyss.Map
         public void SidesToIgnore(MapLayer layer)
         {
             // initialize a list of sides to ignore
-            List<SIDE> ignores = new List<SIDE>();
+            List<Side> ignores = new List<Side>();
 
             // get the current map position of this tile
             Vector2 mapPosition = MathUtil.CoordsToTileCoords(pos);
@@ -83,19 +83,19 @@ namespace Abyss.Map
 
             // LEFT SIDE
             if (IgnoreSide(Left.X, Left, 0, layer, true))
-                ignores.Add(SIDE.LEFT);
+                ignores.Add(Side.LEFT);
 
             // RIGHT SIDE
             if (IgnoreSide(Right.X, Right, layer.GetWidth()-1, layer, false))
-                ignores.Add(SIDE.RIGHT);
+                ignores.Add(Side.RIGHT);
 
             // TOP SIDE
             if (IgnoreSide(Top.Y, Top, 0, layer, true))
-                ignores.Add(SIDE.TOP);
+                ignores.Add(Side.TOP);
 
             // BOTTOM SIDE
             if (IgnoreSide(Bottom.Y, Bottom, layer.GetWidth()-1, layer, false))
-                ignores.Add(SIDE.BOTTOM);
+                ignores.Add(Side.BOTTOM);
 
             this.ignores = ignores;
         }
@@ -133,7 +133,7 @@ namespace Abyss.Map
             List<Vector2> SidePositions = this.SidePositions();
             List<SideDistance> distances = new List<SideDistance>();
             for (int i = 0; i < SidePositions.Count(); i++) {
-                SIDE side = (SIDE)Enum.ToObject(typeof(SIDE), i);
+                Side side = (Side)Enum.ToObject(typeof(Side), i);
                 if (!ignores.Contains(side))
                     distances.Add(new SideDistance((pos - SidePositions[i]).Length(), side));
             }
@@ -154,7 +154,7 @@ namespace Abyss.Map
         /**
          * Returns what side the given position is colliding with (assuming full tile size)
          */
-        public SIDE CollisionSide(Vector2 pos) 
+        public Side CollisionSide(Vector2 pos) 
         {
             List<Vector2> sidePos = this.SidePositions();
             List<SideDistance> distances = new List<SideDistance>();

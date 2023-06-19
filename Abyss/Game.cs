@@ -5,6 +5,8 @@ using Abyss.Map;
 using System.Collections.Generic;
 using MonoGame.Extended;
 using MonoGame.Extended.ViewportAdapters;
+using Abyss.Entities;
+using Abyss.UI;
 
 namespace Abyss
 {
@@ -13,8 +15,11 @@ namespace Abyss
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        private Text test_text;
+
         private MapManager mapManager;
-        private Player player = new Player();
+        private UiManager UI_Manager;
+        private Player player;
 
         public Game()
         {
@@ -42,6 +47,9 @@ namespace Abyss
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Load the game font
+            Globals.FONT = Content.Load<SpriteFont>("font");
+
             // Load sprites
             Globals.TESTBOX = Content.Load<Texture2D>("testbox");
 
@@ -51,14 +59,18 @@ namespace Abyss
 
             // Load all instances
             mapManager = new MapManager(MapManager.TestMap);
+            UI_Manager = new UiManager(UiManager.Debug);
+            player = new Player(Globals.TESTBOX);
+
+            test_text = new Text("This here is a message and this is \nwhere its located on the game's \nhud/UI setup", Globals.MessageLocation, Globals.MessageScale);
         }
 
         protected override void Update(GameTime gameTime)
         {
             double delta = gameTime.ElapsedGameTime.TotalSeconds * Globals.FRAME_SPEED;
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu))
+                test_text.Update("Now in debug menu..");
 
             /** Player
              * all player related update processes
@@ -73,7 +85,7 @@ namespace Abyss
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black); // background color and clears after each frame
+            GraphicsDevice.Clear(new Color(48, 41, 39)); // background color and clears after each frame
             _spriteBatch.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
@@ -81,7 +93,7 @@ namespace Abyss
                 DepthStencilState.Default,
                 RasterizerState.CullCounterClockwise,
                 null,
-                Matrix.CreateScale(Globals.GAME_SCALE)
+                Matrix.Multiply(Matrix.CreateTranslation(new Vector3(0, 7, 0)), Matrix.CreateScale(Globals.game_scale))
                 ) ; // start drawing through the sprite batch
 
             // Draw the tile map
@@ -89,6 +101,9 @@ namespace Abyss
 
             // Draw the Player next
             player.Draw(_spriteBatch);
+
+            // Draw UI
+            test_text.Draw(_spriteBatch);
 
             _spriteBatch.End(); // end the sprite batch
 
