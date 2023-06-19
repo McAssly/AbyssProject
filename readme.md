@@ -6,4 +6,6 @@
 2. NPC and dialogue trees
 3. Menu interactions (UI)
 4. Inventory
-5. Level interactions
+5. Implement magic/combat system
+6. Level interactions (move between levels)
+   -> actual level classes
