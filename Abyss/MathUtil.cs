@@ -28,9 +28,10 @@ namespace Abyss
             new Vector2(Globals.TILE_SIZE),
             new Vector2(Globals.TILE_SIZE, 0),
             new Vector2(0, Globals.TILE_SIZE),
-            new Vector2(Globals.TILE_SIZE / 2, 0),
+            
             new Vector2(0, Globals.TILE_SIZE / 2),
             new Vector2(Globals.TILE_SIZE, Globals.TILE_SIZE / 2),
+            new Vector2(Globals.TILE_SIZE / 2, 0),
             new Vector2(Globals.TILE_SIZE / 2, Globals.TILE_SIZE)
         };
 

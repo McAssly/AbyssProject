@@ -27,11 +27,11 @@ namespace Abyss.Map
      */
     internal struct Tile
     {
-        public Rectangle rect;
-        public Vector2 pos;
-        public bool NULL;
+        public readonly Rectangle rect;
+        public readonly Vector2 pos;
+        public readonly bool NULL;
         public List<SIDE> ignores = new List<SIDE>();
-        public Tile(Rectangle rect, Vector2 pos, bool NULL)
+        public Tile(bool NULL, Vector2 pos = new Vector2(), Rectangle rect = new Rectangle())
         {
             this.rect = rect;
             this.pos = pos;
@@ -126,55 +126,63 @@ namespace Abyss.Map
         /**
          * Determines which side the given position is closest to
          * 
-         * @param   Vector2     the position of the obj
-         * @param   Vector2     the size of the obj
+         * @param   Vector2     the position
          */
-        public SIDE ClosestSide(Vector2 pos, Vector2 size, TileMap map)
+        public SideDistance ClosestSide(Vector2 pos)
         {
-            // 1st: Get two corners of the target object
-            Vector2 p0 = pos;                           // TOP LEFT CORNER
-            Vector2 p3 = pos + size;                    // BOTTOM RIGHT
-
-            // now the corner labels clearly show which side it should be closest to, IE top left would be close to either the bottom or the right side
-            // etc. etc.
-
-            // So if we have p0, that corner should be checking the distance between p0 and the bottom side and the right side
-            // etc. etc.
-
-            // 2nd: Get the four bounds of this tile
-            float left = this.pos.X;
-            float right = this.pos.X + Globals.TILE_SIZE;
-            float top = this.pos.Y;
-            float bottom = this.pos.Y + Globals.TILE_SIZE;
-
-            // 3rd: get the distances between each side but only add them if they aren't ignored
-            List<SideDistance> dist = new List<SideDistance>()
-            {
-                new SideDistance(Math.Abs(left - p3.X), SIDE.LEFT),
-                new SideDistance(Math.Abs(right - p0.X), SIDE.RIGHT),
-                new SideDistance(Math.Abs(top - p3.Y), SIDE.TOP),
-                new SideDistance(Math.Abs(bottom - p0.Y), SIDE.BOTTOM)
-            };
-
-            // 4th: find the smallest distance
-            SideDistance min = dist[0]; // grab the first distance (right side)
-            for (int i=1; i<dist.Count; i++) // loop through to find the min
-            { // we don't need to start at 0 since we already yoinked that one
-                if (dist[i].dist < min.dist)
-                { // if the current dist is greater than update our minimum distance
-                    min = dist[i];
-                }
+            List<Vector2> SidePositions = this.SidePositions();
+            List<SideDistance> distances = new List<SideDistance>();
+            for (int i = 0; i < SidePositions.Count(); i++) {
+                SIDE side = (SIDE)Enum.ToObject(typeof(SIDE), i);
+                if (!ignores.Contains(side))
+                    distances.Add(new SideDistance((pos - SidePositions[i]).Length(), side));
             }
 
-            // 5th: find and return the correct side:
-            for (int i=0; i<dist.Count; i++) // loop through each distance again
+            // in case there are no sides throw a new exception
+            if (distances.Count == 0)
+                return new SideDistance();
+
+            // get the minimum distance, and return its side
+            SideDistance minSide = distances[0];
+            foreach (SideDistance sd in distances)
+                if (minSide.dist > sd.dist)
+                    minSide = sd;
+
+            return minSide;
+        }
+
+        /**
+         * Returns what side the given position is colliding with (assuming full tile size)
+         */
+        public SIDE CollisionSide(Vector2 pos) 
+        {
+            List<Vector2> sidePos = this.SidePositions();
+            List<SideDistance> distances = new List<SideDistance>();
+            for (int i=0; i<8; i++)
             {
-                if (dist[i].dist == min.dist)
-                { // return the corresponding enum
-                    return dist[i].side;
-                }
+                Vector2 offset_pos = pos + MathUtil.offsets[i];
+                distances.Add(ClosestSide(offset_pos));
             }
-            return SIDE.LEFT; // return the left side as a default: why not what could go wrong right?.....
+
+            SideDistance minSide = distances[0];
+            foreach (SideDistance sd in distances)
+                if (minSide.dist > sd.dist)
+                    minSide = sd;
+
+            return minSide.side;
+        }
+
+        /** returns all the positions of each side of the tile
+         */
+        private List<Vector2> SidePositions()
+        {
+            // Initialize a list of side positions (order: 0->L, 1->R, 2->T, 3->B)
+            List<Vector2> sidePos = new List<Vector2>();
+            // calculate and add each side at their respective offsets
+            for (int i = 4; i < 8; i++)
+                sidePos.Add(this.pos + MathUtil.offsets[i]);
+
+            return sidePos;
         }
     }
 }

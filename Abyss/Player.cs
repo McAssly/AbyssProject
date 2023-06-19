@@ -66,7 +66,6 @@ namespace Abyss
             {
                 foreach (SIDE side in this.CollisionSide(map))
                 {
-                    Debug.WriteLine(side.ToString());
                     switch (side)
                     {
                         case SIDE.LEFT:
@@ -113,13 +112,21 @@ namespace Abyss
             List<SIDE> sides = new List<SIDE>();
             for (int i=0; i<8; i++)
             {
+                Vector2 tilePos_p = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + MathUtil.offsets[i]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetWidth() - 1));
                 Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
-                Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
-
-                SIDE ClosestSide = targetTile.ClosestSide(pos, new Vector2(Globals.TILE_SIZE), map);
-                if (!targetTile.ignores.Contains(ClosestSide))
+                // Ignore straight diagnal tiles as they are meaningless here, or rather they fuck shit up
+                if (!new List<Vector2>() {
+                            tilePos_p + new Vector2(1,1),
+                            tilePos_p + new Vector2(-1, -1),
+                            tilePos_p + new Vector2(-1, 1),
+                            tilePos_p + new Vector2(1, -1)
+                        }.Contains(tilePos))
                 {
-                    sides.Add(targetTile.ClosestSide(pos, new Vector2(Globals.TILE_SIZE), map));
+                    Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
+
+                    SIDE ClosestSide = targetTile.CollisionSide(pos);
+                    if (!targetTile.ignores.Contains(ClosestSide))
+                        sides.Add(ClosestSide);
                 }
             }
 

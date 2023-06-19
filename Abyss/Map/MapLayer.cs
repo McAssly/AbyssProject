@@ -128,13 +128,13 @@ namespace Abyss.Map
                     // if the tile index is valid insert the right tile
                     if (tileIndex >= 0)
                     {
-                        if (ignoreTexture) tiles[i, j] = new Tile() { pos = new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), NULL = false };
-                        else tiles[i, j] = new Tile(tileTexture[tileIndex], new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), false);
+                        if (ignoreTexture) tiles[i, j] = new Tile(false, new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE));
+                        else tiles[i, j] = new Tile(false, new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), tileTexture[tileIndex]);
                     }
                     // otherwise the tile will be empty
                     else
                     {
-                        tiles[i, j] = new Tile() { NULL = true };
+                        tiles[i, j] = new Tile(true);
                     }
                 }
             }
