@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -11,6 +12,20 @@ using System.Threading.Tasks;
 
 namespace Abyss.UI
 {
+    internal class UiControllers
+    {
+        // Declare every single UI menu in the game
+        public static Interaction Dialogue = new Interaction();
+        public static Console Debug = new Console();
+        public static Inventory Invenetory = new Inventory();
+        public static Interaction Shop = new Interaction();
+        public static Menu Main = new Menu();
+        public static Menu Options = new Menu();
+
+        // in game HUD
+        public static Hud HUD = new Hud();
+    }
+
     internal interface Ui
     {
         public bool IsClosed();
@@ -19,12 +34,12 @@ namespace Abyss.UI
         public void Draw(SpriteBatch spriteBatch);
     }
 
-    internal class HUD : Ui
+    internal class Hud : Ui
     {
         public bool close = false;
         public bool IsClosed() {  return close; }
         public void UnClose() { close = false; }
-        public HUD() { }
+        public Hud() { }
         public void Update(KeyboardState KB, MouseState MS) { }
         public void Draw(SpriteBatch spriteBatch)
         {
@@ -49,28 +64,45 @@ namespace Abyss.UI
         public bool close = false;
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
-        private Text input = new Text("", new Vector2(8, 8), (float)0.2, false);
+        private TextBuilder input = new TextBuilder("", new Vector2(8, 8), (float)0.2, false);
         public Console() { }
 
         /// <summary>
-        /// Updates the console process, and takes in keyboard inputs primarily
+        /// Does nothing, refer to 
         /// </summary>
         /// <param name="KB"></param>
         /// <param name="MS"></param>
         public void Update(KeyboardState KB, MouseState MS)
         {
-            if (KB.IsKeyDown(Keys.Enter))
+            if (KB.GetPressedKeyCount() == 1)
+                RegisterInput(OnInput);
+            else
+                UnRegisterInput(OnInput);
+        }
+        public static void RegisterInput(EventHandler<TextInputEventArgs> method)
+        {
+            Game.gw.TextInput += method;
+        }
+        public static void UnRegisterInput(EventHandler<TextInputEventArgs> method)
+        {
+            Game.gw.TextInput -= method;
+        }
+
+        public void OnInput(object sender, TextInputEventArgs e)
+        {
+            Keys? k = e.Key;
+            char? c = e.Character;
+            Debug.WriteLine(k.ToString());
+            if (k.Equals(Keys.Enter))
                 close = true;
-            if (KB.IsKeyDown(Keys.Back))
+            else if (k.Equals(Keys.Back))
                 input.Delete();
             else
             {
-                if (KB.GetPressedKeys().Length > 0)
-                {
-                    input.Append(KB.GetPressedKeys()[0].ToString());
-                }
+                input.Append(c);
             }
         }
+
         public void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.FillRectangle(new RectangleF(0, 0, Globals.WindowW, Globals.TILE_SIZE * 2), Globals.Black);

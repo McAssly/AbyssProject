@@ -19,6 +19,8 @@ namespace Abyss
         private GameMaster GM;
         private Player player;
 
+        public static GameWindow gw;
+
         public Game()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -37,6 +39,7 @@ namespace Abyss
             Window.AllowAltF4 = true;
             // window title
             Window.Title = "One of the Title's of All Time";
+            gw = Window;
 
             GM = new GameMaster();
 
@@ -54,11 +57,10 @@ namespace Abyss
             Globals.TESTBOX = Content.Load<Texture2D>("testbox");
 
             // Load the Primary Game / UI
-            LevelManager.TestLevel = Levels.LVL_START;
+            GameMaster.TestLevel = Levels.LVL_START;
             GameMaster.LoadLevels(Content, 0, 0);
 
-            GM.SetLevelManager(new LevelManager(LevelManager.TestLevel));
-            GM.SetUIManager(new UiManager(UiManager.HUD));
+            GM.Setup(GameMaster.TestLevel, UiControllers.HUD);
 
             // load all entities
             player = new Player(Globals.TESTBOX);
@@ -71,19 +73,19 @@ namespace Abyss
             double delta = gameTime.ElapsedGameTime.TotalSeconds * Globals.FRAME_SPEED;
             /** All UI related shit
              */
-            GM.GetUiManager().Close();
+            GM.Close();
 
             // open the debug menu
             if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu))
-                GM.GetUiManager().Open(UiManager.Debug);
+                GM.Open(UiControllers.Debug);
 
-            GM.GetUiManager().Update(Keyboard.GetState(), Mouse.GetState());
+            GM.UpdateUi(Keyboard.GetState(), Mouse.GetState());
             
 
 
             /** ALL GAME RELATED CODE
              */
-            if (GM.GetUiManager().IsHUD())
+            if (GM.IsHud())
             {
                 /** Player
                  * all player related update processes

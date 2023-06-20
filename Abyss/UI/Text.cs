@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +11,11 @@ namespace Abyss.UI
 {
     internal class Text
     {
-        private Vector2 pos;
-        private float scale;
-        private string text;
+        private protected Vector2 pos;
+        private protected float scale;
+        private protected string text;
 
-        private bool selectable;
+        private protected bool selectable;
         public Text(string text, Vector2 position, float scale, bool selectable = false) 
         { 
             this.text = text;
@@ -45,6 +46,38 @@ namespace Abyss.UI
         {
             if (spriteBatch == null) return;
             spriteBatch.DrawString(Globals.FONT, text, pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+        }
+    }
+
+    internal class TextBuilder : Text
+    {
+        StringBuilder textBuilder;
+
+        public TextBuilder(string text, Vector2 position, float scale, bool selectable = false) : base(text, position, scale, selectable)
+        {
+            this.textBuilder = new StringBuilder(text);
+        }
+
+        public void Append(char? c)
+        {
+            if (c.HasValue)
+                textBuilder.Append(c);
+        }
+
+        public new void Delete()
+        {
+            text = textBuilder.ToString();
+            if (!string.IsNullOrEmpty(text))
+            {
+                text = text.Remove(text.Length - 1);
+            }
+            textBuilder = new StringBuilder(text);
+        }
+
+        public new void Draw(SpriteBatch spriteBatch)
+        {
+            if (spriteBatch == null) return;
+            spriteBatch.DrawString(Globals.FONT, textBuilder.ToString(), pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
     }
 }
