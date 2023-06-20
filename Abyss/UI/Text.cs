@@ -22,6 +22,19 @@ namespace Abyss.UI
             this.scale = scale;
         }
 
+        public void Append(string text)
+        {
+            this.text += text;
+        }
+
+        public void Delete()
+        {
+            if (!string.IsNullOrEmpty(text))
+            {
+                text = text.Remove(text.Length - 1);
+            }
+        }
+
         public void Update(string new_text)
         {
             if (text != new_text)

@@ -177,9 +177,8 @@ namespace Abyss.Map
          * Draws the tile layer
          * 
          * @param   SpriteBatch     the spritebatch to draw to
-         * @param   Vector2         the position to map the layer to
          */
-        public void Draw(SpriteBatch spriteBatch, Vector2 position)
+        public void Draw(SpriteBatch spriteBatch)
         {
             // loop through the tile grid
             for (int y = 0; y < height; y++)
@@ -193,7 +192,7 @@ namespace Abyss.Map
                         spriteBatch.Draw
                             (
                                 tileset,
-                                new Rectangle((int)tiles[y, x].pos.X + (int)position.X, (int)tiles[y, x].pos.Y + (int)position.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
+                                new Rectangle((int)tiles[y, x].pos.X, (int)tiles[y, x].pos.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
                                 tiles[y, x].rect,
                                 Color.White
                             );

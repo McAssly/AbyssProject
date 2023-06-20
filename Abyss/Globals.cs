@@ -18,12 +18,15 @@ namespace Abyss
 
         // GAME CONSTANTS
         public static readonly int TILE_SIZE = 16;
-        public static readonly int GameWindow_size = 256;
-        public static readonly int UIWindow_size = 224;
-        public static float game_scale = 4 / (float)WindowSize;
+        public static double game_scale = Math.Sqrt(TILE_SIZE) / (float)WindowSize;
+        public static readonly double GameWindow_size = 256*game_scale;
+        public static Vector3 DrawPosition = new Vector3(
+                (float)((WindowW - GameWindow_size)/(2*game_scale)), 
+                (float)((WindowH - GameWindow_size) / (2 * game_scale)),0);
 
         // UI CONSTANTS
-        public static readonly Vector2 MessageLocation = new Vector2(264, 8);
+        public static Color Black = new Color(48, 41, 39);
+        public static readonly Vector2 MessageLocation = new Vector2(TILE_SIZE/2, TILE_SIZE / 2);
         public static readonly float MessageScale = (float)0.4;
 
         // DEBUG
