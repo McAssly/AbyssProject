@@ -106,6 +106,17 @@ namespace Abyss.UI
     internal class Interaction : Ui
     {
         public bool close = false;
+
+        /**
+         * 
+         * 
+         * WHERE I LEFT OFF WORKING ON DIALOGUE MENUS
+         * WORK WITH HOVERING TEXT AND MOVING THROUGH A DIALOGUE TREE
+         * 
+         * 
+         * 
+         */
+
         public void Close() { close = true; }
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }

@@ -121,7 +121,6 @@ namespace Abyss
                  * HUD related update processes
                  */
                 UiControllers.HUD.UpdatePlayerInfo(player);
-                GM.Open(UiControllers.HUD);
             }
 
             _prevKeyboardState = KB;
