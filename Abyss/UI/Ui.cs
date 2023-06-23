@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Entities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
@@ -16,7 +17,7 @@ namespace Abyss.UI
     {
         // Declare every single UI menu in the game
         public static Interaction Dialogue = new Interaction();
-        public static Console Debug = new Console();
+        public static Console _Debug = new Console();
         public static Inventory Invenetory = new Inventory();
         public static Interaction Shop = new Interaction();
         public static Menu Main = new Menu();
@@ -24,6 +25,41 @@ namespace Abyss.UI
 
         // in game HUD
         public static Hud HUD = new Hud();
+
+
+        // debug
+        public static bool SHOW_POSITION = false;
+        public static bool SHOW_HEALTH = true;
+        public static bool SHOW_MANA = true;
+
+        /// <summary>
+        /// Updates whether the given hud element in the command arguments should be enabled or disabled
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="enable"></param>
+        public static void UpdateHUDElement(List<string> args, bool enable)
+        {
+            if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
+            // This command really only gives a shit about the first argument passed into the primary command
+            /**
+             * List of HUD elements
+             * 
+             * position     - the position of the player
+             * health       - the health of the player
+             * mana         - the mana of the player
+             */
+            // get which secondary argument was passed
+            switch (args[1])
+            {
+                case "position":
+                    SHOW_POSITION = enable; break;
+                case "health":
+                    SHOW_HEALTH = enable; break;
+                case "mana":
+                    SHOW_MANA = enable; break;
+                default : break;
+            }
+        }
     }
 
     internal interface Ui
@@ -38,12 +74,33 @@ namespace Abyss.UI
     internal class Hud : Ui
     {
         public bool close = false;
+
+        // The player info variables
+        private Text health;
+        private Text mana;
+        private Text position;
+
         public void Close() { close = true; }
         public bool IsClosed() {  return close; }
         public void UnClose() { close = false; }
         public Hud() { }
+
+        public void UpdatePlayerInfo(Player player)
+        {
+            this.health = new Text("HP: " + player.Health() + "/" + player.MaxHealth(), new Vector2(16, 16), (float)0.5);
+            this.mana = new Text("MN: " + player.Mana() + "/" + player.MaxMana(), new Vector2(16, 32), (float)0.5);
+            this.position = new Text("POS: " + (int)player.Position().X + ", " + (int)player.Position().Y, new Vector2(16, 48), (float)0.5);
+        }
+
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch) { }
+        public void Draw(SpriteBatch spriteBatch) 
+        {
+            if (spriteBatch == null) return;
+            // draw each text on screen
+            if (UiControllers.SHOW_HEALTH) this.health.Draw(spriteBatch);
+            if (UiControllers.SHOW_MANA) this.mana.Draw(spriteBatch);
+            if (UiControllers.SHOW_POSITION) this.position.Draw(spriteBatch);
+        }
     }
 
     internal class Interaction : Ui
@@ -65,6 +122,54 @@ namespace Abyss.UI
         public Console() { }
 
         public void Update(KeyboardState KB, MouseState MS) { }
+
+        public void ProcessCommand()
+        {
+            // first conver the text input to a readable string
+            string input = Game._TextInput.Append("\n").ToString();
+            Debug.WriteLine(input);
+            
+            // next create a list of arguments that were passed into the console
+            List<string> args = new List<string>();
+            // need to build this list, by first starting with each argument
+            StringBuilder arg = new StringBuilder();
+            foreach (char c in input)
+            {
+                // add the current char in the input to the argument
+                if (c == ' ' || c == '\n') // if we are at the next argument as defined by each delimeter (space or newline)
+                {
+                    // add the finished argument to the arguements list
+                    args.Add(arg.ToString());
+                    arg = new StringBuilder(); // reset the arguemnt builder to build more
+                } else
+                    arg.Append(c);
+            }
+
+            // if no command was passed then return as nothing happend
+            if (args.Count <= 0)
+            { Debug.WriteLine("No arguments found"); return; }
+
+            // every command has a starting argument, the primary command
+            /**
+             * List of primary commands
+             * 
+             * enable       - enables a hud element
+             * disable      - disables a hud element
+             * set          - sets a value to an entity
+             */
+            string primary = args[0];
+            switch (primary)
+            {
+                case "enable":
+                    UiControllers.UpdateHUDElement(args, true);  break;
+                case "disable":
+                    UiControllers.UpdateHUDElement(args, false); break;
+                case "set":
+                    break;
+                default:
+                    break;
+            }
+        }
 
         public void Draw(SpriteBatch spriteBatch)
         {

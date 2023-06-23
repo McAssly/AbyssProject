@@ -158,6 +158,16 @@ namespace Abyss.Entities
         }
 
         /**
+         * Getters/Setters
+         */
+        public double MaxHealth() { return max_health; }
+        public double MaxMana() { return max_mana; }
+        public double Health() { return health; }
+        public double Mana() { return mana; }
+        public Vector2 Position() { return pos; }
+
+
+        /**
          * Simply updates the draw object's position
          */
         public void UpdateDrawObj()

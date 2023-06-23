@@ -79,15 +79,7 @@ namespace Abyss
             KeyboardState KB = Keyboard.GetState();
             double delta = gameTime.ElapsedGameTime.TotalSeconds * Globals.FRAME_SPEED;
 
-            /**
-             * process globals
-             */
-            if (GM.CurrentUi() is Console)
-                if (GameMaster.HandleInput(KB))
-                    GM.CloseCurrent();
-
-
-            /** All UI related shit
+            /** Global UI processes
              */
             GM.Close();
 
@@ -95,15 +87,25 @@ namespace Abyss
             if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu))
             {
                 _TextInput = new StringBuilder(); // reset the text input
-                GM.Open(UiControllers.Debug); // open the debug menu
+                GM.Open(UiControllers._Debug); // open the debug menu
             }
 
             // update the current ui menu
             GM.UpdateUi(KB, Mouse.GetState());
-            
 
 
-            /** ALL GAME RELATED CODE
+
+            // CONSOLE PROCESS              CONSOLE
+            if (GM.CurrentUi() is Console)
+                if (GameMaster.HandleInput(KB))
+                {
+                    UiControllers._Debug.ProcessCommand();
+                    GM.CloseCurrent();
+                }
+
+
+
+            /** ALL GAME RELATED CODE       GAME + HUD
              */
             if (GM.IsHud())
             {
@@ -113,6 +115,13 @@ namespace Abyss
                 player.CalcInputVector(KB);
                 player.Move(GM.GetCurrentTileMap(), delta);
                 player.UpdateDrawObj();
+                
+
+                /**
+                 * HUD related update processes
+                 */
+                UiControllers.HUD.UpdatePlayerInfo(player);
+                GM.Open(UiControllers.HUD);
             }
 
             _prevKeyboardState = KB;

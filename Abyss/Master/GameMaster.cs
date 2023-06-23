@@ -117,9 +117,7 @@ namespace Abyss.Master
             {
                 if (Game._prevKeyboardState.IsKeyUp(key)) // ensure repetitions are not caused
                 {
-                    if (key == Keys.Space) // space key
-                        Game._TextInput.Append(" ");
-                    else if (key == Keys.Enter) // close key
+                    if (key == Keys.Enter) // close key
                         return true;
                 }
             }
@@ -130,7 +128,6 @@ namespace Abyss.Master
         {
             Keys? k = e.Key;
             char c = e.Character;
-            Debug.WriteLine(k.ToString());
             if (!char.IsControl(c) && c != '`')
                 Game._TextInput.Append(c);
             else if (k == Keys.Back && Game._TextInput.Length > 0)
