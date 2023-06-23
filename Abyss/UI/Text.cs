@@ -21,11 +21,14 @@ namespace Abyss.UI
 
         private protected bool selectable;
         private protected bool selected = false;
-        public Text(string text, Vector2 position, float scale, bool selectable = false) 
+        public Text(string text, Vector2 position, float scale, Vector2? size = null, bool selectable = false) 
         { 
             this.text = text;
             this.pos = position;
             this.scale = scale;
+            this.selectable = selectable;
+            if (size.HasValue)
+                this.size = size.Value;
         }
 
         public void Append(string text)
@@ -55,33 +58,39 @@ namespace Abyss.UI
             // otherwise lets try and make it selectable
         }
 
-        public bool Hovering(MouseState MS)
+        public bool Hovering()
         {
-            return MathUtil.IsWithin(new Vector2(MS.X, MS.Y), pos.X, pos.X + size.X, pos.Y, pos.Y + size.X);
+            Vector2 m = MathUtil.Mouse();
+            return m.X >= pos.X && m.X <= pos.X + size.X
+                && m.Y >= pos.Y && m.Y <= pos.Y + size.Y;
         }
 
-        public void Draw(SpriteBatch spriteBatch, MouseState? MS = null)
+        public void Draw(SpriteBatch spriteBatch)
         {
             if (spriteBatch == null) return;
             Color bg, fg;
             fg = Color.White;
+            bg = Globals.Black;
             // the text is selectable change the colors when hovering
-            if (selectable && MS.HasValue)
+            if (selectable)
             {
-                if (Hovering(MS.Value)) // the user is hovering over the textbox
+                if (Hovering()) // the user is hovering over the textbox
                 { // invert the background and foreground colors
                     bg = Color.White;
                     fg = Globals.Black;
                 }
-                else
-                { // if they are not hovering then who cares
-                    bg = Globals.Black;
-                    fg = Color.White;
-                }
+                spriteBatch.FillRectangle(new RectangleF(pos.X, pos.Y, size.X, size.Y), bg);
+            }
+            else
+            {
                 spriteBatch.FillRectangle(new RectangleF(pos.X, pos.Y, size.X, size.Y), bg);
             }
             spriteBatch.DrawString(Globals.FONT, text, pos, fg, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
+
+
+
+
 
         public static void Draw(SpriteBatch spriteBatch, StringBuilder input, Vector2 pos, float scale)
         {

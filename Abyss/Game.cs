@@ -18,9 +18,11 @@ namespace Abyss
         private SpriteBatch _spriteBatch;
 
         private GameMaster GM;
-        public static StringBuilder _TextInput;
         private Player player;
 
+        public static StringBuilder _TextInput;
+
+        public static MouseState _MouseState;
         public static KeyboardState _prevKeyboardState;
 
         public Game()
@@ -67,8 +69,6 @@ namespace Abyss
             // load all entities
             player = new Player(Globals.TESTBOX);
 
-            GameMaster.test_text = new Text("This here is a message and this is \nwhere its located on the game's \nhud/UI setup", Globals.MessageLocation, Globals.MessageScale);
-
 
             // Hook the text input
             Window.TextInput += GameMaster.RegisterInput;
@@ -77,6 +77,7 @@ namespace Abyss
         protected override void Update(GameTime gameTime)
         {
             KeyboardState KB = Keyboard.GetState();
+            _MouseState = Mouse.GetState();
             double delta = gameTime.ElapsedGameTime.TotalSeconds * Globals.FRAME_SPEED;
 
             /** Global UI processes
@@ -99,8 +100,8 @@ namespace Abyss
             if (GM.CurrentUi() is Console)
                 if (GameMaster.HandleInput(KB))
                 {
-                    UiControllers._Debug.ProcessCommand();
                     GM.CloseCurrent();
+                    UiControllers._Debug.ProcessCommand(GM);
                 }
 
 

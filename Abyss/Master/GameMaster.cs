@@ -17,7 +17,16 @@ namespace Abyss.Master
     internal class GameMaster
     {
         // declare testing placeholders
-        public static Text test_text;
+        public static Dialogue TestDialogue = new Dialogue
+            (
+                new Text("Hello World.", Globals.DialoguePosition, 0.3f, Globals.DialogueSize), 
+                new Text[] 
+                {
+                    new Text("Hi", Globals.DialoguePosition + Globals.OptionOffset[0], 0.3f, Globals.DialogueSize, true),
+                    new Text("Why?", Globals.DialoguePosition + Globals.OptionOffset[1], 0.3f, Globals.DialogueSize, true),
+                    new Text("Goodbye.", Globals.DialoguePosition + Globals.OptionOffset[2], 0.3f, Globals.DialogueSize, true)
+                }
+            );
         public static Level TestLevel;
 
         // Declare the game managers (UI/Level)
@@ -45,6 +54,12 @@ namespace Abyss.Master
         public void Open(Ui ui)
         {
             this.currentUi = ui;
+        }
+
+        public void OpenDialogue(Dialogue dialogue)
+        {
+            UiControllers.Dialogue.SetDialogue(dialogue);
+            this.currentUi = UiControllers.Dialogue;
         }
 
         /// <summary>

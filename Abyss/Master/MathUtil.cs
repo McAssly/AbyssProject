@@ -22,6 +22,14 @@ namespace Abyss.Master
      */
     internal class MathUtil
     {
+
+        public static Vector2 Mouse()
+        {
+            return new Vector2(Game._MouseState.X / (float)Globals.game_scale, Game._MouseState.Y / (float)Globals.game_scale);
+        }
+
+
+
         // any useful math variables
         public static Vector2[] offsets = new Vector2[8]
         {
@@ -111,6 +119,9 @@ namespace Abyss.Master
 
         /**
          * Returns true if the given position is within the bounds of the given four points
+         * 
+         * 
+         * THIS FUNCTION MIGHT BE WRONG AND HAVE POOR LOGIC         <------------------------------------------------------ !!!!
          * 
          * @param   Vector2     the given position in question
          * @param   float       left bound

@@ -1,4 +1,5 @@
 ﻿using Abyss.Entities;
+using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -28,6 +29,7 @@ namespace Abyss.UI
 
 
         // debug
+        public static bool SHOW_MOUSEPOSITION = false;
         public static bool SHOW_POSITION = false;
         public static bool SHOW_HEALTH = true;
         public static bool SHOW_MANA = true;
@@ -57,7 +59,26 @@ namespace Abyss.UI
                     SHOW_HEALTH = enable; break;
                 case "mana":
                     SHOW_MANA = enable; break;
+                case "mouse":
+                    SHOW_MOUSEPOSITION = enable; break;
                 default : break;
+            }
+        }
+
+
+        /// <summary>
+        /// opens a ui element
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="GM"></param>
+        public static void CommandOpen(List<string> args, GameMaster GM)
+        {
+            if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
+            switch (args[1])
+            {
+                case "dialogue":
+                    GM.OpenDialogue(GameMaster.TestDialogue); break;
+                default: break;
             }
         }
     }
@@ -87,9 +108,9 @@ namespace Abyss.UI
 
         public void UpdatePlayerInfo(Player player)
         {
-            this.health = new Text("HP: " + player.Health() + "/" + player.MaxHealth(), new Vector2(16, 16), (float)0.5);
-            this.mana = new Text("MN: " + player.Mana() + "/" + player.MaxMana(), new Vector2(16, 32), (float)0.5);
-            this.position = new Text("POS: " + (int)player.Position().X + ", " + (int)player.Position().Y, new Vector2(16, 48), (float)0.5);
+            this.health = new Text("HP: " + player.Health() + "/" + player.MaxHealth(), new Vector2(16, 16), 0.5f);
+            this.mana = new Text("MN: " + player.Mana() + "/" + player.MaxMana(), new Vector2(16, 32), 0.5f);
+            this.position = new Text("POS: " + (int)player.Position().X + ", " + (int)player.Position().Y, new Vector2(16, 48), 0.5f);
         }
 
         public void Update(KeyboardState KB, MouseState MS) { }
@@ -100,6 +121,7 @@ namespace Abyss.UI
             if (UiControllers.SHOW_HEALTH) this.health.Draw(spriteBatch);
             if (UiControllers.SHOW_MANA) this.mana.Draw(spriteBatch);
             if (UiControllers.SHOW_POSITION) this.position.Draw(spriteBatch);
+            if (UiControllers.SHOW_MOUSEPOSITION) new Text("Mouse: " + (int)MathUtil.Mouse().X + ", " + (int)MathUtil.Mouse().Y, new Vector2(16, 64), 0.4f).Draw(spriteBatch);
         }
     }
 
@@ -116,12 +138,18 @@ namespace Abyss.UI
          * 
          * 
          */
+        private Dialogue dialogue;
+
+        public void SetDialogue(Dialogue dialogue)
+        {
+            this.dialogue = dialogue;
+        }
 
         public void Close() { close = true; }
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch) { }
+        public void Draw(SpriteBatch spriteBatch) { dialogue.Draw(spriteBatch); }
     }
 
     internal class Console : Ui
@@ -134,7 +162,7 @@ namespace Abyss.UI
 
         public void Update(KeyboardState KB, MouseState MS) { }
 
-        public void ProcessCommand()
+        public void ProcessCommand(GameMaster GM)
         {
             // first conver the text input to a readable string
             string input = Game._TextInput.Append("\n").ToString();
@@ -167,6 +195,7 @@ namespace Abyss.UI
              * enable       - enables a hud element
              * disable      - disables a hud element
              * set          - sets a value to an entity
+             * open         - opens a ui element
              */
             string primary = args[0];
             switch (primary)
@@ -175,6 +204,8 @@ namespace Abyss.UI
                     UiControllers.UpdateHUDElement(args, true);  break;
                 case "disable":
                     UiControllers.UpdateHUDElement(args, false); break;
+                case "open":
+                    UiControllers.CommandOpen(args, GM); break;
                 case "set":
                     break;
                 default:
