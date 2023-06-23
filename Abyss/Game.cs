@@ -8,6 +8,7 @@ using MonoGame.Extended.ViewportAdapters;
 using Abyss.Entities;
 using Abyss.UI;
 using Abyss.Master;
+using System.Text;
 
 namespace Abyss
 {
@@ -17,9 +18,10 @@ namespace Abyss
         private SpriteBatch _spriteBatch;
 
         private GameMaster GM;
+        public static StringBuilder _TextInput;
         private Player player;
 
-        public static GameWindow gw;
+        public static KeyboardState _prevKeyboardState;
 
         public Game()
         {
@@ -39,9 +41,9 @@ namespace Abyss
             Window.AllowAltF4 = true;
             // window title
             Window.Title = "One of the Title's of All Time";
-            gw = Window;
 
             GM = new GameMaster();
+            _TextInput = new StringBuilder();
 
             base.Initialize();
         }
@@ -66,20 +68,38 @@ namespace Abyss
             player = new Player(Globals.TESTBOX);
 
             GameMaster.test_text = new Text("This here is a message and this is \nwhere its located on the game's \nhud/UI setup", Globals.MessageLocation, Globals.MessageScale);
+
+
+            // Hook the text input
+            Window.TextInput += GameMaster.RegisterInput;
         }
 
         protected override void Update(GameTime gameTime)
         {
+            KeyboardState KB = Keyboard.GetState();
             double delta = gameTime.ElapsedGameTime.TotalSeconds * Globals.FRAME_SPEED;
+
+            /**
+             * process globals
+             */
+            if (GM.CurrentUi() is Console)
+                if (GameMaster.HandleInput(KB))
+                    GM.CloseCurrent();
+
+
             /** All UI related shit
              */
             GM.Close();
 
             // open the debug menu
             if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu))
-                GM.Open(UiControllers.Debug);
+            {
+                _TextInput = new StringBuilder(); // reset the text input
+                GM.Open(UiControllers.Debug); // open the debug menu
+            }
 
-            GM.UpdateUi(Keyboard.GetState(), Mouse.GetState());
+            // update the current ui menu
+            GM.UpdateUi(KB, Mouse.GetState());
             
 
 
@@ -90,10 +110,12 @@ namespace Abyss
                 /** Player
                  * all player related update processes
                  */
-                player.CalcInputVector(Keyboard.GetState());
+                player.CalcInputVector(KB);
                 player.Move(GM.GetCurrentTileMap(), delta);
                 player.UpdateDrawObj();
             }
+
+            _prevKeyboardState = KB;
             base.Update(gameTime);
         }
 

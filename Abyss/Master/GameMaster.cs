@@ -1,11 +1,14 @@
 ﻿using Abyss.Map;
 using Abyss.UI;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -57,6 +60,11 @@ namespace Abyss.Master
             }
         }
 
+        public void CloseCurrent()
+        {
+            this.currentUi.Close();
+        }
+
 
         public bool IsHud()
         {
@@ -95,6 +103,38 @@ namespace Abyss.Master
             if (currentUi == null) return;
             currentUi.Draw(spriteBatch);
             //test_text.Draw(spriteBatch);
+        }
+
+
+        // STATIC
+
+        public static bool HandleInput(KeyboardState KB)
+        {
+            Keys[] keys = KB.GetPressedKeys();
+
+            // Handle control keys
+            foreach (Keys key in keys)
+            {
+                if (Game._prevKeyboardState.IsKeyUp(key)) // ensure repetitions are not caused
+                {
+                    if (key == Keys.Space) // space key
+                        Game._TextInput.Append(" ");
+                    else if (key == Keys.Enter) // close key
+                        return true;
+                }
+            }
+            return false;
+        }
+
+        public static void RegisterInput(object sender, TextInputEventArgs e)
+        {
+            Keys? k = e.Key;
+            char c = e.Character;
+            Debug.WriteLine(k.ToString());
+            if (!char.IsControl(c) && c != '`')
+                Game._TextInput.Append(c);
+            else if (k == Keys.Back && Game._TextInput.Length > 0)
+                Game._TextInput.Length--;
         }
     }
 }

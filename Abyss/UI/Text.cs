@@ -47,37 +47,11 @@ namespace Abyss.UI
             if (spriteBatch == null) return;
             spriteBatch.DrawString(Globals.FONT, text, pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
-    }
 
-    internal class TextBuilder : Text
-    {
-        StringBuilder textBuilder;
-
-        public TextBuilder(string text, Vector2 position, float scale, bool selectable = false) : base(text, position, scale, selectable)
-        {
-            this.textBuilder = new StringBuilder(text);
-        }
-
-        public void Append(char? c)
-        {
-            if (c.HasValue)
-                textBuilder.Append(c);
-        }
-
-        public new void Delete()
-        {
-            text = textBuilder.ToString();
-            if (!string.IsNullOrEmpty(text))
-            {
-                text = text.Remove(text.Length - 1);
-            }
-            textBuilder = new StringBuilder(text);
-        }
-
-        public new void Draw(SpriteBatch spriteBatch)
+        public static void Draw(SpriteBatch spriteBatch, StringBuilder input, Vector2 pos, float scale)
         {
             if (spriteBatch == null) return;
-            spriteBatch.DrawString(Globals.FONT, textBuilder.ToString(), pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            spriteBatch.DrawString(Globals.FONT, input.ToString(), pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
     }
 }
