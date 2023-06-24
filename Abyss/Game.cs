@@ -116,6 +116,8 @@ namespace Abyss
                 player.CalcInputVector(KB);
                 player.Move(GM.GetCurrentTileMap(), delta);
                 player.UpdateDrawObj();
+
+                GM.UpdateLevel(player);
                 
 
                 /**

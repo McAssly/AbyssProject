@@ -1,4 +1,5 @@
-﻿using Abyss.Map;
+﻿using Abyss.Entities;
+using Abyss.Map;
 using Abyss.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -103,6 +104,24 @@ namespace Abyss.Master
         public void UpdateUi(KeyboardState KB, MouseState MS)
         {
             this.currentUi.Update(KB, MS);
+        }
+
+        public void UpdateLevel(Player player)
+        {
+            if (player.ExittingSide().HasValue)
+            {
+                var prevMap = currentLevel.GetCurrent();
+                currentLevel.SetCurrent(player.ExittingSide());
+                // fix the player's position
+                if (currentLevel.GetCurrent() != prevMap)
+                    switch(player.ExittingSide().Value)
+                    {
+                        case Side.LEFT: player.SetPosition(16*16-16, null); break;
+                        case Side.RIGHT: player.SetPosition(0, null); break;
+                        case Side.TOP: player.SetPosition(null, 16 * 16 - 16); break;
+                        case Side.BOTTOM: player.SetPosition(null, 0); break;
+                    }
+            }
         }
 
 

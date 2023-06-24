@@ -38,5 +38,26 @@ namespace Abyss.Entities
             if (this.movement_vec != Vector2.Zero)
                 this.movement_vec.Normalize();
         }
+
+        public Side? ExittingSide()
+        {
+            switch (pos.X)
+            {
+                case -1:
+                    return Side.LEFT;
+                case 16 * 16 - 16 + 1:
+                    return Side.RIGHT;
+                default: break;
+            }
+            switch (pos.Y)
+            {
+                case -1:
+                    return Side.TOP;
+                case 16 * 16 - 16 + 1:
+                    return Side.BOTTOM;
+                default: break;
+            }
+            return null;
+        }
     }
 }

@@ -45,6 +45,8 @@ namespace Abyss.Map
         private MapLayer CollisionLayer;
         // The width and height of the map (default: 1x1)
         private int width, height = 1;
+        // map directions
+        private int[] nextMaps;
 
         /**
          * TileMap constructor loads a given map into a usable tilemap object
@@ -61,6 +63,9 @@ namespace Abyss.Map
 
             // set the collisoon layer
             CollisionLayer = new MapLayer(map.CollisionLayer);
+
+            // set the next map indicies
+            this.nextMaps = map.IndexLocations;
 
             // Next we need the width and height of the tilemap
             // first grab any layer doesn't matter and grab their respective width/height
@@ -84,6 +89,7 @@ namespace Abyss.Map
 
         public MapLayer GetCollisionLayer() { return this.CollisionLayer; }
 
+        public int[] GetNext() { return this.nextMaps; }
         public int GetWidth() { return width; }
         public int GetHeight() { return height; }
         public List<MapLayer> GetLayers()

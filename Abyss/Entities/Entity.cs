@@ -157,6 +157,14 @@ namespace Abyss.Entities
             return sides;
         }
 
+
+        // set the entities position
+        public void SetPosition(float? x, float? y)
+        {
+            if (x != null) pos.X = x.Value;
+            if (y != null) pos.Y = y.Value;
+        }
+
         /**
          * Getters/Setters
          */
@@ -172,7 +180,7 @@ namespace Abyss.Entities
          */
         public void UpdateDrawObj()
         {
-            pos = Vector2.Clamp(pos, Vector2.Zero, new Vector2(16 * 16 - 16));
+            pos = Vector2.Clamp(pos, new Vector2(-1), new Vector2(16 * 16 - 16 + 1));
             // if the player's position updated then therefore so does the draw object's
             if (drawObj.X != pos.X)
                 drawObj.X = (int)pos.X;

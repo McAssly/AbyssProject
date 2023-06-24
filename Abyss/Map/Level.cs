@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Master;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -66,6 +67,17 @@ namespace Abyss.Map
         public void SetCurrent(TileMap _new)
         {
             Current = _new;
+        }
+
+        public void SetCurrent(Side? side)
+        {
+            switch (side.Value)
+            {
+                case Side.LEFT: Current = Maps[Current.GetNext()[3]]; break;
+                case Side.RIGHT: Current = Maps[Current.GetNext()[1]]; break;
+                case Side.TOP: Current = Maps[Current.GetNext()[0]]; break;
+                case Side.BOTTOM: Current = Maps[Current.GetNext()[2]]; break;
+            }
         }
 
         /** Gets the level's maximum position
