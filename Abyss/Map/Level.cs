@@ -16,10 +16,10 @@ namespace Abyss.Map
     internal class Level
     {
         // TileMaps to cycle between
-        private Map[,] maps;
+        private Map[] maps;
         private string tileset;
-        private TileMap[,] Maps;
-        private int width, height;
+        private TileMap[] Maps;
+        private int length;
 
         // The current tile map to draw and read from
         private TileMap Current;
@@ -29,30 +29,26 @@ namespace Abyss.Map
          * 
          * @param   TileMap     the current tile map to be read
          */
-        public Level(Map[,] _Maps, string tileset)
+        public Level(Map[] _Maps, string tileset)
         {
-            this.width = _Maps.GetLength(0);
-            this.height = _Maps.GetLength(1);
+            this.length = _Maps.Length;
             this.maps = _Maps;
             this.tileset = tileset;
         }
 
-        public void LoadLevel(ContentManager Content, int current_x, int current_y)
+        public void LoadLevel(ContentManager Content, int currentIndex)
         {
             Texture2D _tileset = Content.Load<Texture2D>(tileset);
-            Maps = new TileMap[width, height];
-            for (int i = 0; i < width; i++)
+            Maps = new TileMap[length];
+            for (int i = 0; i < length; i++)
             {
-                for (int j = 0; j < height; j++)
-                {
-                    Maps[i, j] = new TileMap(maps[i, j], _tileset);
-                }
+                Maps[i] = new TileMap(maps[i], _tileset);
             }
 
-            Current = Maps[current_x, current_y];
+            Current = Maps[currentIndex];
         }
 
-        public TileMap[,] GetMaps() { return this.Maps; }
+        public TileMap[] GetMaps() { return this.Maps; }
 
         /**
          * Gets the current tile map

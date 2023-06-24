@@ -61,7 +61,7 @@ namespace Abyss
             Globals.TESTBOX = Content.Load<Texture2D>("testbox");
 
             // Load the Primary Game / UI
-            GameMaster.TestLevel = Levels.LVL_START;
+            GameMaster.TestLevel = Levels.EASTWOODS;
             GameMaster.LoadLevels(Content, 0, 0);
 
             GM.Setup(GameMaster.TestLevel, UiControllers.HUD);

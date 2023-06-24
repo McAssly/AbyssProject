@@ -17,6 +17,8 @@ namespace Abyss.Map
         // Represents the assortment of tiles within different layers (lower the layer the higher load priority)
         public Layer[] TileLayers;
         public Layer CollisionLayer;
+        // the map to go to based on the direction given, 0 = north, 1 = east, 2 = south, 3 = west
+        public int[] IndexLocations;
 
         /**
          * Constructs a Map structure for basic storage of levels (might be a bit slow)
@@ -24,10 +26,14 @@ namespace Abyss.Map
          * @param   uint            Id for the level
          * @param   uint[,,]        3D array of tileIds, (1st element is the layer id)
          */
-        public Map(Layer[] tileLayers, Layer CollisionLayer)
+        public Map(Layer[] TileLayers, Layer CollisionLayer, int NorthIndex = -1, int EastIndex = -1, int SouthIndex = -1, int WestIndex = -1)
         {
-            TileLayers = tileLayers;
+            this.TileLayers = TileLayers;
             this.CollisionLayer = CollisionLayer;
+            this.IndexLocations = new int[4]
+            {
+                NorthIndex, EastIndex, SouthIndex, WestIndex
+            };
         }
     }
 
