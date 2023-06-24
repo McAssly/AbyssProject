@@ -62,7 +62,7 @@ namespace Abyss
 
             // Load the Primary Game / UI
             GameMaster.TestLevel = Levels.EASTWOODS;
-            GameMaster.LoadLevels(Content, 0, 0);
+            GameMaster.LoadLevels(Content, 0);
 
             GM.Setup(GameMaster.TestLevel, UiControllers.HUD);
 

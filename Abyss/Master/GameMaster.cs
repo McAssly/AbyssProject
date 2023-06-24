@@ -94,9 +94,9 @@ namespace Abyss.Master
         public TileMap GetCurrentTileMap() { return currentLevel.GetCurrent(); }
 
 
-        public static void LoadLevels(ContentManager Content, int start_x, int start_y)
+        public static void LoadLevels(ContentManager Content, int startingMap)
         {
-            TestLevel.LoadLevel(Content, start_x, start_y);
+            TestLevel.LoadLevel(Content, startingMap);
         }
 
         // UPDATE SECTION -----------------------------------------
