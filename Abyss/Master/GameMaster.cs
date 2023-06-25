@@ -124,6 +124,11 @@ namespace Abyss.Master
             }
         }
 
+        public void LoadSave(int mapIndex)
+        {
+            currentLevel.SetCurrent(mapIndex);
+        }
+
 
         // DRAW SECTION -------------------------------------------
 

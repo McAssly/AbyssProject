@@ -68,6 +68,7 @@ namespace Abyss
 
             // load all entities
             player = new Player(Globals.TESTBOX);
+            Data.Load("save.xml", GM, player);
 
 
             // Hook the text input

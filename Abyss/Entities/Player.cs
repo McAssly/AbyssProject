@@ -39,6 +39,15 @@ namespace Abyss.Entities
                 this.movement_vec.Normalize();
         }
 
+        public void LoadSave(Vector2 pos, int hp, int maxHP, int mana, int maxMana)
+        {
+            this.pos = pos;
+            this.health = hp;
+            this.max_health = maxHP;
+            this.mana = mana;
+            this.max_mana = maxMana;
+        }
+
         public Side? ExittingSide()
         {
             switch (pos.X)

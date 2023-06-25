@@ -69,6 +69,11 @@ namespace Abyss.Map
             Current = _new;
         }
 
+        public void SetCurrent(int index)
+        {
+            Current = Maps[index];
+        }
+
         public void SetCurrent(Side? side)
         {
             switch (side.Value)
