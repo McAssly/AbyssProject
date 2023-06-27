@@ -195,6 +195,7 @@ namespace Abyss.UI
              * enable       - enables a hud element
              * disable      - disables a hud element
              * set          - sets a value to an entity
+             * save         - saves the game in its current state (prototype)
              * open         - opens a ui element
              */
             string primary = args[0];
@@ -206,6 +207,8 @@ namespace Abyss.UI
                     UiControllers.UpdateHUDElement(args, false); break;
                 case "open":
                     UiControllers.CommandOpen(args, GM); break;
+                case "save":
+                    GM.Save(); break;
                 case "set":
                     break;
                 default:

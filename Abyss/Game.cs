@@ -18,7 +18,6 @@ namespace Abyss
         private SpriteBatch _spriteBatch;
 
         private GameMaster GM;
-        private Player player;
 
         public static StringBuilder _TextInput;
 
@@ -67,8 +66,8 @@ namespace Abyss
             GM.Setup(GameMaster.TestLevel, UiControllers.HUD);
 
             // load all entities
-            player = new Player(Globals.TESTBOX);
-            Data.Load("save.xml", GM, player);
+            GM.LoadPlayer(Globals.TESTBOX);
+            Data.Load("save.xml", GM);
 
 
             // Hook the text input
@@ -114,17 +113,17 @@ namespace Abyss
                 /** Player
                  * all player related update processes
                  */
-                player.CalcInputVector(KB);
-                player.Move(GM.GetCurrentTileMap(), delta);
-                player.UpdateDrawObj();
+                GM.player.CalcInputVector(KB);
+                GM.player.Move(GM.GetCurrentTileMap(), delta);
+                GM.player.UpdateDrawObj();
 
-                GM.UpdateLevel(player);
+                GM.UpdateLevel();
                 
 
                 /**
                  * HUD related update processes
                  */
-                UiControllers.HUD.UpdatePlayerInfo(player);
+                UiControllers.HUD.UpdatePlayerInfo(GM.player);
             }
 
             _prevKeyboardState = KB;
@@ -144,11 +143,8 @@ namespace Abyss
                 Matrix.Multiply(Matrix.CreateTranslation(Globals.DrawPosition), Matrix.CreateScale((float)Globals.game_scale))
                 ) ; // start drawing through the sprite batch
 
-            // Draw the level
+            // Draw the level and its entities
             GM.DrawLevel(_spriteBatch);
-
-            // Draw the Player next
-            player.Draw(_spriteBatch);
 
             _spriteBatch.End(); // end the sprite batch
 

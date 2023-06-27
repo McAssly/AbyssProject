@@ -17,7 +17,7 @@ namespace Abyss.Master
 {   
     internal class GameMaster
     {
-        // declare testing placeholders
+        // declare testing placeholders ---------------------------------------------------------------------------------------------
         public static Dialogue TestDialogue = new Dialogue
             (
                 new Text("Hello World.", Globals.DialoguePosition, 0.3f, Globals.DialogueSize), 
@@ -29,13 +29,27 @@ namespace Abyss.Master
                 }
             );
         public static Level TestLevel;
+        // --------------------------------------------------------------------------------------------------------------------------
+
+
+
 
         // Declare the game managers (UI/Level)
         private Level currentLevel;
         private Ui currentUi;
 
+        // Declare game entities
+        protected internal Player player;
+
+        // declare basic constructor
         public GameMaster() { }
 
+
+
+
+
+
+        // SETUP / LOAD SECTION
         /// <summary>
         /// Sets up both the current level and current ui of the game within the game master
         /// </summary>
@@ -49,14 +63,42 @@ namespace Abyss.Master
 
 
         /// <summary>
+        /// Loads every level in the game <--- currently a place holder
+        /// </summary>
+        /// <param name="Content"></param>
+        /// <param name="startingMap"></param>
+        public static void LoadLevels(ContentManager Content, int startingMap) { TestLevel.LoadLevel(Content, startingMap); }
+
+
+        /// <summary>
+        /// Loads the player entity for the game
+        /// </summary>
+        /// <param name="texture"></param>
+        public void LoadPlayer(Texture2D texture) { player = new Player(texture); }
+
+        /// <summary>
+        /// Loads the current save file <--- placeholder
+        /// </summary>
+        /// <param name="mapIndex"></param>
+        public void LoadSave(int mapIndex){ currentLevel.SetCurrent(mapIndex); }
+
+
+
+
+
+
+
+        // COMMANDS
+        /// <summary>
         /// Opens the given UI, sets the current UI to the given
         /// </summary>
         /// <param name="ui"></param>
-        public void Open(Ui ui)
-        {
-            this.currentUi = ui;
-        }
+        public void Open(Ui ui){ this.currentUi = ui; }
 
+        /// <summary>
+        /// opens the given dialogue in the dialogue ui window
+        /// </summary>
+        /// <param name="dialogue"></param>
         public void OpenDialogue(Dialogue dialogue)
         {
             UiControllers.Dialogue.SetDialogue(dialogue);
@@ -76,37 +118,79 @@ namespace Abyss.Master
             }
         }
 
-        public void CloseCurrent()
+        /// <summary>
+        /// Saves the current save state of the game, currently a placeholder
+        /// </summary>
+        public void Save()
         {
-            this.currentUi.Close();
+            Data.Save("save.xml", this);
         }
 
+        /// <summary>
+        /// Force closes the current ui of the game state
+        /// </summary>
+        public void CloseCurrent() { this.currentUi.Close(); }
 
-        public bool IsHud()
-        {
-            return currentUi is Hud;
-        }
+
+
+
+
+
+
+
 
         // GETTERS / SETTERS
+        /// <summary>
+        /// Whether or not the game state is running the game or not (Ui is showing the HUD not any other menu)
+        /// </summary>
+        /// <returns>Whether the current ui is set to the HUD or not</returns>
+        public bool IsHud() { return currentUi is Hud; }
 
-
+        /// <summary>
+        /// Grabs the current level the game state is playing in
+        /// </summary>
+        /// <returns>the game state's current level</returns>
         public Level CurrentLevel() { return currentLevel; }
+
+        /// <summary>
+        /// Grabs the current ui the game state is running
+        /// </summary>
+        /// <returns>the game state's current ui state</returns>
         public Ui CurrentUi() { return currentUi; }
+
+        /// <summary>
+        /// Grabs the current tile map that the game state is rendering
+        /// </summary>
+        /// <returns>the game state's current tile map</returns>
         public TileMap GetCurrentTileMap() { return currentLevel.GetCurrent(); }
 
+        /// <summary>
+        /// Grabs which map index the current level is running in
+        /// </summary>
+        /// <returns>the game state's current map index</returns>
+        public int GetMapIndex() { return Array.IndexOf(currentLevel.GetMaps(), currentLevel.GetCurrent()); }
 
-        public static void LoadLevels(ContentManager Content, int startingMap)
-        {
-            TestLevel.LoadLevel(Content, startingMap);
-        }
 
-        // UPDATE SECTION -----------------------------------------
+
+
+
+
+
+        // UPDATE SECTION
+        /// <summary>
+        /// Updates the current ui of the game state
+        /// </summary>
+        /// <param name="KB"></param>
+        /// <param name="MS"></param>
         public void UpdateUi(KeyboardState KB, MouseState MS)
         {
             this.currentUi.Update(KB, MS);
         }
 
-        public void UpdateLevel(Player player)
+        /// <summary>
+        /// Update's the level whenever the player moves to the next level
+        /// </summary>
+        public void UpdateLevel()
         {
             if (player.ExittingSide().HasValue)
             {
@@ -114,9 +198,9 @@ namespace Abyss.Master
                 currentLevel.SetCurrent(player.ExittingSide());
                 // fix the player's position
                 if (currentLevel.GetCurrent() != prevMap)
-                    switch(player.ExittingSide().Value)
+                    switch (player.ExittingSide().Value)
                     {
-                        case Side.LEFT: player.SetPosition(16*16-16, null); break;
+                        case Side.LEFT: player.SetPosition(16 * 16 - 16, null); break;
                         case Side.RIGHT: player.SetPosition(0, null); break;
                         case Side.TOP: player.SetPosition(null, 16 * 16 - 16); break;
                         case Side.BOTTOM: player.SetPosition(null, 0); break;
@@ -124,19 +208,28 @@ namespace Abyss.Master
             }
         }
 
-        public void LoadSave(int mapIndex)
-        {
-            currentLevel.SetCurrent(mapIndex);
-        }
 
 
-        // DRAW SECTION -------------------------------------------
 
+
+
+        // DRAW SECTION
+        /// <summary>
+        /// Draw's the current level of the game
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public void DrawLevel(SpriteBatch spriteBatch)
         {
             GetCurrentTileMap().Draw(spriteBatch);
+
+            // draw the player
+            player.Draw(spriteBatch);
         }
 
+        /// <summary>
+        /// Draw's the current Ui of the game
+        /// </summary>
+        /// <param name="spriteBatch"></param>
         public void DrawUi(SpriteBatch spriteBatch)
         {
             if (currentUi == null) return;
@@ -145,8 +238,16 @@ namespace Abyss.Master
         }
 
 
-        // STATIC
 
+
+
+
+        // STATIC
+        /// <summary>
+        /// Handle's keyboard input for the game, when using the debug console, or entering in the player name, etc.
+        /// </summary>
+        /// <param name="KB"></param>
+        /// <returns></returns>
         public static bool HandleInput(KeyboardState KB)
         {
             Keys[] keys = KB.GetPressedKeys();
@@ -163,6 +264,11 @@ namespace Abyss.Master
             return false;
         }
 
+        /// <summary>
+        /// The text input hook for the game window to register keyboard text input
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public static void RegisterInput(object sender, TextInputEventArgs e)
         {
             Keys? k = e.Key;
