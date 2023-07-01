@@ -113,6 +113,10 @@ namespace Abyss.Master
         {
             if (this.currentUi.IsClosed())
             {
+                if (this.currentUi is UI.Console)
+                {
+                    Game.GameWindow.TextInput -= RegisterInput;
+                }
                 this.currentUi.UnClose();
                 this.currentUi = UiControllers.HUD;
             }

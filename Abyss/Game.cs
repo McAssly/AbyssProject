@@ -24,6 +24,8 @@ namespace Abyss
         public static MouseState _MouseState;
         public static KeyboardState _prevKeyboardState;
 
+        public static GameWindow GameWindow;
+
         public Game()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -42,6 +44,8 @@ namespace Abyss
             Window.AllowAltF4 = true;
             // window title
             Window.Title = "One of the Title's of All Time";
+
+            GameWindow = Window;
 
             GM = new GameMaster();
             _TextInput = new StringBuilder();
@@ -68,10 +72,6 @@ namespace Abyss
             // load all entities
             GM.LoadPlayer(Globals.TESTBOX);
             Data.Load("save.xml", GM);
-
-
-            // Hook the text input
-            Window.TextInput += GameMaster.RegisterInput;
         }
 
         protected override void Update(GameTime gameTime)
@@ -85,9 +85,10 @@ namespace Abyss
             GM.Close();
 
             // open the debug menu
-            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu))
+            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu) && !(GM.CurrentUi() is Console))
             {
-                _TextInput = new StringBuilder(); // reset the text input
+                // Hook the text input function to the game window
+                Window.TextInput += GameMaster.RegisterInput;
                 GM.Open(UiControllers._Debug); // open the debug menu
             }
 
@@ -102,6 +103,7 @@ namespace Abyss
                 {
                     GM.CloseCurrent();
                     UiControllers._Debug.ProcessCommand(GM);
+                    _TextInput = new StringBuilder(); // reset the text
                 }
 
 
