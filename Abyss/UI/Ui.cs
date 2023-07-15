@@ -29,17 +29,14 @@ namespace Abyss.UI
 
 
         // debug
-        public static bool SHOW_MOUSEPOSITION = false;
-        public static bool SHOW_POSITION = false;
-        public static bool SHOW_HEALTH = true;
-        public static bool SHOW_MANA = true;
+        public static bool SHOW_DEBUG_HUD = true;
 
         /// <summary>
         /// Updates whether the given hud element in the command arguments should be enabled or disabled
         /// </summary>
         /// <param name="args"></param>
         /// <param name="enable"></param>
-        public static void UpdateHUDElement(List<string> args, bool enable)
+        public static void EnableDebugHUD(List<string> args, bool enable)
         {
             if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
             // This command really only gives a shit about the first argument passed into the primary command
@@ -53,14 +50,8 @@ namespace Abyss.UI
             // get which secondary argument was passed
             switch (args[1])
             {
-                case "position":
-                    SHOW_POSITION = enable; break;
-                case "health":
-                    SHOW_HEALTH = enable; break;
-                case "mana":
-                    SHOW_MANA = enable; break;
-                case "mouse":
-                    SHOW_MOUSEPOSITION = enable; break;
+                case "debug":
+                    SHOW_DEBUG_HUD = enable; break;
                 default : break;
             }
         }
@@ -89,39 +80,37 @@ namespace Abyss.UI
         public bool IsClosed();
         public void UnClose();
         public void Update(KeyboardState KB, MouseState MS);
-        public void Draw(SpriteBatch spriteBatch);
+        public void Draw(SpriteBatch spriteBatch, GameMaster GM);
     }
 
     internal class Hud : Ui
     {
         public bool close = false;
 
-        // The player info variables
-        private Text health;
-        private Text mana;
-        private Text position;
-
         public void Close() { close = true; }
         public bool IsClosed() {  return close; }
         public void UnClose() { close = false; }
         public Hud() { }
 
-        public void UpdatePlayerInfo(Player player)
-        {
-            this.health = new Text("HP: " + player.Health() + "/" + player.MaxHealth(), new Vector2(16, 16), 0.5f);
-            this.mana = new Text("MN: " + player.Mana() + "/" + player.MaxMana(), new Vector2(16, 32), 0.5f);
-            this.position = new Text("POS: " + (int)player.Position().X + ", " + (int)player.Position().Y, new Vector2(16, 48), 0.5f);
-        }
-
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch) 
+        public void Draw(SpriteBatch spriteBatch, GameMaster GM) 
         {
             if (spriteBatch == null) return;
-            // draw each text on screen
-            if (UiControllers.SHOW_HEALTH) this.health.Draw(spriteBatch);
-            if (UiControllers.SHOW_MANA) this.mana.Draw(spriteBatch);
-            if (UiControllers.SHOW_POSITION) this.position.Draw(spriteBatch);
-            if (UiControllers.SHOW_MOUSEPOSITION) new Text("Mouse: " + (int)MathUtil.Mouse().X + ", " + (int)MathUtil.Mouse().Y, new Vector2(16, 64), 0.4f).Draw(spriteBatch);
+
+
+            // draw the debug HUD on screen
+            if (UiControllers.SHOW_DEBUG_HUD)
+            {
+                new Text("HP: " + GM.player.Health() + "/" + GM.player.MaxHealth(), 16, 16, 0.5f).Draw(spriteBatch);
+                new Text("MN: " + GM.player.Mana() + "/" + GM.player.MaxMana(), 16, 32, 0.5f).Draw(spriteBatch);
+                new Text("POS: " + (int)GM.player.Position().X + ", " + (int)GM.player.Position().Y, 16, 48, 0.5f).Draw(spriteBatch);
+                new Text("Mouse: " + (int)MathUtil.Mouse().X + ", " + (int)MathUtil.Mouse().Y, 16, 64, 0.4f).Draw(spriteBatch);
+                new Text("Grim: " + GM.player.Inventory.grimoires[0].ToString() + ", " + GM.player.Inventory.grimoires[1].ToString(), 16, 80, 0.3f).Draw(spriteBatch);
+            }
+            else // draw the regular HUD
+            {
+
+            }
         }
     }
 
@@ -149,7 +138,7 @@ namespace Abyss.UI
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch) { dialogue.Draw(spriteBatch); }
+        public void Draw(SpriteBatch spriteBatch, GameMaster GM) { dialogue.Draw(spriteBatch); }
     }
 
     internal class Console : Ui
@@ -202,9 +191,9 @@ namespace Abyss.UI
             switch (primary)
             {
                 case "enable":
-                    UiControllers.UpdateHUDElement(args, true);  break;
+                    UiControllers.EnableDebugHUD(args, true);  break;
                 case "disable":
-                    UiControllers.UpdateHUDElement(args, false); break;
+                    UiControllers.EnableDebugHUD(args, false); break;
                 case "open":
                     UiControllers.CommandOpen(args, GM); break;
                 case "save":
@@ -216,7 +205,7 @@ namespace Abyss.UI
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, GameMaster GM)
         {
             spriteBatch.FillRectangle(new RectangleF(0, 0, Globals.WindowW, Globals.TILE_SIZE * 2), Globals.Black);
             Text.Draw(spriteBatch, Game._TextInput, new Vector2(8, 8), (float)0.2);
@@ -230,7 +219,7 @@ namespace Abyss.UI
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch) { }
+        public void Draw(SpriteBatch spriteBatch, GameMaster GM) { }
     }
 
     internal class Menu : Ui
@@ -240,6 +229,6 @@ namespace Abyss.UI
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch) { }
+        public void Draw(SpriteBatch spriteBatch, GameMaster GM) { }
     }
 }

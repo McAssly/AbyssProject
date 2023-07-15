@@ -33,7 +33,7 @@ namespace Abyss.Entities
         private protected double mana;
 
         // declare the entity's substats
-        private protected double attack;
+        private protected double damage;
         private protected double crit_dmg;
         private protected double crit_rate; // between 0 and 1, a percentage value
         private protected double defense;    // physical resistence
@@ -43,6 +43,9 @@ namespace Abyss.Entities
         private protected Vector2 movement_vec = Vector2.Zero;
         private protected Vector2 pos;
         private protected Vector2 vel = Vector2.Zero; // starts off not moving
+
+        // for crits
+        private protected static readonly Random random = new Random();
 
         public Entity(Texture2D texture) 
         { 
@@ -59,6 +62,16 @@ namespace Abyss.Entities
                     new Vector2(drawSize / 2, 0),
                     new Vector2(drawSize / 2, drawSize)
                 };
+        }
+
+        public double CalculateDamage(double baseDMG)
+        {
+            double damage = baseDMG * this.damage;
+            if (random.NextDouble() < crit_rate)
+            {
+                damage *= crit_dmg;
+            }
+            return damage;
         }
 
         /**

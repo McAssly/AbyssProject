@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -10,6 +11,34 @@ using System.Xml.Linq;
 
 namespace Abyss.Master
 {
+    internal struct PlayerData
+    {
+        public Inventory inventory;
+        public Vector2 position;
+        public int currentHealth;
+        public int maxHealth;
+        public int currentMana;
+        public int maxMana;
+
+        public PlayerData(Vector2 position, int chp, int mhp, int cmn, int mmn)
+        {
+            this.inventory = new Inventory();
+            this.position = position;
+            this.currentHealth = chp;
+            this.maxHealth = mhp;
+            this.currentMana = cmn;
+            this.maxMana = mmn;
+        }
+
+        public void LoadInventory(string[] grimoires, int[] cards, int[] regen, int[] instant)
+        {
+            inventory.grimoires = Inventory.ParseGrimoires(grimoires);
+            inventory.cards = Inventory.ParseCards(cards);
+            inventory.instantPots = instant;
+            inventory.regenPots = regen;
+        }
+    }
+
     internal class Data
     {
         /// <summary>
@@ -54,29 +83,42 @@ namespace Abyss.Master
             XmlDocument save = new XmlDocument();
             save.Load(savefile);
 
-            // Get the player variables
+            // Get the player variables ------------------------------
             string positionData = save.DocumentElement.SelectSingleNode("/player/pos").InnerText;
             string healthData = save.DocumentElement.SelectSingleNode("/player/hp").InnerText;
             string manaData = save.DocumentElement.SelectSingleNode("/player/mana").InnerText;
+
+            // INVENTORY DATA ------------------------------
+            string grimoireData = save.DocumentElement.SelectSingleNode("/player/inventory/grim").InnerText;
+            string cardData = save.DocumentElement.SelectSingleNode("/player/inventory/cards").InnerText;
+            string regenData = save.DocumentElement.SelectSingleNode("/player/inventory/regen").InnerText;
+            string instantData = save.DocumentElement.SelectSingleNode("/player/inventory/instant").InnerText;
 
             // parse the player variables
             int[] parsedPosition = ParseData(positionData, ',');
             int[] parsedHealth = ParseData(healthData, '/');
             int[] parsedMana = ParseData(manaData, '/');
 
-            // convert them into usable variables
-            Vector2 position = new Vector2(parsedPosition[1] * 16, parsedPosition[2] * 16);
-            int mapIndex = parsedPosition[0];
-            int maxHealth = parsedHealth[1];
-            int currentHealth = parsedHealth[0];
-            int maxMana = parsedMana[1];
-            int currentMana = parsedMana[0];
+            // convert them into usable variables ------------------------------
+            PlayerData data = new PlayerData(
+                new Vector2(parsedPosition[1] * 16, parsedPosition[2] * 16),
+                parsedHealth[0], parsedHealth[1],
+                parsedMana[0], parsedMana[1]
+                );
+
+            // load the inventory data
+            data.LoadInventory(
+                grimoireData.Split(','),
+                ParseData(cardData, ','),
+                ParseData(instantData, ','),
+                ParseData(regenData, ',')
+                );
 
             // have the player load this data
-            GM.player.LoadSave(position, currentHealth, maxHealth, currentMana, maxMana);
+            GM.player.LoadSave(data);
 
             // load the map index
-            GM.LoadSave(mapIndex);
+            GM.LoadSave(parsedPosition[0]);
         }
 
         /// <summary>

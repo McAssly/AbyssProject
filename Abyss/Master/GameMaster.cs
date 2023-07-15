@@ -237,7 +237,7 @@ namespace Abyss.Master
         public void DrawUi(SpriteBatch spriteBatch)
         {
             if (currentUi == null) return;
-            currentUi.Draw(spriteBatch);
+            currentUi.Draw(spriteBatch, this);
             //test_text.Draw(spriteBatch);
         }
 

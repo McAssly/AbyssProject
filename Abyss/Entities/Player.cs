@@ -20,6 +20,26 @@ namespace Abyss.Entities
         public int[] regenPots; // array max = 2, combined value max = 16  (both are counters), [0] = health, [1] = mana
         public int[] instantPots; // array max = 2, combiend value max = 4 (see line above)
         public List<Item> extras; // unlimited number of extra items, these are mainly for questlines or auxillary stuff so not entirely important
+
+        public static Grimoire[] ParseGrimoires(string[] grimoireData)
+        {
+            return new Grimoire[]
+            {
+                Grimoire.Which(grimoireData[0]),
+                Grimoire.Which(grimoireData[1])
+            };
+        }
+
+        public static Card[] ParseCards(int[] cardData)
+        {
+            List<Card> cards = new List<Card>();
+            for (int id = 0; id < cardData.Length; id++)
+            {
+                if (Item.WhichCard(id) != null)
+                    cards.Add(Item.WhichCard(id));
+            }
+            return cards.ToArray();
+        }
     }
 
     internal class Player : Entity
@@ -38,18 +58,25 @@ namespace Abyss.Entities
         /// <summary>
         /// loads the given save data into the player state
         /// </summary>
-        /// <param name="pos"></param>
-        /// <param name="hp"></param>
-        /// <param name="maxHP"></param>
-        /// <param name="mana"></param>
-        /// <param name="maxMana"></param>
-        public void LoadSave(Vector2 pos, int hp, int maxHP, int mana, int maxMana)
+        /// <param name="data"></param>
+        public void LoadSave(PlayerData data)
         {
-            this.pos = pos;
-            this.health = hp;
-            this.max_health = maxHP;
-            this.mana = mana;
-            this.max_mana = maxMana;
+            this.pos = data.position;
+            this.health = data.currentHealth;
+            this.max_health = data.maxHealth;
+            this.mana = data.currentMana;
+            this.max_mana = data.maxMana;
+            // inventory
+            this.Inventory = data.inventory;
+        }
+
+
+        /// <summary>
+        /// attacks using the primary grimoire
+        /// </summary>
+        public void Cast(int index)
+        {
+            Inventory.grimoires[index].Attack(this, MathUtil.Mouse());
         }
 
 

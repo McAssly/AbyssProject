@@ -21,8 +21,18 @@ namespace Abyss.UI
 
         private protected bool selectable;
         private protected bool selected = false;
-        public Text(string text, Vector2 position, float scale, Vector2? size = null, bool selectable = false) 
+        public Text(string text, int x, int y, float scale, Vector2? size = null, bool selectable = false) 
         { 
+            this.text = text;
+            this.pos = new Vector2(x, y);
+            this.scale = scale;
+            this.selectable = selectable;
+            if (size.HasValue)
+                this.size = size.Value;
+        }
+
+        public Text(string text, Vector2 position, float scale, Vector2? size = null, bool selectable = false)
+        {
             this.text = text;
             this.pos = position;
             this.scale = scale;

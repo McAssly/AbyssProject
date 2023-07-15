@@ -119,13 +119,17 @@ namespace Abyss
                 GM.player.Move(GM.GetCurrentTileMap(), delta);
                 GM.player.UpdateDrawObj();
 
-                GM.UpdateLevel();
-                
+                // attack
+                if (KB.IsKeyDown(Controls.Attack1))
+                {
+                    GM.player.Cast(0);
+                }
+                if (KB.IsKeyDown(Controls.Attack2))
+                {
+                    GM.player.Cast(1);
+                }
 
-                /**
-                 * HUD related update processes
-                 */
-                UiControllers.HUD.UpdatePlayerInfo(GM.player);
+                GM.UpdateLevel();
             }
 
             _prevKeyboardState = KB;

@@ -5,6 +5,7 @@
 	<mana>100/100</mana>
 	<inventory>
 		<grim>base,water</grim>
+		<cards>0,0,0,0,0,0</cards>
 		<regen>0,0</regen>
 		<instant>0,0</instant>
 		<extra></extra>
