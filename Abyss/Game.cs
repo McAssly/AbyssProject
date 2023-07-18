@@ -9,6 +9,7 @@ using Abyss.Entities;
 using Abyss.UI;
 using Abyss.Master;
 using System.Text;
+using System.Diagnostics;
 
 namespace Abyss
 {
@@ -62,6 +63,7 @@ namespace Abyss
 
             // Load sprites
             Globals.TESTBOX = Content.Load<Texture2D>("testbox");
+            Globals.BaseSpell = Content.Load<Texture2D>("spells/spell");
 
             // Load the Primary Game / UI
             GameMaster.TestLevel = Levels.EASTWOODS;
@@ -112,24 +114,11 @@ namespace Abyss
              */
             if (GM.IsHud())
             {
-                /** Player
-                 * all player related update processes
-                 */
-                GM.player.CalcInputVector(KB);
-                GM.player.Move(GM.GetCurrentTileMap(), delta);
-                GM.player.UpdateDrawObj();
+                // update the player
+                GM.player.Update(delta, KB, _MouseState, GM);
 
-                // attack
-                if (KB.IsKeyDown(Controls.Attack1))
-                {
-                    GM.player.Cast(0);
-                }
-                if (KB.IsKeyDown(Controls.Attack2))
-                {
-                    GM.player.Cast(1);
-                }
-
-                GM.UpdateLevel();
+                // Update the game state
+                GM.Update(delta);
             }
 
             _prevKeyboardState = KB;
@@ -150,7 +139,7 @@ namespace Abyss
                 ) ; // start drawing through the sprite batch
 
             // Draw the level and its entities
-            GM.DrawLevel(_spriteBatch);
+            GM.Draw(_spriteBatch);
 
             _spriteBatch.End(); // end the sprite batch
 

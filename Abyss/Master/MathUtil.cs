@@ -23,9 +23,14 @@ namespace Abyss.Master
     internal class MathUtil
     {
 
-        public static Vector2 Mouse()
+        public static Vector2 MousePosition()
         {
             return new Vector2(Game._MouseState.X / (float)Globals.game_scale, Game._MouseState.Y / (float)Globals.game_scale);
+        }
+
+        public static Vector2 MousePositionInGame()
+        {
+            return MousePosition() - new Vector2(Globals.DrawPosition.X, Globals.DrawPosition.Y);
         }
 
 
@@ -91,6 +96,14 @@ namespace Abyss.Master
                 return val1 + direction * (int)delta;
         }
 
+
+        public static Vector2 ApplyAcceleration(Vector2 velocity, double accel)
+        {
+            double magnitude = Math.Sqrt(velocity.X * velocity.X + velocity.Y * velocity.Y);
+            Vector2 normalized = new Vector2((float)(velocity.X / magnitude), (float)(velocity.Y / magnitude));
+            return normalized * new Vector2((float)(magnitude + accel));
+        }
+
         /**
          * Returns a numerical value of 1 or 0 depending on whether the key is being pressed or not
          * 
@@ -132,6 +145,25 @@ namespace Abyss.Master
         public static bool IsWithin(Vector2 pos, float left, float right, float top, float bottom)
         {
             return pos.X >= left && pos.X <= right && pos.Y >= top && pos.Y <= bottom;
+        }
+
+
+        /// <summary>
+        /// Checks if the current mouse button flag is being pressed (clicked)
+        /// </summary>
+        /// <param name="MS"></param>
+        /// <param name="flag"></param>
+        /// <returns></returns>
+        public static bool IsClicked(MouseState MS, uint flag)
+        {
+            switch (flag)
+            {
+                case 1: 
+                    return MS.LeftButton == ButtonState.Pressed;
+                case 2:
+                    return MS.RightButton == ButtonState.Pressed;
+                default: return false;
+            }
         }
     }
 }

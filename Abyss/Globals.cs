@@ -24,6 +24,8 @@ namespace Abyss
                 (float)((WindowW - GameWindow_size)/(2*game_scale)), 
                 (float)((WindowH - GameWindow_size) / (2 * game_scale)),0);
 
+        public static readonly double ParticleSubtractor = 0.5;
+
         // UI CONSTANTS
         public static Color Black = new Color(48, 41, 39);
         public static readonly Vector2 MessageLocation = new Vector2(TILE_SIZE/2, TILE_SIZE / 2);
@@ -44,6 +46,7 @@ namespace Abyss
 
         // TEXTURES / fonts
         public static SpriteFont FONT;
+        public static Texture2D BaseSpell = null;
 
 
         /** Update the game scale when the window is resized:

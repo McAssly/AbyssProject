@@ -3,6 +3,7 @@ using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended.Timers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -53,6 +54,9 @@ namespace Abyss.Entities
             this.drawObj = new Rectangle(0, 0, 16, 16);
             this.pos = new Vector2();
             this.speed = 2;
+            this.crit_dmg = 0.7; // 200%
+            this.crit_rate = 0.5; // 50%
+            this.damage = 1; // 1
         }
 
         /// <summary>
@@ -70,15 +74,68 @@ namespace Abyss.Entities
             this.Inventory = data.inventory;
         }
 
+        /// <summary>
+        /// Handles player attack sequence
+        /// </summary>
+        /// <param name="KB"></param>
+        /// <param name="MS"></param>
+        public void Attack(KeyboardState KB, MouseState MS)
+        {
+            // get the keyboard controls (off by default)
+            bool keyboardAttack1 = false;
+            bool keyboardAttack2 = false;
+            if (Controls.AttackKey1.HasValue) keyboardAttack1 = KB.IsKeyDown(Controls.AttackKey1.Value);
+            if (Controls.AttackKey2.HasValue) keyboardAttack2 = KB.IsKeyDown(Controls.AttackKey2.Value);
+
+            // detect keyboard/mouse buttons, if the corresponding ones are pressed then active the corresponding grimoire and spell
+            if (keyboardAttack1 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag1))
+            {
+                // there are secondary spells and to activate them the control sequence has to be pressed (default: l-shift)
+                if (KB.IsKeyDown(Controls.Secondary))
+                    this.Cast(0, 2); // secondary spell
+                else this.Cast(0, 1); // primary spell
+            }
+            if (keyboardAttack2 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag2))
+            {
+                if (KB.IsKeyDown(Controls.Secondary))
+                    this.Cast(1, 2); // secondary spell
+                else this.Cast(1, 1); // primary spell
+            }
+        }
+
+        
+        /// <summary>
+        /// updates the player instance
+        /// </summary>
+        /// <param name="delta"></param>
+        /// <param name="KB"></param>
+        /// <param name="MS"></param>
+        /// <param name="GM"></param>
+        public void Update(double delta, KeyboardState KB, MouseState MS, GameMaster GM)
+        {
+            CalcInputVector(KB);
+            Move(GM.GetCurrentTileMap(), delta);
+            UpdateDrawObj();
+
+            /* ATTACK DETECTION AND CASTING */
+            GM.player.Attack(KB, MS);
+            if (time_elapsed >= 1 && GM.player.Mana() < GM.player.MaxMana())
+            {
+                GM.player.AddMana(1);
+                time_elapsed = 0;
+            }
+
+            time_elapsed += delta;
+        }
+
 
         /// <summary>
         /// attacks using the primary grimoire
         /// </summary>
-        public void Cast(int index)
+        public void Cast(int index, int type)
         {
-            Inventory.grimoires[index].Attack(this, MathUtil.Mouse());
+            if (mana > 0) Inventory.grimoires[index].Attack(this, MathUtil.MousePositionInGame(), type);
         }
-
 
         /// <summary>
         /// Determines the input vector of the player and normalizes it to a radius of 1

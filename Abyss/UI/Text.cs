@@ -70,7 +70,7 @@ namespace Abyss.UI
 
         public bool Hovering()
         {
-            Vector2 m = MathUtil.Mouse();
+            Vector2 m = MathUtil.MousePosition();
             return m.X >= pos.X && m.X <= pos.X + size.X
                 && m.Y >= pos.Y && m.Y <= pos.Y + size.Y;
         }

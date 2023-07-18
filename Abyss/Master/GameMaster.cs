@@ -194,8 +194,9 @@ namespace Abyss.Master
         /// <summary>
         /// Update's the level whenever the player moves to the next level
         /// </summary>
-        public void UpdateLevel()
+        public void Update(double delta)
         {
+            // update the game level
             if (player.ExittingSide().HasValue)
             {
                 var prevMap = currentLevel.GetCurrent();
@@ -209,7 +210,17 @@ namespace Abyss.Master
                         case Side.TOP: player.SetPosition(null, 16 * 16 - 16); break;
                         case Side.BOTTOM: player.SetPosition(null, 0); break;
                     }
+                // clear particles
+                player.Inventory.grimoires[0].Clear();
+                player.Inventory.grimoires[1].Clear();
             }
+
+
+
+            // update the game's particles
+            // player attacks
+            player.Inventory.grimoires[0].Update(delta);
+            player.Inventory.grimoires[1].Update(delta);
         }
 
 
@@ -219,15 +230,20 @@ namespace Abyss.Master
 
         // DRAW SECTION
         /// <summary>
-        /// Draw's the current level of the game
+        /// Draw's the current game state
         /// </summary>
         /// <param name="spriteBatch"></param>
-        public void DrawLevel(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch)
         {
+            // draw the current level map
             GetCurrentTileMap().Draw(spriteBatch);
 
             // draw the player
             player.Draw(spriteBatch);
+
+            // draw the particles of the game
+            player.Inventory.grimoires[0].Draw(spriteBatch);
+            player.Inventory.grimoires[1].Draw(spriteBatch);
         }
 
         /// <summary>

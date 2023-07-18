@@ -34,7 +34,7 @@ namespace Abyss.Entities
 
         // declare the entity's substats
         private protected double damage;
-        private protected double crit_dmg;
+        private protected double crit_dmg; // percentage to increase damage by
         private protected double crit_rate; // between 0 and 1, a percentage value
         private protected double defense;    // physical resistence
         private protected double resistence; // magical resistence
@@ -43,6 +43,12 @@ namespace Abyss.Entities
         private protected Vector2 movement_vec = Vector2.Zero;
         private protected Vector2 pos;
         private protected Vector2 vel = Vector2.Zero; // starts off not moving
+
+        // time elapsed
+        private protected double time_elapsed = 0;
+
+        // last damage applied
+        public double last_damage = 0;
 
         // for crits
         private protected static readonly Random random = new Random();
@@ -67,11 +73,24 @@ namespace Abyss.Entities
         public double CalculateDamage(double baseDMG)
         {
             double damage = baseDMG * this.damage;
-            if (random.NextDouble() < crit_rate)
+            int iterations = 0;
+            while (random.NextDouble() < crit_rate && iterations < 3)
             {
-                damage *= crit_dmg;
+                damage = damage + (damage * crit_dmg / (iterations+1));
+                iterations++;
             }
+            this.last_damage = damage;
             return damage;
+        }
+
+        public void ReduceMana(double cost)
+        {
+            mana -= cost;
+        }
+
+        public void AddMana(double amount)
+        {
+            mana += amount;
         }
 
         /**

@@ -104,8 +104,10 @@ namespace Abyss.UI
                 new Text("HP: " + GM.player.Health() + "/" + GM.player.MaxHealth(), 16, 16, 0.5f).Draw(spriteBatch);
                 new Text("MN: " + GM.player.Mana() + "/" + GM.player.MaxMana(), 16, 32, 0.5f).Draw(spriteBatch);
                 new Text("POS: " + (int)GM.player.Position().X + ", " + (int)GM.player.Position().Y, 16, 48, 0.5f).Draw(spriteBatch);
-                new Text("Mouse: " + (int)MathUtil.Mouse().X + ", " + (int)MathUtil.Mouse().Y, 16, 64, 0.4f).Draw(spriteBatch);
-                new Text("Grim: " + GM.player.Inventory.grimoires[0].ToString() + ", " + GM.player.Inventory.grimoires[1].ToString(), 16, 80, 0.3f).Draw(spriteBatch);
+                new Text("Ms-W: " + (int)MathUtil.MousePosition().X + ", " + (int)MathUtil.MousePosition().Y, 16, 64, 0.4f).Draw(spriteBatch);
+                new Text("Ms-G: " + (int)MathUtil.MousePositionInGame().X + ", " + (int)MathUtil.MousePositionInGame().Y, 16, 80, 0.4f).Draw(spriteBatch);
+                new Text("Grim: " + GM.player.Inventory.grimoires[0].ToString() + ", " + GM.player.Inventory.grimoires[1].ToString(), 16, 96, 0.3f).Draw(spriteBatch);
+                new Text("DMG: " + GM.player.last_damage, 16, 112, 0.3f).Draw(spriteBatch);
             }
             else // draw the regular HUD
             {
