@@ -21,6 +21,33 @@ namespace Abyss.Entities
     }
 
     /// <summary>
+    /// Allows for global particle constructor control within each grimoire
+    /// </summary>
+    internal struct ParticleController
+    {
+        public readonly double accel;
+        public readonly double lifetime;
+        public readonly Element element;
+        public readonly double base_damage;
+        public readonly double base_speed;
+        public readonly double mana_cost;
+        public readonly double cooldown_max;
+        public double cooldown;
+
+        public ParticleController(Element element, double lifetime, double base_damage, double base_speed, double mana_cost, double accel, double cooldown_max)
+        {
+            this.element = element;
+            this.lifetime = lifetime;
+            this.base_damage = base_damage;
+            this.base_speed = base_speed;
+            this.mana_cost = mana_cost;
+            this.accel = accel;
+            this.cooldown_max = cooldown_max;
+            this.cooldown = 0;
+        }
+    }
+
+    /// <summary>
     /// A magic particle
     /// </summary>
     internal class Particle
@@ -37,14 +64,14 @@ namespace Abyss.Entities
 
 
         /** PARTICLE CONSTRUCTOR */
-        public Particle(Entity parent, Vector2 position, Vector2 velocity, double accel, double lifetime, Element element, double damage, double rotation)
+        public Particle(Entity parent, Vector2 position, Vector2 velocity, ParticleController pc, double damage, double rotation)
         {
             this.parent = parent;
             this.position = position;
             this.velocity = velocity;
-            this.accel = accel;
-            this.lifetime = lifetime;
-            this.element = element;
+            this.accel = pc.accel;
+            this.lifetime = pc.lifetime;
+            this.element = pc.element;
             this.damage = damage;
             this.rotation = rotation;
         }
@@ -98,20 +125,8 @@ namespace Abyss.Entities
     internal class Grimoire
     {
         public List<Particle> Particles = new List<Particle>();
-        private readonly double accel = 0.25;
-        private readonly double lifetime = 0.5;
-        private readonly Element element = Element.NULL;
-        private readonly double base_damage = 1;
-        private readonly double base_speed = 5;
-
-        private readonly double mana_cost_1 = 1;
-        private readonly double mana_cost_2 = 5;
-
-        private readonly double cooldown_max_1 = 0.1;
-        private readonly double cooldown_max_2 = 0.3;
-
-        private double cooldown_1 = 0.0;
-        private double cooldown_2 = 0.0;
+        private ParticleController primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1);
+        private ParticleController secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
 
 
 
@@ -130,19 +145,19 @@ namespace Abyss.Entities
             switch (type)
             {
                 case 1: // primary
-                    if (cooldown_1 <= 0)
+                    if (primary.cooldown <= 0)
                     {
                         Primary(parent, targetPos);
-                        parent.ReduceMana(mana_cost_1);
-                        cooldown_1 = cooldown_max_1;
+                        parent.ReduceMana(primary.mana_cost);
+                        primary.cooldown = primary.cooldown_max;
                     }
                         break;
                 case 2: // secondary
-                    if (cooldown_2 <= 0)
+                    if (secondary.cooldown <= 0)
                     {
                         Secondary(parent, targetPos);
-                        parent.ReduceMana(mana_cost_2);
-                        cooldown_2 = cooldown_max_2;
+                        parent.ReduceMana(secondary.mana_cost);
+                        secondary.cooldown = secondary.cooldown_max;
                     }
                     break;
                 default: return;
@@ -157,11 +172,11 @@ namespace Abyss.Entities
         public void Primary(Entity parent, Vector2 targetPos)
         {
             Vector2 position = parent.Position();
-            Vector2 target = MathUtil.MoveToward(parent.Position(), targetPos, base_speed);
+            Vector2 target = MathUtil.MoveToward(parent.Position(), targetPos, primary.base_speed);
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(target, position),
-                accel, lifetime, element, parent.CalculateDamage(base_damage),
+                primary, parent.CalculateDamage(primary.base_damage),
                 Math.Atan2(target.Y - position.Y, target.X - position.X)
                 ));
         }
@@ -174,13 +189,13 @@ namespace Abyss.Entities
         public void Secondary(Entity parent, Vector2 targetPos)
         {
             Vector2 position = parent.Position();
-            Vector2 target = MathUtil.MoveToward(parent.Position(), targetPos, base_speed);
+            Vector2 target = MathUtil.MoveToward(parent.Position(), targetPos, secondary.base_speed);
             double rotation = Math.Atan2(target.Y - position.Y, target.X - position.X);
             // central particle
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(target, position),
-                accel, lifetime, element, parent.CalculateDamage(base_damage),
+                secondary, parent.CalculateDamage(secondary.base_damage),
                 rotation
                 ));
 
@@ -192,7 +207,7 @@ namespace Abyss.Entities
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(leftTarget, position),
-                accel, lifetime, element, parent.CalculateDamage(base_damage),
+                secondary, parent.CalculateDamage(secondary.base_damage),
                 leftRotation
                 ));
 
@@ -202,7 +217,7 @@ namespace Abyss.Entities
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(rightTarget, position),
-                accel, lifetime, element, parent.CalculateDamage(base_damage),
+                secondary, parent.CalculateDamage(secondary.base_damage),
                 rightRotation
                 ));
         }
@@ -230,8 +245,8 @@ namespace Abyss.Entities
             // remove all particles that have run out of life
             Particles.RemoveAll(particle => particle.lifetime <= 0);
 
-            if (cooldown_1 > 0) cooldown_1 -= Globals.ParticleSubtractor * delta;
-            if (cooldown_2 > 0) cooldown_2 -= Globals.ParticleSubtractor * delta;
+            if (primary.cooldown > 0) primary.cooldown -= Globals.ParticleSubtractor * delta;
+            if (secondary.cooldown > 0) secondary.cooldown -= Globals.ParticleSubtractor * delta;
         }
 
         /// <summary>
