@@ -15,27 +15,27 @@ namespace Abyss.Master
     {
         public Inventory inventory;
         public Vector2 position;
-        public int currentHealth;
-        public int maxHealth;
-        public int currentMana;
-        public int maxMana;
+        public int current_hp;
+        public int max_hp;
+        public int current_mana;
+        public int max_mana;
 
         public PlayerData(Vector2 position, int chp, int mhp, int cmn, int mmn)
         {
             this.inventory = new Inventory();
             this.position = position;
-            this.currentHealth = chp;
-            this.maxHealth = mhp;
-            this.currentMana = cmn;
-            this.maxMana = mmn;
+            this.current_hp = chp;
+            this.max_hp = mhp;
+            this.current_mana = cmn;
+            this.max_mana = mmn;
         }
 
         public void LoadInventory(string[] grimoires, int[] cards, int[] regen, int[] instant)
         {
             inventory.grimoires = Inventory.ParseGrimoires(grimoires);
             inventory.cards = Inventory.ParseCards(cards);
-            inventory.instantPots = instant;
-            inventory.regenPots = regen;
+            inventory.instant_pots = instant;
+            inventory.regen_pots = regen;
         }
     }
 
@@ -44,81 +44,81 @@ namespace Abyss.Master
         /// <summary>
         /// Saves the current game data into the given save file
         /// </summary>
-        /// <param name="savefile"></param>
+        /// <param name="save_file"></param>
         /// <param name="GM"></param>
         /// <param name="player"></param>
-        public static void Save(string savefile, GameMaster GM)
+        public static void Save(string save_file, GameMaster GM)
         {
             // Load the XML doc
             XmlDocument save = new XmlDocument();
-            save.Load(savefile);
+            save.Load(save_file);
 
-            XmlNode posNode = save.DocumentElement.SelectSingleNode("/player/pos");
-            XmlNode hpNode = save.DocumentElement.SelectSingleNode("/player/hp");
-            XmlNode manaNode = save.DocumentElement.SelectSingleNode("/player/mana");
+            XmlNode pos_node = save.DocumentElement.SelectSingleNode("/player/pos");
+            XmlNode hp_node = save.DocumentElement.SelectSingleNode("/player/hp");
+            XmlNode mana_node = save.DocumentElement.SelectSingleNode("/player/mana");
 
             // save the position, hp and mana
-            if (posNode != null && hpNode != null && manaNode != null)
+            if (pos_node != null && hp_node != null && mana_node != null)
             {
                 // save the position data
-                posNode.InnerText = WriteData(new int[] { GM.GetMapIndex(), (int)GM.player.Position().X / 16, (int)GM.player.Position().Y / 16 }, ',');
+                pos_node.InnerText = WriteData(new int[] { GM.GetMapIndex(), (int)GM.player.Position().X / 16, (int)GM.player.Position().Y / 16 }, ',');
                 // save the health data
-                hpNode.InnerText = WriteData(new int[] { (int)GM.player.Health(), (int)GM.player.MaxHealth() }, '/');
+                hp_node.InnerText = WriteData(new int[] { (int)GM.player.Health(), (int)GM.player.MaxHealth() }, '/');
                 // save the mana data
-                manaNode.InnerText = WriteData(new int[] { (int)GM.player.Mana(), (int)GM.player.MaxMana() }, '/');
+                mana_node.InnerText = WriteData(new int[] { (int)GM.player.Mana(), (int)GM.player.MaxMana() }, '/');
                 // overite the data
-                save.Save(savefile);
+                save.Save(save_file);
             }
         }
 
         /// <summary>
         /// Loads the given save data into the game
         /// </summary>
-        /// <param name="savefile"></param>
+        /// <param name="save_file"></param>
         /// <param name="GM"></param>
         /// <param name="player"></param>
-        public static void Load(string savefile, GameMaster GM)
+        public static void Load(string save_file, GameMaster GM)
         {
             // load the XML document
             XmlDocument save = new XmlDocument();
-            save.Load(savefile);
+            save.Load(save_file);
 
             // Get the player variables ------------------------------
-            string positionData = save.DocumentElement.SelectSingleNode("/player/pos").InnerText;
-            string healthData = save.DocumentElement.SelectSingleNode("/player/hp").InnerText;
-            string manaData = save.DocumentElement.SelectSingleNode("/player/mana").InnerText;
+            string pos_data = save.DocumentElement.SelectSingleNode("/player/pos").InnerText;
+            string hp_data = save.DocumentElement.SelectSingleNode("/player/hp").InnerText;
+            string mana_data = save.DocumentElement.SelectSingleNode("/player/mana").InnerText;
 
             // INVENTORY DATA ------------------------------
-            string grimoireData = save.DocumentElement.SelectSingleNode("/player/inventory/grim").InnerText;
-            string cardData = save.DocumentElement.SelectSingleNode("/player/inventory/cards").InnerText;
-            string regenData = save.DocumentElement.SelectSingleNode("/player/inventory/regen").InnerText;
-            string instantData = save.DocumentElement.SelectSingleNode("/player/inventory/instant").InnerText;
+            string grim_data = save.DocumentElement.SelectSingleNode("/player/inventory/grim").InnerText;
+            string card_data = save.DocumentElement.SelectSingleNode("/player/inventory/cards").InnerText;
+            string regen_data = save.DocumentElement.SelectSingleNode("/player/inventory/regen").InnerText;
+            string instant_data = save.DocumentElement.SelectSingleNode("/player/inventory/instant").InnerText;
 
             // parse the player variables
-            int[] parsedPosition = ParseData(positionData, ',');
-            int[] parsedHealth = ParseData(healthData, '/');
-            int[] parsedMana = ParseData(manaData, '/');
+            int[] parsed_pos = ParseData(pos_data, ',');
+            int[] parsed_hp = ParseData(hp_data, '/');
+            int[] parsed_mana = ParseData(mana_data, '/');
 
             // convert them into usable variables ------------------------------
             PlayerData data = new PlayerData(
-                new Vector2(parsedPosition[1] * 16, parsedPosition[2] * 16),
-                parsedHealth[0], parsedHealth[1],
-                parsedMana[0], parsedMana[1]
+                new Vector2(parsed_pos[1] * 16, parsed_pos[2] * 16),
+                parsed_hp[0], parsed_hp[1],
+                parsed_mana[0], parsed_mana[1]
                 );
 
             // load the inventory data
             data.LoadInventory(
-                grimoireData.Split(','),
-                ParseData(cardData, ','),
-                ParseData(instantData, ','),
-                ParseData(regenData, ',')
+                grim_data.Split(','),
+                ParseData(card_data, ','),
+                ParseData(instant_data, ','),
+                ParseData(regen_data, ',')
                 );
 
             // have the player load this data
             GM.player.LoadSave(data);
 
             // load the map index
-            GM.LoadSave(parsedPosition[0]);
+            GM.LoadSave(parsed_pos[0]);
         }
 
         /// <summary>
@@ -129,14 +129,14 @@ namespace Abyss.Master
         /// <returns></returns>
         private static int[] ParseData(string data, char delimeter)
         {
-            List<int> dataList = new List<int>();
+            List<int> data_list = new List<int>();
             foreach (string str in data.Split(delimeter))
             {
                 if (int.TryParse(str, out int num))
-                { dataList.Add(num); }
+                { data_list.Add(num); }
             }
 
-            return dataList.ToArray();
+            return data_list.ToArray();
         }
 
 

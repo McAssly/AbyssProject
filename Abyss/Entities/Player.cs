@@ -18,23 +18,23 @@ namespace Abyss.Entities
     {
         public Grimoire[] grimoires; // max = 2, can only hold 2 grimoires
         public Card[] cards; // max total = 8
-        public int[] regenPots; // array max = 2, combined value max = 16  (both are counters), [0] = health, [1] = mana
-        public int[] instantPots; // array max = 2, combiend value max = 4 (see line above)
+        public int[] regen_pots; // array max = 2, combined value max = 16  (both are counters), [0] = health, [1] = mana
+        public int[] instant_pots; // array max = 2, combiend value max = 4 (see line above)
         public List<Item> extras; // unlimited number of extra items, these are mainly for questlines or auxillary stuff so not entirely important
 
-        public static Grimoire[] ParseGrimoires(string[] grimoireData)
+        public static Grimoire[] ParseGrimoires(string[] grim_data)
         {
             return new Grimoire[]
             {
-                Grimoire.Which(grimoireData[0]),
-                Grimoire.Which(grimoireData[1])
+                Grimoire.Which(grim_data[0]),
+                Grimoire.Which(grim_data[1])
             };
         }
 
-        public static Card[] ParseCards(int[] cardData)
+        public static Card[] ParseCards(int[] card_data)
         {
             List<Card> cards = new List<Card>();
-            for (int id = 0; id < cardData.Length; id++)
+            for (int id = 0; id < card_data.Length; id++)
             {
                 if (Item.WhichCard(id) != null)
                     cards.Add(Item.WhichCard(id));
@@ -51,7 +51,7 @@ namespace Abyss.Entities
         public Player(Texture2D texture) :base(texture)
         {
             // draw object is currently a placeholder as there is no player texture as of now
-            this.drawObj = new Rectangle(0, 0, 16, 16);
+            this.draw_obj = new Rectangle(0, 0, 16, 16);
             this.pos = new Vector2();
             this.speed = 2;
             this.crit_dmg = 0.7; // 200%
@@ -66,10 +66,10 @@ namespace Abyss.Entities
         public void LoadSave(PlayerData data)
         {
             this.pos = data.position;
-            this.health = data.currentHealth;
-            this.max_health = data.maxHealth;
-            this.mana = data.currentMana;
-            this.max_mana = data.maxMana;
+            this.health = data.current_hp;
+            this.max_health = data.max_hp;
+            this.mana = data.current_mana;
+            this.max_mana = data.max_mana;
             // inventory
             this.Inventory = data.inventory;
         }
@@ -82,20 +82,20 @@ namespace Abyss.Entities
         public void Attack(KeyboardState KB, MouseState MS)
         {
             // get the keyboard controls (off by default)
-            bool keyboardAttack1 = false;
-            bool keyboardAttack2 = false;
-            if (Controls.AttackKey1.HasValue) keyboardAttack1 = KB.IsKeyDown(Controls.AttackKey1.Value);
-            if (Controls.AttackKey2.HasValue) keyboardAttack2 = KB.IsKeyDown(Controls.AttackKey2.Value);
+            bool kb_atk_1 = false;
+            bool kb_atk_2 = false;
+            if (Controls.AttackKey1.HasValue) kb_atk_1 = KB.IsKeyDown(Controls.AttackKey1.Value);
+            if (Controls.AttackKey2.HasValue) kb_atk_2 = KB.IsKeyDown(Controls.AttackKey2.Value);
 
             // detect keyboard/mouse buttons, if the corresponding ones are pressed then active the corresponding grimoire and spell
-            if (keyboardAttack1 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag1))
+            if (kb_atk_1 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag1))
             {
                 // there are secondary spells and to activate them the control sequence has to be pressed (default: l-shift)
                 if (KB.IsKeyDown(Controls.Secondary))
                     this.Cast(0, 2); // secondary spell
                 else this.Cast(0, 1); // primary spell
             }
-            if (keyboardAttack2 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag2))
+            if (kb_atk_2 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag2))
             {
                 if (KB.IsKeyDown(Controls.Secondary))
                     this.Cast(1, 2); // secondary spell

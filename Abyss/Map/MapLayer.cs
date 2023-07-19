@@ -49,7 +49,7 @@ namespace Abyss.Map
         private Texture2D tileset;
 
         // the list of tile textures at their corresponding index
-        private List<Rectangle> tileTexture = new List<Rectangle>();
+        private List<Rectangle> tile_texture = new List<Rectangle>();
 
         // Main tile map
         private Tile[,] tiles = new Tile[16, 16];
@@ -68,7 +68,7 @@ namespace Abyss.Map
             // First create the tileTexture array
             this.blocked = layer.blocked;
             this.tileset = tileset;
-            this.tileTexture = new List<Rectangle>();
+            this.tile_texture = new List<Rectangle>();
             // loop through the each tile within the tileset and place them in order within the list
             for (int y = 0; y < this.tileset.Height / Globals.TILE_SIZE; y++)
             {
@@ -81,7 +81,7 @@ namespace Abyss.Map
                      * In this case the tile is positioned @ x * its width, y * height
                      * And its width and height are the global tile size (16px)
                      */
-                    tileTexture.Add(new Rectangle(x * Globals.TILE_SIZE, y * Globals.TILE_SIZE, Globals.TILE_SIZE, Globals.TILE_SIZE));
+                    tile_texture.Add(new Rectangle(x * Globals.TILE_SIZE, y * Globals.TILE_SIZE, Globals.TILE_SIZE, Globals.TILE_SIZE));
                 }
             }
 
@@ -117,7 +117,7 @@ namespace Abyss.Map
 
         /** generates the layer mapping
          */
-        private void GenerateMapLayer(Layer layer, bool ignoreTexture = false)
+        private void GenerateMapLayer(Layer layer, bool ignored = false)
         {
             for (int i = 0; i < width; i++)
             {
@@ -128,8 +128,8 @@ namespace Abyss.Map
                     // if the tile index is valid insert the right tile
                     if (tileIndex >= 0)
                     {
-                        if (ignoreTexture) tiles[i, j] = new Tile(false, new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE));
-                        else tiles[i, j] = new Tile(false, new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), tileTexture[tileIndex]);
+                        if (ignored) tiles[i, j] = new Tile(false, new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE));
+                        else tiles[i, j] = new Tile(false, new Vector2(j * Globals.TILE_SIZE, i * Globals.TILE_SIZE), tile_texture[tileIndex]);
                     }
                     // otherwise the tile will be empty
                     else

@@ -108,7 +108,7 @@ namespace Abyss.Entities
         {
             velocity = MathUtil.ApplyAcceleration(velocity, accel * delta);
             position += velocity;
-            lifetime -= Globals.ParticleSubtractor * delta;
+            lifetime -= Globals.PARTICLE_SUBTRACTOR * delta;
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace Abyss.Entities
             switch (type)
             {
                 case 1: // primary
-                    if (primary.cooldown <= 0)
+                    if (primary.cooldown <= 0 && parent.Mana() >= primary.mana_cost)
                     {
                         Primary(parent, targetPos);
                         parent.ReduceMana(primary.mana_cost);
@@ -153,7 +153,7 @@ namespace Abyss.Entities
                     }
                         break;
                 case 2: // secondary
-                    if (secondary.cooldown <= 0)
+                    if (secondary.cooldown <= 0 && parent.Mana() >= secondary.mana_cost)
                     {
                         Secondary(parent, targetPos);
                         parent.ReduceMana(secondary.mana_cost);
@@ -168,11 +168,11 @@ namespace Abyss.Entities
         /// the primary attack of the base grimoire
         /// </summary>
         /// <param name="parent"></param>
-        /// <param name="targetPos"></param>
-        public void Primary(Entity parent, Vector2 targetPos)
+        /// <param name="target_pos"></param>
+        public void Primary(Entity parent, Vector2 target_pos)
         {
             Vector2 position = parent.Position();
-            Vector2 target = MathUtil.MoveToward(parent.Position(), targetPos, primary.base_speed);
+            Vector2 target = MathUtil.MoveToward(parent.Position(), target_pos, primary.base_speed);
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(target, position),
@@ -185,11 +185,11 @@ namespace Abyss.Entities
         /// the secondary attack of the base grimoire
         /// </summary>
         /// <param name="parent"></param>
-        /// <param name="targetPos"></param>
-        public void Secondary(Entity parent, Vector2 targetPos)
+        /// <param name="target_pos"></param>
+        public void Secondary(Entity parent, Vector2 target_pos)
         {
             Vector2 position = parent.Position();
-            Vector2 target = MathUtil.MoveToward(parent.Position(), targetPos, secondary.base_speed);
+            Vector2 target = MathUtil.MoveToward(parent.Position(), target_pos, secondary.base_speed);
             double rotation = Math.Atan2(target.Y - position.Y, target.X - position.X);
             // central particle
             Particles.Add(new Particle(
@@ -202,23 +202,23 @@ namespace Abyss.Entities
             double length = Math.Sqrt(Math.Pow(target.X - position.X, 2) + Math.Pow(target.Y - position.Y, 2));
 
             // left particle
-            double leftRotation = rotation - 0.18;
-            Vector2 leftTarget = new Vector2((float)(position.X + length * Math.Cos(leftRotation)), (float)(position.Y + length * Math.Sin(leftRotation)));
+            double left_rotation = rotation - 0.18;
+            Vector2 left_target = new Vector2((float)(position.X + length * Math.Cos(left_rotation)), (float)(position.Y + length * Math.Sin(left_rotation)));
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
-                Vector2.Subtract(leftTarget, position),
+                Vector2.Subtract(left_target, position),
                 secondary, parent.CalculateDamage(secondary.base_damage),
-                leftRotation
+                left_rotation
                 ));
 
             // right particle
-            double rightRotation = rotation + 0.18;
-            Vector2 rightTarget = new Vector2((float)(position.X + length * Math.Cos(rightRotation)), (float)(position.Y + length * Math.Sin(rightRotation)));
+            double right_rotation = rotation + 0.18;
+            Vector2 right_target = new Vector2((float)(position.X + length * Math.Cos(right_rotation)), (float)(position.Y + length * Math.Sin(right_rotation)));
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
-                Vector2.Subtract(rightTarget, position),
+                Vector2.Subtract(right_target, position),
                 secondary, parent.CalculateDamage(secondary.base_damage),
-                rightRotation
+                right_rotation
                 ));
         }
 
@@ -245,8 +245,8 @@ namespace Abyss.Entities
             // remove all particles that have run out of life
             Particles.RemoveAll(particle => particle.lifetime <= 0);
 
-            if (primary.cooldown > 0) primary.cooldown -= Globals.ParticleSubtractor * delta;
-            if (secondary.cooldown > 0) secondary.cooldown -= Globals.ParticleSubtractor * delta;
+            if (primary.cooldown > 0) primary.cooldown -= Globals.PARTICLE_SUBTRACTOR * delta;
+            if (secondary.cooldown > 0) secondary.cooldown -= Globals.PARTICLE_SUBTRACTOR * delta;
         }
 
         /// <summary>

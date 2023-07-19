@@ -18,7 +18,7 @@ namespace Abyss
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private GameMaster GM;
+        private GameMaster game_state;
 
         public static StringBuilder _TextInput;
 
@@ -48,7 +48,7 @@ namespace Abyss
 
             GameWindow = Window;
 
-            GM = new GameMaster();
+            game_state = new GameMaster();
             _TextInput = new StringBuilder();
 
             base.Initialize();
@@ -59,21 +59,21 @@ namespace Abyss
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Load the game font
-            Globals.FONT = Content.Load<SpriteFont>("font");
+            Globals.Font = Content.Load<SpriteFont>("font");
 
             // Load sprites
-            Globals.TESTBOX = Content.Load<Texture2D>("testbox");
+            Globals.TestBox = Content.Load<Texture2D>("testbox");
             Globals.BaseSpell = Content.Load<Texture2D>("spells/spell");
 
             // Load the Primary Game / UI
-            GameMaster.TestLevel = Levels.EASTWOODS;
+            GameMaster.TestLevel = Levels.Eastwoods;
             GameMaster.LoadLevels(Content, 0);
 
-            GM.Setup(GameMaster.TestLevel, UiControllers.HUD);
+            game_state.Setup(GameMaster.TestLevel, UiControllers.HUD);
 
             // load all entities
-            GM.LoadPlayer(Globals.TESTBOX);
-            Data.Load("save.xml", GM);
+            game_state.LoadPlayer(Globals.TestBox);
+            Data.Load("save.xml", game_state);
         }
 
         protected override void Update(GameTime gameTime)
@@ -84,27 +84,27 @@ namespace Abyss
 
             /** Global UI processes
              */
-            GM.Close();
+            game_state.Close();
 
             // open the debug menu
-            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu) && !(GM.CurrentUi() is Console))
+            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu) && !(game_state.CurrentUi() is Console))
             {
                 // Hook the text input function to the game window
                 Window.TextInput += GameMaster.RegisterInput;
-                GM.Open(UiControllers._Debug); // open the debug menu
+                game_state.Open(UiControllers._Debug); // open the debug menu
             }
 
             // update the current ui menu
-            GM.UpdateUi(KB, Mouse.GetState());
+            game_state.UpdateUi(KB, Mouse.GetState());
 
 
 
             // CONSOLE PROCESS              CONSOLE
-            if (GM.CurrentUi() is Console)
+            if (game_state.CurrentUi() is Console)
                 if (GameMaster.HandleInput(KB))
                 {
-                    GM.CloseCurrent();
-                    UiControllers._Debug.ProcessCommand(GM);
+                    game_state.CloseCurrent();
+                    UiControllers._Debug.ProcessCommand(game_state);
                     _TextInput = new StringBuilder(); // reset the text
                 }
 
@@ -112,13 +112,13 @@ namespace Abyss
 
             /** ALL GAME RELATED CODE       GAME + HUD
              */
-            if (GM.IsHud())
+            if (game_state.IsHud())
             {
                 // update the player
-                GM.player.Update(delta, KB, _MouseState, GM);
+                game_state.player.Update(delta, KB, _MouseState, game_state);
 
                 // Update the game state
-                GM.Update(delta);
+                game_state.Update(delta);
             }
 
             _prevKeyboardState = KB;
@@ -135,11 +135,11 @@ namespace Abyss
                 DepthStencilState.Default,
                 RasterizerState.CullCounterClockwise,
                 null,
-                Matrix.Multiply(Matrix.CreateTranslation(Globals.DrawPosition), Matrix.CreateScale((float)Globals.game_scale))
+                Matrix.Multiply(Matrix.CreateTranslation(Globals.DrawPosition), Matrix.CreateScale((float)Globals.GameScale))
                 ) ; // start drawing through the sprite batch
 
             // Draw the level and its entities
-            GM.Draw(_spriteBatch);
+            game_state.Draw(_spriteBatch);
 
             _spriteBatch.End(); // end the sprite batch
 
@@ -153,12 +153,12 @@ namespace Abyss
                 DepthStencilState.Default,
                 RasterizerState.CullCounterClockwise,
                 null,
-                Matrix.CreateScale((float)Globals.game_scale));
+                Matrix.CreateScale((float)Globals.GameScale));
 
             
             
             // Draw the UI
-            GM.DrawUi(_spriteBatch);
+            game_state.DrawUi(_spriteBatch);
 
             _spriteBatch.End();
 

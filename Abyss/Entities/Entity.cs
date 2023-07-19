@@ -12,16 +12,16 @@ namespace Abyss.Entities
 {
     internal class Entity
     {
-        private protected Rectangle drawObj;
+        private protected Rectangle draw_obj;
         private protected Texture2D texture;
-        private protected int drawSize = Globals.TILE_SIZE; // by default we will use the global tile size
+        private protected int draw_size = Globals.TILE_SIZE; // by default we will use the global tile size
         // offsets for the entity, useful for knowing where each corner and face are located on the entity's draw object
         private protected readonly Vector2[] _offsets;
 
         // declare max values for the entity
-        private protected readonly int MAX_SPEED = 1;
-        private protected readonly int MAX_ACCEL = 50;
-        private protected readonly int FRICTION = 50;
+        private protected readonly int max_speed = 1;
+        private protected readonly int max_accel = 50;
+        private protected readonly int friction = 50;
 
         // declare the entity's stats
         private protected double speed = 1;
@@ -59,20 +59,20 @@ namespace Abyss.Entities
             _offsets = new Vector2[8]
                 {
                     Vector2.Zero,
-                    new Vector2(drawSize),
-                    new Vector2(drawSize, 0),
-                    new Vector2(0, drawSize),
+                    new Vector2(draw_size),
+                    new Vector2(draw_size, 0),
+                    new Vector2(0, draw_size),
 
-                    new Vector2(0, drawSize / 2),
-                    new Vector2(drawSize, drawSize / 2),
-                    new Vector2(drawSize / 2, 0),
-                    new Vector2(drawSize / 2, drawSize)
+                    new Vector2(0, draw_size / 2),
+                    new Vector2(draw_size, draw_size / 2),
+                    new Vector2(draw_size / 2, 0),
+                    new Vector2(draw_size / 2, draw_size)
                 };
         }
 
-        public double CalculateDamage(double baseDMG)
+        public double CalculateDamage(double base_dmg)
         {
-            double damage = baseDMG * this.damage;
+            double damage = base_dmg * this.damage;
             int iterations = 0;
             while (random.NextDouble() < crit_rate && iterations < 3)
             {
@@ -86,6 +86,7 @@ namespace Abyss.Entities
         public void ReduceMana(double cost)
         {
             mana -= cost;
+            if (mana < 0) mana = 0;
         }
 
         public void AddMana(double amount)
@@ -103,9 +104,9 @@ namespace Abyss.Entities
         {
             // if the movement vector is not zero then the entity must be trying to move
             if (movement_vec != Vector2.Zero)
-                vel = MathUtil.MoveToward(vel, movement_vec * MAX_SPEED * (float)speed, MAX_ACCEL * delta);
+                vel = MathUtil.MoveToward(vel, movement_vec * max_speed * (float)speed, max_accel * delta);
             else // otherwise it is not trying to move at all so slow it down to zero
-                vel = MathUtil.MoveToward(vel, Vector2.Zero, FRICTION * delta);
+                vel = MathUtil.MoveToward(vel, Vector2.Zero, friction * delta);
 
             // handle collision, if they are about to collide we must alter our velocity before we move forward
             if (this.WillCollide(map) && vel != Vector2.Zero)
@@ -214,12 +215,12 @@ namespace Abyss.Entities
         {
             pos = Vector2.Clamp(pos, new Vector2(-1), new Vector2(16 * 16 - 16 + 1));
             // if the player's position updated then therefore so does the draw object's
-            if (drawObj.X != pos.X)
-                drawObj.X = (int)pos.X;
+            if (draw_obj.X != pos.X)
+                draw_obj.X = (int)pos.X;
 
             // the same goes for the y-axis
-            if (drawObj.Y != pos.Y)
-                drawObj.Y = (int)pos.Y;
+            if (draw_obj.Y != pos.Y)
+                draw_obj.Y = (int)pos.Y;
         }
 
         /**
@@ -230,7 +231,7 @@ namespace Abyss.Entities
         public void Draw(SpriteBatch spriteBatch)
         {
             if (spriteBatch == null) return;
-            spriteBatch.Draw(Globals.TESTBOX, drawObj, Color.White);
+            spriteBatch.Draw(Globals.TestBox, draw_obj, Color.White);
         }
     }
 }

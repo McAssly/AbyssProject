@@ -35,8 +35,8 @@ namespace Abyss.Master
 
 
         // Declare the game managers (UI/Level)
-        private Level currentLevel;
-        private Ui currentUi;
+        private Level current_level;
+        private Ui current_ui;
 
         // Declare game entities
         protected internal Player player;
@@ -57,8 +57,8 @@ namespace Abyss.Master
         /// <param name="ui"></param>
         public void Setup(Level level, Ui ui)
         {
-            this.currentLevel = level;
-            this.currentUi = ui;
+            this.current_level = level;
+            this.current_ui = ui;
         }
 
 
@@ -66,8 +66,8 @@ namespace Abyss.Master
         /// Loads every level in the game <--- currently a place holder
         /// </summary>
         /// <param name="Content"></param>
-        /// <param name="startingMap"></param>
-        public static void LoadLevels(ContentManager Content, int startingMap) { TestLevel.LoadLevel(Content, startingMap); }
+        /// <param name="initial_map"></param>
+        public static void LoadLevels(ContentManager Content, int initial_map) { TestLevel.LoadLevel(Content, initial_map); }
 
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace Abyss.Master
         /// <summary>
         /// Loads the current save file <--- placeholder
         /// </summary>
-        /// <param name="mapIndex"></param>
-        public void LoadSave(int mapIndex){ currentLevel.SetCurrent(mapIndex); }
+        /// <param name="map_index"></param>
+        public void LoadSave(int map_index){ current_level.SetCurrent(map_index); }
 
 
 
@@ -93,7 +93,7 @@ namespace Abyss.Master
         /// Opens the given UI, sets the current UI to the given
         /// </summary>
         /// <param name="ui"></param>
-        public void Open(Ui ui){ this.currentUi = ui; }
+        public void Open(Ui ui){ this.current_ui = ui; }
 
         /// <summary>
         /// opens the given dialogue in the dialogue ui window
@@ -102,7 +102,7 @@ namespace Abyss.Master
         public void OpenDialogue(Dialogue dialogue)
         {
             UiControllers.Dialogue.SetDialogue(dialogue);
-            this.currentUi = UiControllers.Dialogue;
+            this.current_ui = UiControllers.Dialogue;
         }
 
         /// <summary>
@@ -111,14 +111,14 @@ namespace Abyss.Master
         /// </summary>
         public void Close()
         {
-            if (this.currentUi.IsClosed())
+            if (this.current_ui.IsClosed())
             {
-                if (this.currentUi is UI.Console)
+                if (this.current_ui is UI.Console)
                 {
                     Game.GameWindow.TextInput -= RegisterInput;
                 }
-                this.currentUi.UnClose();
-                this.currentUi = UiControllers.HUD;
+                this.current_ui.UnClose();
+                this.current_ui = UiControllers.HUD;
             }
         }
 
@@ -133,7 +133,7 @@ namespace Abyss.Master
         /// <summary>
         /// Force closes the current ui of the game state
         /// </summary>
-        public void CloseCurrent() { this.currentUi.Close(); }
+        public void CloseCurrent() { this.current_ui.Close(); }
 
 
 
@@ -148,31 +148,31 @@ namespace Abyss.Master
         /// Whether or not the game state is running the game or not (Ui is showing the HUD not any other menu)
         /// </summary>
         /// <returns>Whether the current ui is set to the HUD or not</returns>
-        public bool IsHud() { return currentUi is Hud; }
+        public bool IsHud() { return current_ui is Hud; }
 
         /// <summary>
         /// Grabs the current level the game state is playing in
         /// </summary>
         /// <returns>the game state's current level</returns>
-        public Level CurrentLevel() { return currentLevel; }
+        public Level CurrentLevel() { return current_level; }
 
         /// <summary>
         /// Grabs the current ui the game state is running
         /// </summary>
         /// <returns>the game state's current ui state</returns>
-        public Ui CurrentUi() { return currentUi; }
+        public Ui CurrentUi() { return current_ui; }
 
         /// <summary>
         /// Grabs the current tile map that the game state is rendering
         /// </summary>
         /// <returns>the game state's current tile map</returns>
-        public TileMap GetCurrentTileMap() { return currentLevel.GetCurrent(); }
+        public TileMap GetCurrentTileMap() { return current_level.GetCurrent(); }
 
         /// <summary>
         /// Grabs which map index the current level is running in
         /// </summary>
         /// <returns>the game state's current map index</returns>
-        public int GetMapIndex() { return Array.IndexOf(currentLevel.GetMaps(), currentLevel.GetCurrent()); }
+        public int GetMapIndex() { return Array.IndexOf(current_level.GetMaps(), current_level.GetCurrent()); }
 
 
 
@@ -188,7 +188,7 @@ namespace Abyss.Master
         /// <param name="MS"></param>
         public void UpdateUi(KeyboardState KB, MouseState MS)
         {
-            this.currentUi.Update(KB, MS);
+            this.current_ui.Update(KB, MS);
         }
 
         /// <summary>
@@ -199,10 +199,10 @@ namespace Abyss.Master
             // update the game level
             if (player.ExittingSide().HasValue)
             {
-                var prevMap = currentLevel.GetCurrent();
-                currentLevel.SetCurrent(player.ExittingSide());
+                var prev_map = current_level.GetCurrent();
+                current_level.SetCurrent(player.ExittingSide());
                 // fix the player's position
-                if (currentLevel.GetCurrent() != prevMap)
+                if (current_level.GetCurrent() != prev_map)
                     switch (player.ExittingSide().Value)
                     {
                         case Side.LEFT: player.SetPosition(16 * 16 - 16, null); break;
@@ -252,8 +252,8 @@ namespace Abyss.Master
         /// <param name="spriteBatch"></param>
         public void DrawUi(SpriteBatch spriteBatch)
         {
-            if (currentUi == null) return;
-            currentUi.Draw(spriteBatch, this);
+            if (current_ui == null) return;
+            current_ui.Draw(spriteBatch, this);
             //test_text.Draw(spriteBatch);
         }
 

@@ -25,7 +25,7 @@ namespace Abyss.Master
 
         public static Vector2 MousePosition()
         {
-            return new Vector2(Game._MouseState.X / (float)Globals.game_scale, Game._MouseState.Y / (float)Globals.game_scale);
+            return new Vector2(Game._MouseState.X / (float)Globals.GameScale, Game._MouseState.Y / (float)Globals.GameScale);
         }
 
         public static Vector2 MousePositionInGame()

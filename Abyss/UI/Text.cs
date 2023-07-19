@@ -95,7 +95,7 @@ namespace Abyss.UI
             {
                 spriteBatch.FillRectangle(new RectangleF(pos.X, pos.Y, size.X, size.Y), bg);
             }
-            spriteBatch.DrawString(Globals.FONT, text, pos, fg, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            spriteBatch.DrawString(Globals.Font, text, pos, fg, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
 
 
@@ -105,7 +105,7 @@ namespace Abyss.UI
         public static void Draw(SpriteBatch spriteBatch, StringBuilder input, Vector2 pos, float scale)
         {
             if (spriteBatch == null) return;
-            spriteBatch.DrawString(Globals.FONT, input.ToString(), pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            spriteBatch.DrawString(Globals.Font, input.ToString(), pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
         }
     }
 }

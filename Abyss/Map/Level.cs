@@ -23,21 +23,21 @@ namespace Abyss.Map
         private int length;
 
         // The current tile map to draw and read from
-        private TileMap Current;
+        private TileMap current;
 
         /**
          * Constructs a map manager
          * 
          * @param   TileMap     the current tile map to be read
          */
-        public Level(Map[] _Maps, string tileset)
+        public Level(Map[] maps, string tileset)
         {
-            this.length = _Maps.Length;
-            this.maps = _Maps;
+            this.length = maps.Length;
+            this.maps = maps;
             this.tileset = tileset;
         }
 
-        public void LoadLevel(ContentManager Content, int currentIndex)
+        public void LoadLevel(ContentManager Content, int current_index)
         {
             Texture2D _tileset = Content.Load<Texture2D>(tileset);
             Maps = new TileMap[length];
@@ -46,7 +46,7 @@ namespace Abyss.Map
                 Maps[i] = new TileMap(maps[i], _tileset);
             }
 
-            Current = Maps[currentIndex];
+            current = Maps[current_index];
         }
 
         public TileMap[] GetMaps() { return this.Maps; }
@@ -56,7 +56,7 @@ namespace Abyss.Map
          */
         public TileMap GetCurrent()
         {
-            return Current;
+            return current;
         }
 
         /**
@@ -66,22 +66,22 @@ namespace Abyss.Map
          */
         public void SetCurrent(TileMap _new)
         {
-            Current = _new;
+            current = _new;
         }
 
         public void SetCurrent(int index)
         {
-            Current = Maps[index];
+            current = Maps[index];
         }
 
         public void SetCurrent(Side? side)
         {
             switch (side.Value)
             {
-                case Side.LEFT: Current = Maps[Current.GetNext()[3]]; break;
-                case Side.RIGHT: Current = Maps[Current.GetNext()[1]]; break;
-                case Side.TOP: Current = Maps[Current.GetNext()[0]]; break;
-                case Side.BOTTOM: Current = Maps[Current.GetNext()[2]]; break;
+                case Side.LEFT: current = Maps[current.GetNext()[3]]; break;
+                case Side.RIGHT: current = Maps[current.GetNext()[1]]; break;
+                case Side.TOP: current = Maps[current.GetNext()[0]]; break;
+                case Side.BOTTOM: current = Maps[current.GetNext()[2]]; break;
             }
         }
 
@@ -90,7 +90,7 @@ namespace Abyss.Map
          */
         public Vector2 Max()
         {
-            return Current.getMax();
+            return current.getMax();
         }
 
         /** Gets the level's minimum position
@@ -99,7 +99,7 @@ namespace Abyss.Map
          */
         public Vector2 Min()
         {
-            return Current.getMin();
+            return current.getMin();
         }
     }
 }

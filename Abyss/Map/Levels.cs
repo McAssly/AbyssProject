@@ -16,9 +16,9 @@ namespace Abyss.Map
     internal class Levels
     {
         // TILESETS
-        private static readonly string TILESET_EASTWOODS = "tilesets/eastwoods";
+        private static readonly string TS_EASTWOODS = "tilesets/eastwoods";
 
         // MAPS
-        public static Level EASTWOODS = new Level(Eastwoods.Maps, TILESET_EASTWOODS);
+        public static Level Eastwoods = new Level(levels.Eastwoods.Maps, TS_EASTWOODS);
     }
 }

@@ -74,13 +74,13 @@ namespace Abyss.Map
             List<Side> ignores = new List<Side>();
 
             // get the current map position of this tile
-            Vector2 mapPosition = MathUtil.CoordsToTileCoords(pos);
+            Vector2 map_pos = MathUtil.CoordsToTileCoords(pos);
 
             // get the adjacent tile positions
-            Vector2 Left = mapPosition - new Vector2(1, 0);
-            Vector2 Right = mapPosition - new Vector2(-1, 0);
-            Vector2 Top = mapPosition - new Vector2(0, 1);
-            Vector2 Bottom = mapPosition - new Vector2(0, -1);
+            Vector2 Left = map_pos - new Vector2(1, 0);
+            Vector2 Right = map_pos - new Vector2(-1, 0);
+            Vector2 Top = map_pos - new Vector2(0, 1);
+            Vector2 Bottom = map_pos - new Vector2(0, -1);
 
             // LEFT SIDE
             if (IgnoreSide(Left.X, Left, 0, layer, true))
@@ -104,9 +104,9 @@ namespace Abyss.Map
         /** 
          * Determines whether the given side should be ignored
          */
-        private static bool IgnoreSide(float axis_position, Vector2 pos, float bound, MapLayer layer, bool isLowerBound)
+        private static bool IgnoreSide(float axis_position, Vector2 pos, float bound, MapLayer layer, bool is_lower_bound)
         {
-            if (isLowerBound)
+            if (is_lower_bound)
             {
                 if (axis_position < bound) // its out of bounds so therefore it needs to be ignored
                     return true;
@@ -131,12 +131,12 @@ namespace Abyss.Map
          */
         public SideDistance ClosestSide(Vector2 pos)
         {
-            List<Vector2> SidePositions = this.SidePositions();
+            List<Vector2> side_pos = this.SidePositions();
             List<SideDistance> distances = new List<SideDistance>();
-            for (int i = 0; i < SidePositions.Count(); i++) {
+            for (int i = 0; i < side_pos.Count(); i++) {
                 Side side = (Side)Enum.ToObject(typeof(Side), i);
                 if (!ignores.Contains(side))
-                    distances.Add(new SideDistance((pos - SidePositions[i]).Length(), side));
+                    distances.Add(new SideDistance((pos - side_pos[i]).Length(), side));
             }
 
             // in case there are no sides throw a new exception
@@ -157,7 +157,7 @@ namespace Abyss.Map
          */
         public Side CollisionSide(Vector2 pos) 
         {
-            List<Vector2> sidePos = this.SidePositions();
+            List<Vector2> side_pos = this.SidePositions();
             List<SideDistance> distances = new List<SideDistance>();
             for (int i=0; i<8; i++)
             {
@@ -165,12 +165,12 @@ namespace Abyss.Map
                 distances.Add(ClosestSide(offset_pos));
             }
 
-            SideDistance minSide = distances[0];
+            SideDistance min_side = distances[0];
             foreach (SideDistance sd in distances)
-                if (minSide.dist > sd.dist)
-                    minSide = sd;
+                if (min_side.dist > sd.dist)
+                    min_side = sd;
 
-            return minSide.side;
+            return min_side.side;
         }
 
         /** returns all the positions of each side of the tile
@@ -178,12 +178,12 @@ namespace Abyss.Map
         private List<Vector2> SidePositions()
         {
             // Initialize a list of side positions (order: 0->L, 1->R, 2->T, 3->B)
-            List<Vector2> sidePos = new List<Vector2>();
+            List<Vector2> side_pos = new List<Vector2>();
             // calculate and add each side at their respective offsets
             for (int i = 4; i < 8; i++)
-                sidePos.Add(this.pos + MathUtil.offsets[i]);
+                side_pos.Add(this.pos + MathUtil.offsets[i]);
 
-            return sidePos;
+            return side_pos;
         }
     }
 }
