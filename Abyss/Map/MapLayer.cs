@@ -104,15 +104,6 @@ namespace Abyss.Map
 
             // generate the actual tile map
             this.GenerateMapLayer(layer, true);
-
-            // then add in where the collision tiles need to ignore during collision
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    this.tiles[y, x].SidesToIgnore(this);
-                }
-            }
         }
 
         /** generates the layer mapping

@@ -53,8 +53,8 @@ namespace Abyss.Entities
         // for crits
         private protected static readonly Random random = new Random();
 
-        public Entity(Texture2D texture) 
-        { 
+        public Entity(Texture2D texture)
+        {
             this.texture = texture;
             _offsets = new Vector2[8]
                 {
@@ -76,7 +76,7 @@ namespace Abyss.Entities
             int iterations = 0;
             while (random.NextDouble() < crit_rate && iterations < 3)
             {
-                damage = damage + (damage * crit_dmg / (iterations+1));
+                damage = damage + (damage * crit_dmg / (iterations + 1));
                 iterations++;
             }
             this.last_damage = damage;
@@ -109,85 +109,51 @@ namespace Abyss.Entities
                 vel = MathUtil.MoveToward(vel, Vector2.Zero, friction * delta);
 
             // handle collision, if they are about to collide we must alter our velocity before we move forward
-            if (this.WillCollide(map) && vel != Vector2.Zero)
-            {
-                // get the side we will collide into and based on that alter out velocity
-                foreach (Side side in this.CollisionSide(map))
-                {
-                    /**
-                     * If we are colliding with the top or bottom of a tile's surface
-                     * then we will make sure they do not move in the y-axis
-                     * 
-                     * same for left/right on the x-axis
-                     */
-                    switch (side)
-                    {
-                        case Side.LEFT:
-                        case Side.RIGHT:
-                            vel.X = 0; break;
-                        case Side.TOP:
-                        case Side.BOTTOM:
-                            vel.Y = 0; break;
-                        default: break;
-                    }
-                }
-                // now that the collision was handled we can now move our entity
-                pos += vel;
-            }
-            else // nothing is standing in our way, ONWARD!
-                pos += vel;
+            if (this.WillCollideX(map) && vel.X != 0)
+                vel.X = 0;
+            if (this.WillCollideY(map) && vel.Y != 0)
+                vel.Y = 0;
+            pos += vel;
         }
 
-        /**
-         * Determines if the entity is about to collide with a collision tile
-         * 
-         * @param TileMap   the current map level
-         */
-        public bool WillCollide(TileMap map)
+        public bool WillCollideX(TileMap map)
         {
-            // we must loop through each offset of our entity
-            for (int i=0; i<8; i++)
+            // the only offsets needed for the x axis are the left and right offsets
+            // therefore ignore offsets @ i = 6 & 7
+            for (int i = 0; i < 8; i++)
             {
-                // we now will grab the tile position of where we are trying to move towards
-                Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
-                // then we will get the tile that we are trying to move towards, from the collision layer of the map
-                Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
-                if (!targetTile.NULL && targetTile.Colliding(pos + vel, new Vector2(Globals.TILE_SIZE))) // if said tile is a collision tile then we must check if we are colliding with that tile
-                    return true;
+                if (i == 6 || i == 7) continue;
+                if (vel.X > 0 && (i == 0 || i == 4 || i == 3)) continue; // ignore left side
+                if (vel.X < 0 && (i == 1 || i == 5 || i == 2)) continue; // ignore right side
+                if (CollisionCheckX(map, i)) return true;
             }
-            // if not a single check passed we won't collide so all is well, return false
+            return false;
+        }
+        public bool WillCollideY(TileMap map)
+        {
+            // the only offsets needed for the y axis are the top and bottom offsets
+            // therefore ignore offsets @ i = 4 & 5
+            for (int i = 0; i < 8; i++)
+            {
+                if (i == 4 || i == 5) continue;
+                if (vel.Y > 0 && (i == 0 || i == 6 || i == 2)) continue; // ignore top side
+                if (vel.Y < 0 && (i == 3 || i == 7 || i == 1)) continue; // ignore bottom side
+                if (CollisionCheckY(map, i)) return true;
+            }
             return false;
         }
 
-        /**
-         * Determines which sides the entity is colliding with
-         * 
-         * @param TileMap   the current map level of the game
-         */
-        public List<Side> CollisionSide(TileMap map)
+        public bool CollisionCheckX(TileMap map, int offset)
         {
-            List<Side> sides = new List<Side>();
-            for (int i = 0; i < 8; i++)
-            {
-                Vector2 tilePos_p = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + MathUtil.offsets[i]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetWidth() - 1));
-                Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + vel + MathUtil.offsets[i]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
-                // Ignore straight diagnal tiles as they are meaningless here, or rather they fuck shit up
-                if (!new List<Vector2>() {
-                            tilePos_p + new Vector2(1,1),
-                            tilePos_p + new Vector2(-1, -1),
-                            tilePos_p + new Vector2(-1, 1),
-                            tilePos_p + new Vector2(1, -1)
-                        }.Contains(tilePos))
-                {
-                    Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
-
-                    Side ClosestSide = targetTile.CollisionSide(pos);
-                    if (!targetTile.ignores.Contains(ClosestSide))
-                        sides.Add(ClosestSide);
-                }
-            }
-
-            return sides;
+            Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(vel.X, 0) + MathUtil.offsets[offset]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
+            Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
+            return !targetTile.NULL && targetTile.Colliding(this);
+        }
+        public bool CollisionCheckY(TileMap map, int offset)
+        {
+            Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(0, vel.Y) + MathUtil.offsets[offset]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
+            Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
+            return !targetTile.NULL && targetTile.Colliding(this);
         }
 
 
@@ -201,11 +167,12 @@ namespace Abyss.Entities
         /**
          * Getters/Setters
          */
-        public double MaxHealth() { return max_health; }
-        public double MaxMana() { return max_mana; }
-        public double Health() { return health; }
-        public double Mana() { return mana; }
-        public Vector2 Position() { return pos; }
+        public double GetMaxHealth() { return max_health; }
+        public double GetMaxMana() { return max_mana; }
+        public double GetHealth() { return health; }
+        public double GetMana() { return mana; }
+        public Vector2 GetPosition() { return pos; }
+        public Vector2 GetVelocity() { return vel; }
         public Rectangle GetDrawObj() { return draw_obj; }
 
         /**

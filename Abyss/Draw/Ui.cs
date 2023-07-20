@@ -42,9 +42,9 @@ namespace Abyss.Draw
             // draw the debug HUD on screen
             if (UiControllers.SHOW_DEBUG_HUD)
             {
-                Draw(new Text("HP: " + GM.player.Health() + "/" + GM.player.MaxHealth(), 16, 16, 0.5f));
-                Draw(new Text("MN: " + GM.player.Mana() + "/" + GM.player.MaxMana(), 16, 32, 0.5f));
-                Draw(new Text("POS: " + (int)GM.player.Position().X + ", " + (int)GM.player.Position().Y, 16, 48, 0.5f));
+                Draw(new Text("HP: " + GM.player.GetHealth() + "/" + GM.player.GetMaxHealth(), 16, 16, 0.5f));
+                Draw(new Text("MN: " + GM.player.GetMana() + "/" + GM.player.GetMaxMana(), 16, 32, 0.5f));
+                Draw(new Text("POS: " + (int)GM.player.GetPosition().X + ", " + (int)GM.player.GetPosition().Y, 16, 48, 0.5f));
                 Draw(new Text("Ms-W: " + (int)MathUtil.MousePosition().X + ", " + (int)MathUtil.MousePosition().Y, 16, 64, 0.4f));
                 Draw(new Text("Ms-G: " + (int)MathUtil.MousePositionInGame().X + ", " + (int)MathUtil.MousePositionInGame().Y, 16, 80, 0.4f));
                 Draw(new Text("Grim: " + GM.player.Inventory.grimoires[0].ToString() + ", " + GM.player.Inventory.grimoires[1].ToString(), 16, 96, 0.3f));

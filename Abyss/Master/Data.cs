@@ -61,11 +61,11 @@ namespace Abyss.Master
             if (pos_node != null && hp_node != null && mana_node != null)
             {
                 // save the position data
-                pos_node.InnerText = WriteData(new int[] { GM.GetMapIndex(), (int)GM.player.Position().X / 16, (int)GM.player.Position().Y / 16 }, ',');
+                pos_node.InnerText = WriteData(new int[] { GM.GetMapIndex(), (int)GM.player.GetPosition().X / 16, (int)GM.player.GetPosition().Y / 16 }, ',');
                 // save the health data
-                hp_node.InnerText = WriteData(new int[] { (int)GM.player.Health(), (int)GM.player.MaxHealth() }, '/');
+                hp_node.InnerText = WriteData(new int[] { (int)GM.player.GetHealth(), (int)GM.player.GetMaxHealth() }, '/');
                 // save the mana data
-                mana_node.InnerText = WriteData(new int[] { (int)GM.player.Mana(), (int)GM.player.MaxMana() }, '/');
+                mana_node.InnerText = WriteData(new int[] { (int)GM.player.GetMana(), (int)GM.player.GetMaxMana() }, '/');
                 // overite the data
                 save.Save(save_file);
             }

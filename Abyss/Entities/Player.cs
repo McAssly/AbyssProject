@@ -119,7 +119,7 @@ namespace Abyss.Entities
 
             /* ATTACK DETECTION AND CASTING */
             GM.player.Attack(KB, MS);
-            if (time_elapsed >= 1 && GM.player.Mana() < GM.player.MaxMana())
+            if (time_elapsed >= 1 && GM.player.GetMana() < GM.player.GetMaxMana())
             {
                 GM.player.AddMana(1);
                 time_elapsed = 0;
