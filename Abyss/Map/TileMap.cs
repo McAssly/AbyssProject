@@ -73,20 +73,6 @@ namespace Abyss.Map
             this.height = this.layers[0].GetHeight();
         }
 
-        /**
-         * Draws the map to the screen
-         * 
-         * @param   SpriteBatch     the sprite batch to draw to
-         * @param   Vector2         the position to map the draw to
-         */
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            foreach (MapLayer layer in layers)
-            {
-                layer.Draw(spriteBatch);
-            }
-        }
-
         public MapLayer GetCollisionLayer() { return this.collision_layer; }
 
         public int[] GetNext() { return this.next_maps; }

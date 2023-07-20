@@ -206,7 +206,7 @@ namespace Abyss.Entities
         public double Health() { return health; }
         public double Mana() { return mana; }
         public Vector2 Position() { return pos; }
-
+        public Rectangle GetDrawObj() { return draw_obj; }
 
         /**
          * Simply updates the draw object's position
@@ -221,17 +221,6 @@ namespace Abyss.Entities
             // the same goes for the y-axis
             if (draw_obj.Y != pos.Y)
                 draw_obj.Y = (int)pos.Y;
-        }
-
-        /**
-         * Draws the player sprite
-         * 
-         * @param   SpriteBatch     the sprite batch to draw to
-         */
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            if (spriteBatch == null) return;
-            spriteBatch.Draw(Globals.TestBox, draw_obj, Color.White);
         }
     }
 }

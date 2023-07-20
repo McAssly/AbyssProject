@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Microsoft.Xna.Framework.Graphics;
 using Abyss.Map;
+using System.Reflection.PortableExecutable;
 
 namespace Abyss.Entities
 {
@@ -47,6 +48,20 @@ namespace Abyss.Entities
         }
     }
 
+
+    internal struct SubParticle
+    {
+        public readonly Vector2 pos;
+        public readonly Vector2 vel;
+        public readonly double accel;
+        public readonly double rotation;
+
+        public void Update()
+        {
+
+        }
+    }
+
     /// <summary>
     /// A magic particle
     /// </summary>
@@ -54,6 +69,7 @@ namespace Abyss.Entities
     {
         // instance variables
         private protected Entity parent;
+        private protected List<SubParticle> particles;
         public Vector2 position;
         public Vector2 velocity;
         public double accel;
@@ -94,7 +110,7 @@ namespace Abyss.Entities
         /// <returns></returns>
         public bool IsColliding(Tile tile)
         {
-            return true;
+            return false;
         }
 
 
@@ -109,16 +125,6 @@ namespace Abyss.Entities
             velocity = MathUtil.ApplyAcceleration(velocity, accel * delta);
             position += velocity;
             lifetime -= Globals.PARTICLE_SUBTRACTOR * delta;
-        }
-
-        /// <summary>
-        /// Draws the particle
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        /// <param name="texture"></param>
-        public void Draw(SpriteBatch spriteBatch, Texture2D texture)
-        {
-            spriteBatch.Draw(texture, this.position, null, Color.White, (float)rotation, new Vector2(texture.Width/2, texture.Height/2), 1, SpriteEffects.None, 0);
         }
     }
 
@@ -247,19 +253,6 @@ namespace Abyss.Entities
 
             if (primary.cooldown > 0) primary.cooldown -= Globals.PARTICLE_SUBTRACTOR * delta;
             if (secondary.cooldown > 0) secondary.cooldown -= Globals.PARTICLE_SUBTRACTOR * delta;
-        }
-
-        /// <summary>
-        /// draws the grimoire
-        /// </summary>
-        /// <param name="spriteBatch"></param>
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            if (Globals.BaseSpell == null) return;
-            foreach (var particle in Particles)
-            {
-                particle.Draw(spriteBatch, Globals.BaseSpell);
-            }
         }
 
 

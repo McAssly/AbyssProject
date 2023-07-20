@@ -1,4 +1,5 @@
-﻿using Abyss.Entities;
+﻿using Abyss.Draw;
+using Abyss.Entities;
 using Abyss.Map;
 using Abyss.UI;
 using Microsoft.Xna.Framework;
@@ -14,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Abyss.Master
-{   
+{
     internal class GameMaster
     {
         // declare testing placeholders ---------------------------------------------------------------------------------------------
@@ -233,28 +234,27 @@ namespace Abyss.Master
         /// Draw's the current game state
         /// </summary>
         /// <param name="spriteBatch"></param>
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(DrawBatch sprite_batch)
         {
             // draw the current level map
-            GetCurrentTileMap().Draw(spriteBatch);
+            sprite_batch.Draw(current_level.GetCurrent());
 
             // draw the player
-            player.Draw(spriteBatch);
+            sprite_batch.Draw(player);
 
             // draw the particles of the game
-            player.Inventory.grimoires[0].Draw(spriteBatch);
-            player.Inventory.grimoires[1].Draw(spriteBatch);
+            sprite_batch.Draw(player.Inventory.grimoires[0]);
+            sprite_batch.Draw(player.Inventory.grimoires[1]);
         }
 
         /// <summary>
         /// Draw's the current Ui of the game
         /// </summary>
-        /// <param name="spriteBatch"></param>
-        public void DrawUi(SpriteBatch spriteBatch)
+        /// <param name="sprite_batch"></param>
+        public void DrawUi(DrawBatch sprite_batch)
         {
             if (current_ui == null) return;
-            current_ui.Draw(spriteBatch, this);
-            //test_text.Draw(spriteBatch);
+            sprite_batch.Draw(current_ui, this);
         }
 
 

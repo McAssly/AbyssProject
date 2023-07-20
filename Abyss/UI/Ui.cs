@@ -80,7 +80,6 @@ namespace Abyss.UI
         public bool IsClosed();
         public void UnClose();
         public void Update(KeyboardState KB, MouseState MS);
-        public void Draw(SpriteBatch spriteBatch, GameMaster GM);
     }
 
     internal class Hud : Ui
@@ -93,27 +92,6 @@ namespace Abyss.UI
         public Hud() { }
 
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch, GameMaster GM) 
-        {
-            if (spriteBatch == null) return;
-
-
-            // draw the debug HUD on screen
-            if (UiControllers.SHOW_DEBUG_HUD)
-            {
-                new Text("HP: " + GM.player.Health() + "/" + GM.player.MaxHealth(), 16, 16, 0.5f).Draw(spriteBatch);
-                new Text("MN: " + GM.player.Mana() + "/" + GM.player.MaxMana(), 16, 32, 0.5f).Draw(spriteBatch);
-                new Text("POS: " + (int)GM.player.Position().X + ", " + (int)GM.player.Position().Y, 16, 48, 0.5f).Draw(spriteBatch);
-                new Text("Ms-W: " + (int)MathUtil.MousePosition().X + ", " + (int)MathUtil.MousePosition().Y, 16, 64, 0.4f).Draw(spriteBatch);
-                new Text("Ms-G: " + (int)MathUtil.MousePositionInGame().X + ", " + (int)MathUtil.MousePositionInGame().Y, 16, 80, 0.4f).Draw(spriteBatch);
-                new Text("Grim: " + GM.player.Inventory.grimoires[0].ToString() + ", " + GM.player.Inventory.grimoires[1].ToString(), 16, 96, 0.3f).Draw(spriteBatch);
-                new Text("DMG: " + GM.player.last_damage, 16, 112, 0.3f).Draw(spriteBatch);
-            }
-            else // draw the regular HUD
-            {
-
-            }
-        }
     }
 
     internal class Interaction : Ui
@@ -140,7 +118,6 @@ namespace Abyss.UI
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch, GameMaster GM) { dialogue.Draw(spriteBatch); }
     }
 
     internal class Console : Ui
@@ -206,12 +183,6 @@ namespace Abyss.UI
                     break;
             }
         }
-
-        public void Draw(SpriteBatch spriteBatch, GameMaster GM)
-        {
-            spriteBatch.FillRectangle(new RectangleF(0, 0, Globals.WindowW, Globals.TILE_SIZE * 2), Globals.Black);
-            Text.Draw(spriteBatch, Game._TextInput, new Vector2(8, 8), (float)0.2);
-        }
     }
 
     internal class Inventory : Ui
@@ -221,7 +192,6 @@ namespace Abyss.UI
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch, GameMaster GM) { }
     }
 
     internal class Menu : Ui
@@ -231,6 +201,5 @@ namespace Abyss.UI
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
-        public void Draw(SpriteBatch spriteBatch, GameMaster GM) { }
     }
 }

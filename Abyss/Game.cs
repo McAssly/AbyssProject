@@ -10,13 +10,14 @@ using Abyss.UI;
 using Abyss.Master;
 using System.Text;
 using System.Diagnostics;
+using Abyss.Draw;
 
 namespace Abyss
 {
     public class Game : Microsoft.Xna.Framework.Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        private DrawBatch sprite_batch;
 
         private GameMaster game_state;
 
@@ -56,7 +57,7 @@ namespace Abyss
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            sprite_batch = new DrawBatch(GraphicsDevice);
 
             // Load the game font
             Globals.Font = Content.Load<SpriteFont>("font");
@@ -128,7 +129,7 @@ namespace Abyss
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Globals.Black); // background color and clears after each frame
-            _spriteBatch.Begin(
+            sprite_batch.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
@@ -139,14 +140,14 @@ namespace Abyss
                 ) ; // start drawing through the sprite batch
 
             // Draw the level and its entities
-            game_state.Draw(_spriteBatch);
+            game_state.Draw(sprite_batch);
 
-            _spriteBatch.End(); // end the sprite batch
+            sprite_batch.End(); // end the sprite batch
 
 
             // Draw UI
 
-            _spriteBatch.Begin(
+            sprite_batch.Begin(
                 SpriteSortMode.Deferred,
                 BlendState.AlphaBlend,
                 SamplerState.PointClamp,
@@ -158,9 +159,9 @@ namespace Abyss
             
             
             // Draw the UI
-            game_state.DrawUi(_spriteBatch);
+            game_state.DrawUi(sprite_batch);
 
-            _spriteBatch.End();
+            sprite_batch.End();
 
             base.Draw(gameTime);
         }

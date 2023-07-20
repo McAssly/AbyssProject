@@ -172,33 +172,9 @@ namespace Abyss.Map
             return tiles;
         }
 
-
-        /**
-         * Draws the tile layer
-         * 
-         * @param   SpriteBatch     the spritebatch to draw to
-         */
-        public void Draw(SpriteBatch spriteBatch)
+        public Texture2D GetTileset()
         {
-            // loop through the tile grid
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    // if the tile is not null then it can be drawn
-                    if (!tiles[y, x].NULL)
-                    {
-                        // draw the tile
-                        spriteBatch.Draw
-                            (
-                                tileset,
-                                new Rectangle((int)tiles[y, x].pos.X, (int)tiles[y, x].pos.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
-                                tiles[y, x].rect,
-                                Color.White
-                            );
-                    }
-                }
-            }
+            return tileset;
         }
     }
 }

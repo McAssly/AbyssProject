@@ -75,37 +75,38 @@ namespace Abyss.UI
                 && m.Y >= pos.Y && m.Y <= pos.Y + size.Y;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public bool IsSelectable()
         {
-            if (spriteBatch == null) return;
-            Color bg, fg;
-            fg = Color.White;
-            bg = Globals.Black;
-            // the text is selectable change the colors when hovering
-            if (selectable)
-            {
-                if (Hovering()) // the user is hovering over the textbox
-                { // invert the background and foreground colors
-                    bg = Color.White;
-                    fg = Globals.Black;
-                }
-                spriteBatch.FillRectangle(new RectangleF(pos.X, pos.Y, size.X, size.Y), bg);
-            }
-            else
-            {
-                spriteBatch.FillRectangle(new RectangleF(pos.X, pos.Y, size.X, size.Y), bg);
-            }
-            spriteBatch.DrawString(Globals.Font, text, pos, fg, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            return this.selectable;
         }
 
-
-
-
-
-        public static void Draw(SpriteBatch spriteBatch, StringBuilder input, Vector2 pos, float scale)
+        public float GetX()
         {
-            if (spriteBatch == null) return;
-            spriteBatch.DrawString(Globals.Font, input.ToString(), pos, Color.White, 0, Vector2.Zero, scale, SpriteEffects.None, 0);
+            return pos.X;
+        }
+        public float GetY()
+        {
+            return pos.Y;
+        }
+        public Vector2 GetPosition()
+        {
+            return pos;
+        }
+        public float GetWidth()
+        {
+            return size.X;
+        }
+        public float GetHeight()
+        {
+            return size.Y;
+        }
+        public float GetScale()
+        {
+            return scale;
+        }
+        public string GetText()
+        {
+            return text;
         }
     }
 }

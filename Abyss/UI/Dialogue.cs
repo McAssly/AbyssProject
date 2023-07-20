@@ -20,13 +20,5 @@ namespace Abyss.UI
             this.Next = next;
             this.options = options;
         }
-
-        public void Draw(SpriteBatch spriteBatch)
-        {
-            master.Draw(spriteBatch);
-            if (options != null)
-                foreach (Text option in options)
-                    option.Draw(spriteBatch);
-        }
     }
 }
