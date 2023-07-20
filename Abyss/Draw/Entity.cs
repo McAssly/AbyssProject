@@ -13,7 +13,7 @@ namespace Abyss.Draw
     {
         public void Draw(Entity entity) // placeholder
         {
-            Draw(Globals.TestBox, entity.GetDrawObj(), Color.White);
+            Draw(Globals.TestBox, entity.GetDrawObj(), null, Color.White);
         }
 
         public void Draw(Grimoire grimoire)
@@ -27,7 +27,20 @@ namespace Abyss.Draw
 
         public void Draw(Particle particle, Texture2D texture)
         {
-            Draw(texture, particle.position, null, Color.White, (float)particle.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1, SpriteEffects.None, 0);
+            foreach (SubParticle sub_particle in particle.particles)
+            {
+                this.Draw(sub_particle, particle, texture);
+            }
+        }
+
+        public void Draw(SubParticle sub_particle, Particle parent, Texture2D texture)
+        {
+            Draw(texture, parent.position + sub_particle.displacement, null, Color.White, (float)parent.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1, SpriteEffects.None, 0);
+        }
+
+        public void Draw(SubParticle particle, Texture2D texture)
+        {
+
         }
     }
 }

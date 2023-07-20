@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace Abyss.Map
 {
-    /**
-     * This strcture is intended for storing map segments, or full map levels
-     * 
-     */
+    /// <summary>
+    /// stores map segments for level data
+    /// </summary>
     internal struct Map
     {
         // Represents the assortment of tiles within different layers (lower the layer the higher load priority)
@@ -20,12 +19,16 @@ namespace Abyss.Map
         // the map to go to based on the direction given, 0 = north, 1 = east, 2 = south, 3 = west
         public int[] index_locations;
 
-        /**
-         * Constructs a Map structure for basic storage of levels (might be a bit slow)
-         * 
-         * @param   uint            Id for the level
-         * @param   uint[,,]        3D array of tileIds, (1st element is the layer id)
-         */
+        /// <summary>
+        /// constructs the map segement with its associated data
+        /// </summary>
+        /// <param name="tile_layers"></param>
+        /// <param name="collision_layer"></param>
+        /// <param name="z_index"></param>
+        /// <param name="north_index"></param>
+        /// <param name="east_index"></param>
+        /// <param name="south_index"></param>
+        /// <param name="west_index"></param>
         public Map(Layer[] tile_layers, Layer collision_layer, int north_index = -1, int east_index = -1, int south_index = -1, int west_index = -1)
         {
             this.tile_layers = tile_layers;
@@ -37,10 +40,13 @@ namespace Abyss.Map
         }
     }
 
+    /// <summary>
+    /// The tile map used for drawing and collision
+    /// </summary>
     internal class TileMap
     {
         // The tileset layers to be loaded
-        private List<MapLayer> layers = new List<MapLayer>();
+        private MapLayer[] layers = new MapLayer[16];
         // Set the collision layer
         private MapLayer collision_layer;
         // The width and height of the map (default: 1x1)
@@ -48,18 +54,20 @@ namespace Abyss.Map
         // map directions
         private int[] next_maps;
 
-        /**
-         * TileMap constructor loads a given map into a usable tilemap object
-         * 
-         * @param   Map     takes the given level (map) to be loaded
-         */
+        /// <summary>
+        /// constructs the tile map
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="tileset"></param>
         public TileMap(Map map, Texture2D tileset)
         {
+            List<MapLayer> map_layers = new List<MapLayer>();
             // Next construct the maplayer array
             for (uint i = 0; i < map.tile_layers.Length; i++)
             {
-                layers.Add(new MapLayer(map.tile_layers[i], tileset));
+                map_layers.Add(new MapLayer(map.tile_layers[i], tileset));
             }
+            layers = map_layers.ToArray();
 
             // set the collisoon layer
             collision_layer = new MapLayer(map.collision_layer);
@@ -78,7 +86,7 @@ namespace Abyss.Map
         public int[] GetNext() { return this.next_maps; }
         public int GetWidth() { return width; }
         public int GetHeight() { return height; }
-        public List<MapLayer> GetLayers()
+        public MapLayer[] GetLayers()
         {
             return layers;
         }

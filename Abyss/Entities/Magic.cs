@@ -48,17 +48,29 @@ namespace Abyss.Entities
         }
     }
 
-
     internal struct SubParticle
     {
-        public readonly Vector2 pos;
-        public readonly Vector2 vel;
+        public Vector2 displacement;
+        public Vector2 velocity;
         public readonly double accel;
-        public readonly double rotation;
+        public double rotation;
+        public readonly double angular_vel;
 
-        public void Update()
+        public SubParticle(double x, double y, double vx, double vy, double accel, double angular_vel)
         {
+            this.displacement = new Vector2((float)x, (float)y);
+            this.velocity = new Vector2((float)vx, (float)vy);
+            this.accel = accel;
+            this.rotation = 0;
+            this.angular_vel = angular_vel;
+        }
 
+        public void Update(double delta)
+        {
+            rotation += angular_vel;
+            if (accel > 0) velocity += MathUtil.ApplyAcceleration(velocity, accel * delta);
+            displacement += velocity;
+            displacement = MathUtil.Rotate(Vector2.Zero, displacement, rotation);
         }
     }
 
@@ -69,7 +81,7 @@ namespace Abyss.Entities
     {
         // instance variables
         private protected Entity parent;
-        private protected List<SubParticle> particles;
+        public SubParticle[] particles;
         public Vector2 position;
         public Vector2 velocity;
         public double accel;
@@ -80,7 +92,7 @@ namespace Abyss.Entities
 
 
         /** PARTICLE CONSTRUCTOR */
-        public Particle(Entity parent, Vector2 position, Vector2 velocity, ParticleController pc, double damage, double rotation)
+        public Particle(Entity parent, Vector2 position, Vector2 velocity, ParticleController pc, double damage, double rotation, SubParticle[] sub_particles)
         {
             this.parent = parent;
             this.position = position;
@@ -90,6 +102,7 @@ namespace Abyss.Entities
             this.element = pc.element;
             this.damage = damage;
             this.rotation = rotation;
+            this.particles = sub_particles;
         }
 
 
@@ -122,6 +135,8 @@ namespace Abyss.Entities
         /// <param name="delta"></param>
         public void Update(double delta)
         {
+            for (int i = 0; i < particles.Length; i++)
+                particles[i].Update(delta);
             velocity = MathUtil.ApplyAcceleration(velocity, accel * delta);
             position += velocity;
             lifetime -= Globals.PARTICLE_SUBTRACTOR * delta;
@@ -134,8 +149,11 @@ namespace Abyss.Entities
         private ParticleController primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1);
         private ParticleController secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
 
-
-
+        private protected SubParticle[] sub_particles = new SubParticle[2]
+            {
+                new SubParticle(0, 0, 0, 0, 0, 0),
+                new SubParticle(1, 1, 0, 0, 0, 0.3)
+            };
 
         /**    ATTACK SEQUENCE    */
 
@@ -183,7 +201,8 @@ namespace Abyss.Entities
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(target, position),
                 primary, parent.CalculateDamage(primary.base_damage),
-                Math.Atan2(target.Y - position.Y, target.X - position.X)
+                Math.Atan2(target.Y - position.Y, target.X - position.X),
+                (SubParticle[])sub_particles.Clone()
                 ));
         }
 
@@ -202,29 +221,32 @@ namespace Abyss.Entities
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(target, position),
                 secondary, parent.CalculateDamage(secondary.base_damage),
-                rotation
+                rotation,
+                (SubParticle[])sub_particles.Clone()
                 ));
 
             double length = Math.Sqrt(Math.Pow(target.X - position.X, 2) + Math.Pow(target.Y - position.Y, 2));
 
             // left particle
             double left_rotation = rotation - 0.18;
-            Vector2 left_target = new Vector2((float)(position.X + length * Math.Cos(left_rotation)), (float)(position.Y + length * Math.Sin(left_rotation)));
+            Vector2 left_target = MathUtil.Rotate(position, target, left_rotation);
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(left_target, position),
                 secondary, parent.CalculateDamage(secondary.base_damage),
-                left_rotation
+                left_rotation,
+                (SubParticle[])sub_particles.Clone()
                 ));
 
             // right particle
             double right_rotation = rotation + 0.18;
-            Vector2 right_target = new Vector2((float)(position.X + length * Math.Cos(right_rotation)), (float)(position.Y + length * Math.Sin(right_rotation)));
+            Vector2 right_target = MathUtil.Rotate(position, target, right_rotation);
             Particles.Add(new Particle(
                 parent, position + new Vector2(8, 8),
                 Vector2.Subtract(right_target, position),
                 secondary, parent.CalculateDamage(secondary.base_damage),
-                right_rotation
+                right_rotation,
+                (SubParticle[])sub_particles.Clone()
                 ));
         }
 

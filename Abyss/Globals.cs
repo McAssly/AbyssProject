@@ -48,6 +48,14 @@ namespace Abyss
         public static SpriteFont Font;
         public static Texture2D BaseSpell = null;
 
+        // DRAW LAYERS
+        public static readonly float floor_z = 0.05f;
+        public static readonly float deco_z = 0.04f;
+        public static readonly float entity_z = 0.03f;
+        public static readonly float wall_z = 0.02f;
+        public static readonly float exterior1_z = 0.01f;
+        public static readonly float exterior2_z = 0.0f;
+
 
         /** Update the game scale when the window is resized:
          */

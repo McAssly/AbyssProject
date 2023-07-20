@@ -9,15 +9,11 @@ using System.Threading.Tasks;
 
 namespace Abyss.Map
 {
-    /**
-     * Layer
-     * 
-     * For storage of levels
-     * Acts as a single tile layer storing very basic tile information
-     * 
-     * the tiles array is a grid of the tiles within the layer representing the index of which tile to use
-     * blocked determines if said layer has collision or not
-     */
+    /// <summary>
+    /// Layer data storage. Acts as a single tile layer storing very basic tile information. 
+    /// The tiles array is a grid of the tiles within the layer representing the index of which tile to use
+    /// blocked determines if said layer has collision or not
+    /// </summary>
     internal struct Layer
     {
         public bool blocked;

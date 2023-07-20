@@ -104,6 +104,12 @@ namespace Abyss.Master
             return normalized * new Vector2((float)(magnitude + accel));
         }
 
+        public static Vector2 Rotate(Vector2 origin, Vector2 vec, double angle)
+        {
+            double length = Math.Sqrt(Math.Pow(vec.X - origin.X, 2) + Math.Pow(vec.Y - origin.Y, 2));
+            return new Vector2((float)(origin.X + length * Math.Cos(angle)), (float)(origin.Y + length * Math.Sin(angle)));
+        }
+
         /**
          * Returns a numerical value of 1 or 0 depending on whether the key is being pressed or not
          * 

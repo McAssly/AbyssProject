@@ -44,7 +44,7 @@ namespace Abyss.Draw
                                 new Rectangle((int)layer.GetTiles()[y, x].pos.X, (int)layer.GetTiles()[y, x].pos.Y, Globals.TILE_SIZE, Globals.TILE_SIZE),
                                 layer.GetTiles()[y, x].rect,
                                 Color.White
-                            );
+                            ) ;
                     }
                 }
             }
