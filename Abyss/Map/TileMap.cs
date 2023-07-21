@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Entities;
+using Abyss.Master;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +22,9 @@ namespace Abyss.Map
         // the map to go to based on the direction given, 0 = north, 1 = east, 2 = south, 3 = west
         public int[] index_locations;
 
+        // list of entities on the map
+        public Entity[] entities;
+
         /// <summary>
         /// constructs the map segement with its associated data
         /// </summary>
@@ -29,7 +35,7 @@ namespace Abyss.Map
         /// <param name="east_index"></param>
         /// <param name="south_index"></param>
         /// <param name="west_index"></param>
-        public Map(Layer[] tile_layers, Layer collision_layer, int north_index = -1, int east_index = -1, int south_index = -1, int west_index = -1)
+        public Map(Layer[] tile_layers, Layer collision_layer, Entity[] entities, int north_index = -1, int east_index = -1, int south_index = -1, int west_index = -1)
         {
             this.tile_layers = tile_layers;
             this.collision_layer = collision_layer;
@@ -37,6 +43,7 @@ namespace Abyss.Map
             {
                 north_index, east_index, south_index, west_index
             };
+            this.entities = entities;
         }
     }
 
@@ -53,6 +60,8 @@ namespace Abyss.Map
         private int width, height = 1;
         // map directions
         private int[] next_maps;
+        // the entities on the map
+        private protected readonly Entity[] entities;
 
         /// <summary>
         /// constructs the tile map
@@ -75,10 +84,18 @@ namespace Abyss.Map
             // set the next map indicies
             this.next_maps = map.index_locations;
 
+            // set the entities
+            this.entities = (Entity[])map.entities.Clone();
+
             // Next we need the width and height of the tilemap
             // first grab any layer doesn't matter and grab their respective width/height
             this.width = this.layers[0].GetWidth();
             this.height = this.layers[0].GetHeight();
+        }
+
+        public Entity[] GetEntities()
+        {
+            return MathUtil.CloneArray(entities);
         }
 
         public MapLayer GetCollisionLayer() { return this.collision_layer; }

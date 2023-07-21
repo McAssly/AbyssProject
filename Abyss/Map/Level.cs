@@ -1,10 +1,13 @@
-﻿using Abyss.Master;
+﻿using Abyss.Entities;
+using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +27,7 @@ namespace Abyss.Map
 
         // The current tile map to draw and read from
         private TileMap current;
+        private List<Entity> current_entities;
 
         /**
          * Constructs a map manager
@@ -47,6 +51,7 @@ namespace Abyss.Map
             }
 
             current = Maps[current_index];
+            current_entities = Maps[current_index].GetEntities().ToList();
         }
 
         public TileMap[] GetMaps() { return this.Maps; }
@@ -59,6 +64,11 @@ namespace Abyss.Map
             return current;
         }
 
+        public List<Entity> GetEntities()
+        {
+            return this.current_entities;
+        }
+
         /**
          * Changes the current tile map to the given
          * 
@@ -67,11 +77,13 @@ namespace Abyss.Map
         public void SetCurrent(TileMap _new)
         {
             current = _new;
+            current_entities = _new.GetEntities().ToList();
         }
 
         public void SetCurrent(int index)
         {
             current = Maps[index];
+            current_entities = Maps[index].GetEntities().ToList();
         }
 
         public void SetCurrent(Side? side)
@@ -82,6 +94,12 @@ namespace Abyss.Map
                 case Side.RIGHT: current = Maps[current.GetNext()[1]]; break;
                 case Side.TOP: current = Maps[current.GetNext()[0]]; break;
                 case Side.BOTTOM: current = Maps[current.GetNext()[2]]; break;
+            }
+            current_entities = current.GetEntities().ToList();
+            Debug.WriteLine(current_entities.Count);
+            if (current_entities.Count > 0)
+            {
+                Debug.WriteLine(current_entities[0]);
             }
         }
 

@@ -229,6 +229,17 @@ namespace Abyss.Master
             // player attacks
             player.Inventory.grimoires[0].Update(delta, this);
             player.Inventory.grimoires[1].Update(delta, this);
+
+            // Update the entities
+            // enemies
+            current_level.GetEntities().RemoveAll(x => x.GetHealth() <= 0);
+            foreach (Entity entity in current_level.GetEntities())
+                for (int i = 0; i < 2; i++)
+                {
+                    double damage_dealt = player.Inventory.grimoires[i].Hits(entity);
+                    if (damage_dealt != 0)
+                        entity.ReduceHealth(damage_dealt);
+                }
         }
 
 
@@ -245,6 +256,10 @@ namespace Abyss.Master
         {
             // draw the current level map
             sprite_batch.Draw(current_level.GetCurrent());
+
+            // draw the entities
+            if (current_level.GetEntities().Count > 0)
+                sprite_batch.Draw(current_level.GetEntities());
 
             // draw the player
             sprite_batch.Draw(player);

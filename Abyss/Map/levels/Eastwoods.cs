@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Abyss;
+using Abyss.Entities;
+using Abyss.Entities.Enemies;
 
 namespace Abyss.Map.levels
 {
@@ -93,6 +95,12 @@ namespace Abyss.Map.levels
                             {0,1,0,0,0,0,0,0,0,0,0,1,1,1,0,0},
                             {0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0}
                         }),
+                    new Entity[3]
+                        { 
+                            new Rat(4, 5),
+                            new Rat(13, 5),
+                            new Rat(4, 13)
+                        },
                     1, default, default, default),
                 // the tower of time map
                 new Map(
@@ -194,6 +202,7 @@ namespace Abyss.Map.levels
                         {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1},
                         {0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1}
                     }),
+                    new Entity[]{ },
                     default, default, 0, default) };
     };
 }

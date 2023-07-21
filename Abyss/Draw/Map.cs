@@ -22,9 +22,7 @@ namespace Abyss.Draw
         public void Draw(TileMap tilemap)
         {
             foreach (MapLayer layer in tilemap.GetLayers())
-            {
                 Draw(layer);
-            }
         }
 
         public void Draw(MapLayer layer)

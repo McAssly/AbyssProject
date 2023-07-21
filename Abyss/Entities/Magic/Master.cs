@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using Microsoft.Xna.Framework.Graphics;
 using Abyss.Map;
 using System.Reflection.PortableExecutable;
+using System.Diagnostics;
 
 namespace Abyss.Entities.Magic
 {
@@ -113,7 +114,7 @@ namespace Abyss.Entities.Magic
         /// <returns></returns>
         public bool IsColliding(Entity entity)
         {
-            return false;
+            return MathUtil.IsWithin(position, entity.GetPosition().X, entity.GetPosition().X + entity.GetWidth(), entity.GetPosition().Y, entity.GetPosition().Y + entity.GetHeight());
         }
 
         /// <summary>
@@ -244,6 +245,24 @@ namespace Abyss.Entities.Magic
             double right_rotation = rotation + 0.18;
             Vector2 right_target = MathUtil.Rotate(position, target, right_rotation);
             GenerateParticle(parent, Vector2.Subtract(right_target, position), 1, right_rotation);
+        }
+
+
+        /// <summary>
+        /// Detects if the entity is hit by any particle the grimoire casted, and returns the damage that particle deals then removes said particle
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public double Hits(Entity entity)
+        {
+            Particle dealer = Particles.Find(x => x.IsColliding(entity));
+            if (dealer != null)
+            {
+                double damage = dealer.damage;
+                Particles.Remove(dealer);
+                return damage;
+            }
+            return 0;
         }
 
         public void GenerateParticle(Entity parent, Vector2 velocity, byte type, double rotation)

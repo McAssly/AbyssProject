@@ -1,9 +1,11 @@
-﻿using Abyss.Map;
+﻿using Abyss.Entities.Enemies;
+using Abyss.Map;
 using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -56,6 +58,16 @@ namespace Abyss.Entities
 
         // for crits
         private protected static readonly Random random = new Random();
+
+        public Entity()
+        {
+
+        }
+
+        public Entity(float x, float y)
+        {
+            this.pos = new Vector2(x * 16, y * 16);
+        }
 
         public Entity(Texture2D texture)
         {
@@ -200,7 +212,8 @@ namespace Abyss.Entities
         public Vector2 GetPosition() { return pos; }
         public Vector2 GetVelocity() { return vel; }
         public Rectangle GetDrawObj() { return draw_obj; }
-
+        public int GetWidth() { return draw_obj.Width; }
+        public int GetHeight() { return draw_obj.Height; }
         /**
          * Simply updates the draw object's position
          */
