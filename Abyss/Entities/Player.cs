@@ -1,4 +1,5 @@
-﻿using Abyss.Map;
+﻿using Abyss.Entities.Magic;
+using Abyss.Map;
 using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -125,7 +126,18 @@ namespace Abyss.Entities
                 time_elapsed = 0;
             }
 
+            if (statuses.Count != 0)
+            {
+                for (int i = 0; i < statuses.Count; i++)
+                {
+                    StatusEffect status_copy = statuses[i];
+                    status_copy.timer -= 1;
+                    statuses[i] = status_copy;
+                }
+                statuses.RemoveAll(effect => effect.timer <= 0);
+            }
             time_elapsed += delta;
+            regen_timer += delta;
         }
 
 

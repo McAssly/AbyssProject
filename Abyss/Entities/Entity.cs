@@ -44,8 +44,12 @@ namespace Abyss.Entities
         private protected Vector2 pos;
         private protected Vector2 vel = Vector2.Zero; // starts off not moving
 
+        // declare the status effects to be applied
+        public List<StatusEffect> statuses;
+
         // time elapsed
         private protected double time_elapsed = 0;
+        public double regen_timer = 0;
 
         // last damage applied
         public double last_damage = 0;
@@ -55,6 +59,7 @@ namespace Abyss.Entities
 
         public Entity(Texture2D texture)
         {
+            this.statuses = new List<StatusEffect>();
             this.texture = texture;
             _offsets = new Vector2[8]
                 {
@@ -72,7 +77,22 @@ namespace Abyss.Entities
 
         public double CalculateDamage(double base_dmg)
         {
+            // do the temp variables
+            double crit_dmg = this.crit_dmg;
+            double crit_rate = this.crit_rate;
             double damage = base_dmg * this.damage;
+
+            // find any required statuses and apply the status effects
+            StatusEffect? crit_rate_effect = statuses.Find(effect => effect.application_id == 0);
+            StatusEffect? crit_dmg_effect = statuses.Find(effect => effect.application_id == 1);
+            StatusEffect? damage_effect = statuses.Find(effect => effect.application_id == 2);
+
+            // if the efffects existed then apply the effect
+            if (crit_rate_effect.HasValue) crit_rate += crit_rate_effect.Value.value;
+            if (crit_dmg_effect.HasValue) crit_dmg += crit_dmg_effect.Value.value;
+            if (damage_effect.HasValue) damage += damage_effect.Value.value;
+
+            // calculate the actual damage values
             int iterations = 0;
             while (random.NextDouble() < crit_rate && iterations < 3)
             {
@@ -81,6 +101,12 @@ namespace Abyss.Entities
             }
             this.last_damage = damage;
             return damage;
+        }
+
+        public void ReduceHealth(double amount)
+        {
+            health -= amount;
+            if (health < 0) health = 0;
         }
 
         public void ReduceMana(double cost)

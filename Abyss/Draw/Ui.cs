@@ -1,4 +1,5 @@
-﻿using Abyss.Master;
+﻿using Abyss.Entities;
+using Abyss.Master;
 using Abyss.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -51,6 +52,12 @@ namespace Abyss.Draw
                 Draw(new Text("DMG: " + GM.player.last_damage, 16, 112, 0.3f));
                 Draw(new Text((int)GM.fps + " fps", (int) Globals.DrawPosition.X + 16 * 17, 16, 0.5f));
                 Draw(new Text(1 / GM.fps + "", (int)Globals.DrawPosition.X + 16 * 17, 32, 0.5f));
+                // draw the status effects on the player
+                for (int i = 0; i < GM.player.statuses.Count; i++)
+                {
+                    StatusEffect effect = GM.player.statuses[i];
+                    Draw(new Text(effect.ToString(), (int)Globals.DrawPosition.X + 16 * 17, 48 + 8 * i, 0.3f));
+                }
             }
             else // draw the regular HUD
             {

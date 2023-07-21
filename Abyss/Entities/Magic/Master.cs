@@ -11,14 +11,14 @@ using Microsoft.Xna.Framework.Graphics;
 using Abyss.Map;
 using System.Reflection.PortableExecutable;
 
-namespace Abyss.Entities
+namespace Abyss.Entities.Magic
 {
     /// <summary>
     /// The elemental type of a particle
     /// </summary>
     internal enum Element
     {
-        NULL = 0, 
+        NULL = 0, water = 1
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ namespace Abyss.Entities
             this.mana_cost = mana_cost;
             this.accel = accel;
             this.cooldown_max = cooldown_max;
-            this.cooldown = 0;
+            cooldown = 0;
         }
     }
 
@@ -58,10 +58,10 @@ namespace Abyss.Entities
 
         public SubParticle(double x, double y, double vx, double vy, double accel, double angular_vel)
         {
-            this.displacement = new Vector2((float)x, (float)y);
-            this.velocity = new Vector2((float)vx, (float)vy);
+            displacement = new Vector2((float)x, (float)y);
+            velocity = new Vector2((float)vx, (float)vy);
             this.accel = accel;
-            this.rotation = 0;
+            rotation = 0;
             this.angular_vel = angular_vel;
         }
 
@@ -97,12 +97,12 @@ namespace Abyss.Entities
             this.parent = parent;
             this.position = position;
             this.velocity = velocity;
-            this.accel = pc.accel;
-            this.lifetime = pc.lifetime;
-            this.element = pc.element;
+            accel = pc.accel;
+            lifetime = pc.lifetime;
+            element = pc.element;
             this.damage = damage;
             this.rotation = rotation;
-            this.particles = sub_particles;
+            particles = sub_particles;
         }
 
 
@@ -152,17 +152,31 @@ namespace Abyss.Entities
         }
     }
 
+
+
+
+    /// <summary>
+    /// This is the base grimoire its nothing special but it works
+    /// </summary>
     internal class Grimoire
     {
         public List<Particle> Particles = new List<Particle>();
-        private ParticleController primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1);
-        private ParticleController secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
+        private protected ParticleController primary;
+        private protected ParticleController secondary;
 
-        private protected SubParticle[] sub_particles = new SubParticle[2]
-            {
-                new SubParticle(0, 0, 0, 0, 0, 0),
-                new SubParticle(1, 1, 0, 0, 0, 0.3)
-            };
+        private protected SubParticle[] sub_particles;
+
+        public Grimoire() 
+        {
+            primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1);
+            secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
+
+            sub_particles = new SubParticle[2]
+                {
+                    new SubParticle(0, 0, 0, 0, 0, 0),
+                    new SubParticle(1, 1, 0, 0, 0, 0.3)
+                };
+    }
 
         /**    ATTACK SEQUENCE    */
 
@@ -184,7 +198,7 @@ namespace Abyss.Entities
                         parent.ReduceMana(primary.mana_cost);
                         primary.cooldown = primary.cooldown_max;
                     }
-                        break;
+                    break;
                 case 2: // secondary
                     if (secondary.cooldown <= 0 && parent.GetMana() >= secondary.mana_cost)
                     {
@@ -202,10 +216,10 @@ namespace Abyss.Entities
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="target_pos"></param>
-        public void Primary(Entity parent, Vector2 target_pos)
+        public virtual void Primary(Entity parent, Vector2 target_pos)
         {
             Vector2 target = MathUtil.MoveToward(parent.GetPosition(), target_pos, primary.base_speed);
-            this.GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X));
+            GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X));
         }
 
         /// <summary>
@@ -213,23 +227,23 @@ namespace Abyss.Entities
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="target_pos"></param>
-        public void Secondary(Entity parent, Vector2 target_pos)
+        public virtual void Secondary(Entity parent, Vector2 target_pos)
         {
             Vector2 position = parent.GetPosition();
             Vector2 target = MathUtil.MoveToward(parent.GetPosition(), target_pos, secondary.base_speed);
             double rotation = Math.Atan2(target.Y - position.Y, target.X - position.X);
             // central particle
-            this.GenerateParticle(parent, Vector2.Subtract(target, position), 1, rotation);
+            GenerateParticle(parent, Vector2.Subtract(target, position), 1, rotation);
 
             // left particle
             double left_rotation = rotation - 0.18;
             Vector2 left_target = MathUtil.Rotate(position, target, left_rotation);
-            this.GenerateParticle(parent, Vector2.Subtract(left_target, position), 1, left_rotation);
+            GenerateParticle(parent, Vector2.Subtract(left_target, position), 1, left_rotation);
 
             // right particle
             double right_rotation = rotation + 0.18;
             Vector2 right_target = MathUtil.Rotate(position, target, right_rotation);
-            this.GenerateParticle(parent, Vector2.Subtract(right_target, position), 1, right_rotation);
+            GenerateParticle(parent, Vector2.Subtract(right_target, position), 1, right_rotation);
         }
 
         public void GenerateParticle(Entity parent, Vector2 velocity, byte type, double rotation)
@@ -238,7 +252,7 @@ namespace Abyss.Entities
             switch (type)
             {
                 case 0:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4,4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
+                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
                     break;
                 case 1:
                     Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
@@ -330,45 +344,4 @@ namespace Abyss.Entities
             return "base";
         }
     }
-
-    internal class WaterGrimoire : Grimoire
-    {
-        public override string ToString()
-        {
-            return "water";
-        }
-    }
-
-    internal class WindGrimoire : Grimoire
-    {
-        public override string ToString()
-        {
-            return "wind";
-        }
-    }
-
-    internal class EarthGrimoire : Grimoire
-    {
-        public override string ToString()
-        {
-            return "earth";
-        }
-    }
-
-    internal class FireGrimoire : Grimoire
-    {
-        public override string ToString()
-        {
-            return "fire";
-        }
-    }
-
-    internal class LightningGrimoire : Grimoire
-    {
-        public override string ToString()
-        {
-            return "lightning";
-        }
-    }
-
 }

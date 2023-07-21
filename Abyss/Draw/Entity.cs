@@ -1,4 +1,5 @@
 ﻿using Abyss.Entities;
+using Abyss.Entities.Magic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
