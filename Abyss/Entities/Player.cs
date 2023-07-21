@@ -55,9 +55,10 @@ namespace Abyss.Entities
             this.draw_obj = new Rectangle(0, 0, 16, 16);
             this.pos = new Vector2();
             this.speed = 1.5;
-            this.crit_dmg = 0.7; // 200%
+            this.crit_dmg = 0.7; // 70%
             this.crit_rate = 0.05; // 5%
-            this.damage = 1; // 1
+            this.damage = 1; // 1 base
+            this.defense = 1; // 1 divisor
         }
 
         /// <summary>

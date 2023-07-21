@@ -38,8 +38,7 @@ namespace Abyss.Entities
         private protected double damage;
         private protected double crit_dmg; // percentage to increase damage by
         private protected double crit_rate; // between 0 and 1, a percentage value
-        private protected double defense;    // physical resistence
-        private protected double resistence; // magical resistence
+        private protected double defense;    // damage resistence
 
         // declare position variables
         private protected Vector2 movement_vec = Vector2.Zero;
@@ -144,7 +143,7 @@ namespace Abyss.Entities
 
         public void ReduceHealth(double amount)
         {
-            health -= amount;
+            health -= amount / defense;
             if (health < 0) health = 0;
         }
 
