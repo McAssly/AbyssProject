@@ -96,11 +96,6 @@ namespace Abyss.Map
                 case Side.BOTTOM: current = Maps[current.GetNext()[2]]; break;
             }
             current_entities = current.GetEntities().ToList();
-            Debug.WriteLine(current_entities.Count);
-            if (current_entities.Count > 0)
-            {
-                Debug.WriteLine(current_entities[0]);
-            }
         }
 
         /** Gets the level's maximum position

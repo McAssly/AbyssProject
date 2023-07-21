@@ -46,6 +46,10 @@ namespace Abyss.Entities
         private protected Vector2 pos;
         private protected Vector2 vel = Vector2.Zero; // starts off not moving
 
+        // declare the enemy attack cooldown
+        public double attack_cooldown;
+        public double attack_cooldown_max;
+
         // declare the status effects to be applied
         public List<StatusEffect> statuses;
 
@@ -87,6 +91,26 @@ namespace Abyss.Entities
                 };
         }
 
+        public bool CollidesWith(Entity entity)
+        {
+            foreach (Vector2 offset in _offsets)
+            {
+                if (MathUtil.IsWithin(pos + offset, entity.GetPosition().X, entity.GetPosition().X + entity.GetWidth(), entity.GetPosition().Y, entity.GetPosition().Y + entity.GetHeight()))
+                    return true;
+            }
+            return false;
+        }
+
+        public double Hits(Player player)
+        {
+            double damage = this.CalculateDamage(1);
+            if (player.CollidesWith(this))
+            {
+                return damage;
+            }
+            return 0;
+        }
+
         public double CalculateDamage(double base_dmg)
         {
             // do the temp variables
@@ -95,14 +119,17 @@ namespace Abyss.Entities
             double damage = base_dmg * this.damage;
 
             // find any required statuses and apply the status effects
-            StatusEffect? crit_rate_effect = statuses.Find(effect => effect.application_id == 0);
-            StatusEffect? crit_dmg_effect = statuses.Find(effect => effect.application_id == 1);
-            StatusEffect? damage_effect = statuses.Find(effect => effect.application_id == 2);
+            if (statuses != null)
+            {
+                StatusEffect? crit_rate_effect = statuses.Find(effect => effect.application_id == 0);
+                StatusEffect? crit_dmg_effect = statuses.Find(effect => effect.application_id == 1);
+                StatusEffect? damage_effect = statuses.Find(effect => effect.application_id == 2);
 
-            // if the efffects existed then apply the effect
-            if (crit_rate_effect.HasValue) crit_rate += crit_rate_effect.Value.value;
-            if (crit_dmg_effect.HasValue) crit_dmg += crit_dmg_effect.Value.value;
-            if (damage_effect.HasValue) damage += damage_effect.Value.value;
+                // if the efffects existed then apply the effect
+                if (crit_rate_effect.HasValue) crit_rate += crit_rate_effect.Value.value;
+                if (crit_dmg_effect.HasValue) crit_dmg += crit_dmg_effect.Value.value;
+                if (damage_effect.HasValue) damage += damage_effect.Value.value;
+            }
 
             // calculate the actual damage values
             int iterations = 0;

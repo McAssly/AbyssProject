@@ -56,7 +56,7 @@ namespace Abyss.Entities
             this.pos = new Vector2();
             this.speed = 1.5;
             this.crit_dmg = 0.7; // 200%
-            this.crit_rate = 0.5; // 50%
+            this.crit_rate = 0.05; // 5%
             this.damage = 1; // 1
         }
 

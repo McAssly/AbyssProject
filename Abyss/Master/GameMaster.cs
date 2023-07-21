@@ -234,12 +234,24 @@ namespace Abyss.Master
             // enemies
             current_level.GetEntities().RemoveAll(x => x.GetHealth() <= 0);
             foreach (Entity entity in current_level.GetEntities())
+            {
+                // enemies take damage
                 for (int i = 0; i < 2; i++)
                 {
                     double damage_dealt = player.Inventory.grimoires[i].Hits(entity);
                     if (damage_dealt != 0)
                         entity.ReduceHealth(damage_dealt);
                 }
+
+                // enemies deal damage
+                if (entity.Hits(player) > 0 && entity.attack_cooldown <= 0)
+                {
+                    player.ReduceHealth(entity.Hits(player));
+                    entity.attack_cooldown = entity.attack_cooldown_max;
+                }
+
+                if (entity.attack_cooldown > 0) entity.attack_cooldown -= delta;
+            }
         }
 
 
