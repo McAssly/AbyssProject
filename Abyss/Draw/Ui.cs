@@ -49,6 +49,8 @@ namespace Abyss.Draw
                 Draw(new Text("Ms-G: " + (int)MathUtil.MousePositionInGame().X + ", " + (int)MathUtil.MousePositionInGame().Y, 16, 80, 0.4f));
                 Draw(new Text("Grim: " + GM.player.Inventory.grimoires[0].ToString() + ", " + GM.player.Inventory.grimoires[1].ToString(), 16, 96, 0.3f));
                 Draw(new Text("DMG: " + GM.player.last_damage, 16, 112, 0.3f));
+                Draw(new Text((int)GM.fps + " fps", (int) Globals.DrawPosition.X + 16 * 17, 16, 0.5f));
+                Draw(new Text(1 / GM.fps + "", (int)Globals.DrawPosition.X + 16 * 17, 32, 0.5f));
             }
             else // draw the regular HUD
             {

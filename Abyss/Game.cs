@@ -11,6 +11,7 @@ using Abyss.Master;
 using System.Text;
 using System.Diagnostics;
 using Abyss.Draw;
+using System;
 
 namespace Abyss
 {
@@ -33,6 +34,10 @@ namespace Abyss
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
+
+            // Frame rates
+            IsFixedTimeStep = true;
+            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 72.0);
         }
 
         protected override void Initialize()
@@ -88,7 +93,7 @@ namespace Abyss
             game_state.Close();
 
             // open the debug menu
-            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu) && !(game_state.CurrentUi() is Console))
+            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu) && !(game_state.CurrentUi() is UI.Console))
             {
                 // Hook the text input function to the game window
                 Window.TextInput += GameMaster.RegisterInput;
@@ -101,7 +106,7 @@ namespace Abyss
 
 
             // CONSOLE PROCESS              CONSOLE
-            if (game_state.CurrentUi() is Console)
+            if (game_state.CurrentUi() is UI.Console)
                 if (GameMaster.HandleInput(KB))
                 {
                     game_state.CloseCurrent();
@@ -115,11 +120,8 @@ namespace Abyss
              */
             if (game_state.IsHud())
             {
-                // update the player
-                game_state.player.Update(delta, KB, _MouseState, game_state);
-
                 // Update the game state
-                game_state.Update(delta);
+                game_state.Update(delta, KB, _MouseState);
             }
 
             _prevKeyboardState = KB;
@@ -128,6 +130,8 @@ namespace Abyss
 
         protected override void Draw(GameTime gameTime)
         {
+            game_state.fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
+
             GraphicsDevice.Clear(Globals.Black); // background color and clears after each frame
             sprite_batch.Begin(
                 SpriteSortMode.Deferred,

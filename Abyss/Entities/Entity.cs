@@ -113,7 +113,7 @@ namespace Abyss.Entities
                 vel.X = 0;
             if (this.WillCollideY(map) && vel.Y != 0)
                 vel.Y = 0;
-            pos += vel;
+            pos += vel * new Vector2((float)(delta * Globals.FRAME_FACTOR));
         }
 
         public bool WillCollideX(TileMap map)

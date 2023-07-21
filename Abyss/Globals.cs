@@ -14,7 +14,7 @@ namespace Abyss
         // GAME VARIABLES
         public static double WindowSize = 1.5; // inverse size (bigger = smaller)
         public static int WindowW = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / WindowSize), WindowH = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / WindowSize);
-        public static readonly double FRAME_SPEED = 1.2;
+        public static readonly double FRAME_SPEED = 1.5;
 
         // GAME CONSTANTS
         public static readonly int TILE_SIZE = 16;
@@ -24,6 +24,7 @@ namespace Abyss
                 (float)((WindowW - GAME_WINDOW_SIZE)/(2*GameScale)), 
                 (float)((WindowH - GAME_WINDOW_SIZE) / (2 * GameScale)),0);
 
+        public static readonly double FRAME_FACTOR = 50;
         public static readonly double PARTICLE_SUBTRACTOR = 0.5;
 
         // UI CONSTANTS

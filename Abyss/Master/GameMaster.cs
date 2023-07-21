@@ -42,6 +42,9 @@ namespace Abyss.Master
         // Declare game entities
         protected internal Player player;
 
+        // declare debug vars
+        protected internal double fps;
+
         // declare basic constructor
         public GameMaster() { }
 
@@ -195,8 +198,12 @@ namespace Abyss.Master
         /// <summary>
         /// Update's the level whenever the player moves to the next level
         /// </summary>
-        public void Update(double delta)
+        public void Update(double delta, KeyboardState KB, MouseState MS)
         {
+            // update the player
+            player.Update(delta, KB, MS, this);
+
+
             // update the game level
             if (player.ExittingSide().HasValue)
             {
@@ -220,8 +227,8 @@ namespace Abyss.Master
 
             // update the game's particles
             // player attacks
-            player.Inventory.grimoires[0].Update(delta);
-            player.Inventory.grimoires[1].Update(delta);
+            player.Inventory.grimoires[0].Update(delta, this);
+            player.Inventory.grimoires[1].Update(delta, this);
         }
 
 

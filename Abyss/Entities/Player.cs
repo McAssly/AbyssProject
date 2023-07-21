@@ -53,7 +53,7 @@ namespace Abyss.Entities
             // draw object is currently a placeholder as there is no player texture as of now
             this.draw_obj = new Rectangle(0, 0, 16, 16);
             this.pos = new Vector2();
-            this.speed = 2;
+            this.speed = 1.5;
             this.crit_dmg = 0.7; // 200%
             this.crit_rate = 0.5; // 50%
             this.damage = 1; // 1

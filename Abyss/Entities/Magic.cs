@@ -69,7 +69,7 @@ namespace Abyss.Entities
         {
             rotation += angular_vel;
             if (accel > 0) velocity += MathUtil.ApplyAcceleration(velocity, accel * delta);
-            displacement += velocity;
+            displacement += velocity * new Vector2((float)(delta * Globals.FRAME_FACTOR));
             displacement = MathUtil.Rotate(Vector2.Zero, displacement, rotation);
         }
     }
@@ -123,7 +123,16 @@ namespace Abyss.Entities
         /// <returns></returns>
         public bool IsColliding(Tile tile)
         {
-            return false;
+            return tile.Colliding(this);
+        }
+
+        /// <summary>
+        /// determines if said particle is outside the game's boundaries
+        /// </summary>
+        /// <returns></returns>
+        public bool IsOutside()
+        {
+            return position.X < 0 || position.X > 16 * 16 || position.Y < 0 || position.Y > 16 * 16;
         }
 
 
@@ -138,7 +147,7 @@ namespace Abyss.Entities
             for (int i = 0; i < particles.Length; i++)
                 particles[i].Update(delta);
             velocity = MathUtil.ApplyAcceleration(velocity, accel * delta);
-            position += velocity;
+            position += velocity * new Vector2((float)(delta * Globals.FRAME_FACTOR));
             lifetime -= Globals.PARTICLE_SUBTRACTOR * delta;
         }
     }
@@ -195,15 +204,8 @@ namespace Abyss.Entities
         /// <param name="target_pos"></param>
         public void Primary(Entity parent, Vector2 target_pos)
         {
-            Vector2 position = parent.GetPosition();
             Vector2 target = MathUtil.MoveToward(parent.GetPosition(), target_pos, primary.base_speed);
-            Particles.Add(new Particle(
-                parent, position + new Vector2(8, 8),
-                Vector2.Subtract(target, position),
-                primary, parent.CalculateDamage(primary.base_damage),
-                Math.Atan2(target.Y - position.Y, target.X - position.X),
-                (SubParticle[])sub_particles.Clone()
-                ));
+            this.GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X));
         }
 
         /// <summary>
@@ -217,37 +219,32 @@ namespace Abyss.Entities
             Vector2 target = MathUtil.MoveToward(parent.GetPosition(), target_pos, secondary.base_speed);
             double rotation = Math.Atan2(target.Y - position.Y, target.X - position.X);
             // central particle
-            Particles.Add(new Particle(
-                parent, position + new Vector2(8, 8),
-                Vector2.Subtract(target, position),
-                secondary, parent.CalculateDamage(secondary.base_damage),
-                rotation,
-                (SubParticle[])sub_particles.Clone()
-                ));
-
-            double length = Math.Sqrt(Math.Pow(target.X - position.X, 2) + Math.Pow(target.Y - position.Y, 2));
+            this.GenerateParticle(parent, Vector2.Subtract(target, position), 1, rotation);
 
             // left particle
             double left_rotation = rotation - 0.18;
             Vector2 left_target = MathUtil.Rotate(position, target, left_rotation);
-            Particles.Add(new Particle(
-                parent, position + new Vector2(8, 8),
-                Vector2.Subtract(left_target, position),
-                secondary, parent.CalculateDamage(secondary.base_damage),
-                left_rotation,
-                (SubParticle[])sub_particles.Clone()
-                ));
+            this.GenerateParticle(parent, Vector2.Subtract(left_target, position), 1, left_rotation);
 
             // right particle
             double right_rotation = rotation + 0.18;
             Vector2 right_target = MathUtil.Rotate(position, target, right_rotation);
-            Particles.Add(new Particle(
-                parent, position + new Vector2(8, 8),
-                Vector2.Subtract(right_target, position),
-                secondary, parent.CalculateDamage(secondary.base_damage),
-                right_rotation,
-                (SubParticle[])sub_particles.Clone()
-                ));
+            this.GenerateParticle(parent, Vector2.Subtract(right_target, position), 1, right_rotation);
+        }
+
+        public void GenerateParticle(Entity parent, Vector2 velocity, byte type, double rotation)
+        {
+            if (parent == null) return;
+            switch (type)
+            {
+                case 0:
+                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4,4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
+                    break;
+                case 1:
+                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
+                    break;
+                default: break;
+            }
         }
 
 
@@ -267,11 +264,28 @@ namespace Abyss.Entities
         /// updates the grimoire
         /// </summary>
         /// <param name="delta"></param>
-        public void Update(double delta)
+        public void Update(double delta, GameMaster game_state)
         {
             foreach (Particle particle in Particles) particle.Update(delta);
             // remove all particles that have run out of life
-            Particles.RemoveAll(particle => particle.lifetime <= 0);
+            Particles.RemoveAll(particle => particle.lifetime <= 0 || particle.IsOutside());
+
+            List<Particle> _particles = new List<Particle>();
+
+            // get adjacent collision tiles
+            foreach (Particle particle in Particles)
+            {
+                Vector2 tile_pos = Vector2.Clamp(MathUtil.CoordsToTileCoords(particle.position), Vector2.Zero, new Vector2(16 - 1, 16 - 1));
+                Tile tile = game_state.GetCurrentTileMap().GetCollisionLayer().GetTiles()[(int)tile_pos.Y, (int)tile_pos.X];
+                if (particle.IsColliding(tile) && !tile.NULL)
+                {
+                    _particles.Add(particle);
+                    break;
+                }
+            }
+
+            // remove any colliding with a tile
+            Particles.RemoveAll(particle => _particles.Contains(particle));
 
             if (primary.cooldown > 0) primary.cooldown -= Globals.PARTICLE_SUBTRACTOR * delta;
             if (secondary.cooldown > 0) secondary.cooldown -= Globals.PARTICLE_SUBTRACTOR * delta;

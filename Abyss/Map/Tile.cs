@@ -50,5 +50,11 @@ namespace Abyss.Map
                 || MathUtil.IsWithin(p2, left, right, top, bottom)
                 || MathUtil.IsWithin(p3, left, right, top, bottom);
         }
+
+
+        public bool Colliding(Particle particle)
+        {
+            return MathUtil.IsWithin(particle.position, pos.X, pos.X + Globals.TILE_SIZE, pos.Y, pos.Y + Globals.TILE_SIZE);
+        }
     }
 }
