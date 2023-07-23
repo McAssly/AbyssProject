@@ -86,17 +86,16 @@ namespace Abyss.Map
             current_entities = Maps[index].GetEntities().ToList();
         }
 
-        public void SetCurrent(Side? side)
+        public int GetNextMap(Side side)
         {
-            int previous_index = this.GetIndex();
-            switch (side.Value)
+            switch(side)
             {
-                case Side.LEFT: current = Maps[current.GetNext()[3]]; break;
-                case Side.RIGHT: current = Maps[current.GetNext()[1]]; break;
-                case Side.TOP: current = Maps[current.GetNext()[0]]; break;
-                case Side.BOTTOM: current = Maps[current.GetNext()[2]]; break;
+                case Side.LEFT: return 3;
+                case Side.RIGHT: return 1;
+                case Side.TOP: return 0;
+                case Side.BOTTOM: return 2;
             }
-            if (this.GetIndex() != previous_index) current_entities = current.GetEntities().ToList();
+            return -1;
         }
 
         public int GetIndex()

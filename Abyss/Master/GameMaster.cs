@@ -121,6 +121,10 @@ namespace Abyss.Master
         /// <param name="dialogue"></param>
         public void OpenDialogue(Dialogue dialogue)
         {
+            // unhook the input controller
+            Game.GameWindow.TextInput -= RegisterInput;
+
+            // open the given dialogue
             UiControllers.Dialogue.SetDialogue(dialogue);
             this.current_ui = UiControllers.Dialogue;
         }
@@ -232,20 +236,34 @@ namespace Abyss.Master
             // update the game level
             if (player.ExittingSide().HasValue)
             {
-                var prev_map = current_level.GetCurrent();
-                current_level.SetCurrent(player.ExittingSide());
-                // fix the player's position
-                if (current_level.GetCurrent() != prev_map)
-                    switch (player.ExittingSide().Value)
+                // get the next map the current map links to (at the exitting side)
+                int next_map = current_level.GetNextMap(player.ExittingSide().Value);
+                int next_map_index = current_level.GetCurrent().GetNext()[next_map];
+                // get the new position the player will take
+                NullableVector new_position = player.GetNextPosition(player.ExittingSide().Value);
+
+                // then get the player's position based on the new position
+                Vector2 new_pos = player.GetPosition(new_position);
+
+                // turn it into the proper tile coord
+                Vector tile_coords = MathUtil.CoordsToTileCoords(new_pos);
+
+                // if the new position on the next map is not a collision tile then allow the player to move into the next map
+                if (current_level.GetMaps()[next_map_index].GetCollisionLayer().GetTiles()[tile_coords.y, tile_coords.x].NULL)
+                {
+                    // change to the new map
+                    var prev_map = current_level.GetCurrent();
+                    current_level.SetCurrent(next_map_index);
+                    // wrap the player's position to the new one
+                    if (current_level.GetCurrent() != prev_map) // if the map properly changed
                     {
-                        case Side.LEFT: player.SetPosition(16 * 16 - 16, null); break;
-                        case Side.RIGHT: player.SetPosition(0, null); break;
-                        case Side.TOP: player.SetPosition(null, 16 * 16 - 16); break;
-                        case Side.BOTTOM: player.SetPosition(null, 0); break;
+                        // set the new position
+                        player.SetPosition(new_pos);
+                        // clear particles
+                        player.Inventory.grimoires[0].Clear();
+                        player.Inventory.grimoires[1].Clear();
                     }
-                // clear particles
-                player.Inventory.grimoires[0].Clear();
-                player.Inventory.grimoires[1].Clear();
+                }
             }
 
 

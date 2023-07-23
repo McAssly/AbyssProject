@@ -24,7 +24,7 @@ namespace Abyss.Entities.Magic
 
         public override void Secondary(Entity parent, Vector2 target_pos)
         {
-            StatusEffect effect = new StatusEffect(0.6, 500, 0);
+            StatusEffect effect = new StatusEffect(0.6, 5, 0);
             if (!parent.statuses.Exists(status => status.application_id == 0))
                 parent.statuses.Add(effect);
         }

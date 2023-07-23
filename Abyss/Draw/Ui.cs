@@ -79,6 +79,11 @@ namespace Abyss.Draw
                     this.Draw(option);
         }
 
+        public void Draw(UI.Interaction interaction)
+        {
+            this.Draw(interaction.GetDialogue());
+        }
+
         public void Draw(Ui ui, GameMaster GM)
         {
             if (ui is Hud)
@@ -89,9 +94,9 @@ namespace Abyss.Draw
             {
                 Draw(ui as UI.Console);
             }
-            else if (ui is UI.Dialogue)
+            else if (ui is UI.Interaction)
             {
-                Draw(ui as UI.Dialogue);
+                Draw(ui as UI.Interaction);
             }
         }
     }

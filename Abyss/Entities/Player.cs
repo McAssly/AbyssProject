@@ -9,9 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using NullableVector = Abyss.Master.NullableVector;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Entities
 {
@@ -156,12 +159,15 @@ namespace Abyss.Entities
                 time_elapsed = 0;
             }
 
-            if (statuses.Count != 0)
+            // if the player has any status effects update their statuses
+            if (statuses.Count > 0)
             {
+                // iterate through each status and apply each of them
                 for (int i = 0; i < statuses.Count; i++)
                 {
+                    // create a copy of the status
                     StatusEffect status_copy = statuses[i];
-                    status_copy.timer -= 1;
+                    status_copy.timer -= delta;
                     statuses[i] = status_copy;
                 }
                 statuses.RemoveAll(effect => effect.timer <= 0);
@@ -221,6 +227,37 @@ namespace Abyss.Entities
             }
             // if not a single check passed then they aren't leaving the map
             return null;
+        }
+
+
+        public NullableVector GetNextPosition(Side side)
+        {
+            switch (side)
+            {
+                case Side.LEFT: return new NullableVector(16 * 16 - 16, null);
+                case Side.RIGHT: return new NullableVector(0, null);
+                case Side.TOP: return new NullableVector(null, 16 * 16 - 16);
+                case Side.BOTTOM: return new NullableVector(null, 0);
+                default: return new NullableVector();
+            }
+        }
+
+
+        public Vector2 GetPosition(NullableVector? modifier)
+        {
+            if (!modifier.HasValue) return this.pos;
+            if (modifier.Value.x.HasValue && modifier.Value.y.HasValue)
+                return new Vector2(modifier.Value.x.Value, modifier.Value.y.Value);
+            else if (modifier.Value.x.HasValue)
+                return new Vector2(modifier.Value.x.Value, this.pos.Y);
+            else if (modifier.Value.y.HasValue)
+                return new Vector2(this.pos.X, modifier.Value.y.Value);
+            return this.pos;
+        }
+
+        public void SetPosition(Vector2 _new)
+        {
+            this.pos = _new;
         }
     }
 }

@@ -16,6 +16,33 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Abyss.Master
 {
+    internal struct NullableVector
+    {
+        public int? x, y;
+        
+        public NullableVector(int? x, int? y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    internal struct Vector
+    {
+        public int x, y;
+        
+        public Vector(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
+        public static Vector Convert(Vector2 vector)
+        {
+            return new Vector((int)vector.X, (int)vector.Y);
+        }
+    }
+
     internal enum Side
     {
         LEFT = 0, RIGHT = 1, TOP = 2, BOTTOM = 3
@@ -177,11 +204,11 @@ namespace Abyss.Master
          * 
          * @param   Vector2     the current coordinates
          */
-        public static Vector2 CoordsToTileCoords(Vector2 coords)
+        public static Vector CoordsToTileCoords(Vector2 coords)
         {
             Vector2 result = coords / Globals.TILE_SIZE;
             result.Floor();
-            return result;
+            return Vector.Convert(Vector2.Clamp(result, Vector2.Zero, new Vector2(16-1)));
         }
 
         /**

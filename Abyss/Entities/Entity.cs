@@ -209,14 +209,14 @@ namespace Abyss.Entities
 
         public bool CollisionCheckX(TileMap map, int offset)
         {
-            Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(vel.X, 0) + MathUtil.offsets[offset]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
-            Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
+            Vector tilePos = MathUtil.CoordsToTileCoords(pos + new Vector2(vel.X, 0) + MathUtil.offsets[offset]);
+            Tile targetTile = map.GetCollisionLayer().GetTiles()[tilePos.y, tilePos.x];
             return !targetTile.NULL && targetTile.Colliding(this);
         }
         public bool CollisionCheckY(TileMap map, int offset)
         {
-            Vector2 tilePos = Vector2.Clamp(MathUtil.CoordsToTileCoords(pos + new Vector2(0, vel.Y) + MathUtil.offsets[offset]), Vector2.Zero, new Vector2(map.GetWidth() - 1, map.GetHeight() - 1));
-            Tile targetTile = map.GetCollisionLayer().GetTiles()[(int)tilePos.Y, (int)tilePos.X];
+            Vector tilePos = MathUtil.CoordsToTileCoords(pos + new Vector2(0, vel.Y) + MathUtil.offsets[offset]);
+            Tile targetTile = map.GetCollisionLayer().GetTiles()[tilePos.y, tilePos.x];
             return !targetTile.NULL && targetTile.Colliding(this);
         }
 
