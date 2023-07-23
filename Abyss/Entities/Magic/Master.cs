@@ -188,7 +188,7 @@ namespace Abyss.Entities.Magic
         /// <param name="parent"></param>
         /// <param name="targetPos"></param>
         /// <param name="type"></param>
-        public void Attack(Entity parent, Vector2 targetPos, int type)
+        public virtual void Attack(Entity parent, Vector2 targetPos, int type)
         {
             switch (type)
             {
