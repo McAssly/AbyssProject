@@ -45,6 +45,10 @@ namespace Abyss.Master
         // declare debug vars
         protected internal double fps;
 
+        // save data
+        protected internal GameData save;
+        private bool in_tutorial;
+
         // declare basic constructor
         public GameMaster() { }
 
@@ -84,7 +88,19 @@ namespace Abyss.Master
         /// Loads the current save file <--- placeholder
         /// </summary>
         /// <param name="map_index"></param>
-        public void LoadSave(int map_index){ current_level.SetCurrent(map_index); }
+        public void LoadSave(int map_index, PlayerData player, bool in_tutorial)
+        { 
+            current_level.SetCurrent(map_index); 
+            this.player.LoadSave(player);
+            this.in_tutorial = in_tutorial;
+        }
+
+        public void LoadSaveState(GameData data)
+        {
+            current_level.SetCurrent(data.map_index);
+            this.player.LoadSave(data.player);
+            this.in_tutorial = data.in_tutorial;
+        }
 
 
 
@@ -131,7 +147,16 @@ namespace Abyss.Master
         /// </summary>
         public void Save()
         {
-            Data.Save("save.xml", this);
+            this.save = new GameData(
+                this.in_tutorial,
+                this.GetMapIndex(),
+                (int)this.player.GetPosition().X,
+                (int)this.player.GetPosition().Y,
+                (int)this.player.GetHealth(), (int)this.player.GetMaxHealth(),
+                (int)this.player.GetMana(), (int)this.player.GetMaxMana(),
+                this.player.Inventory
+                );
+            Data.Save("save.xml", this.save);
         }
 
         /// <summary>
@@ -251,6 +276,16 @@ namespace Abyss.Master
                 }
 
                 if (entity.attack_cooldown > 0) entity.attack_cooldown -= delta;
+            }
+
+
+            // kill the player if they should be dead
+            if (player.GetHealth() <= 0)
+            {
+                if (this.in_tutorial)
+                    this.LoadSaveState(SaveState.tutorial);
+                else
+                    this.LoadSaveState(SaveState.start);
             }
         }
 

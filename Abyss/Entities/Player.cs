@@ -23,6 +23,35 @@ namespace Abyss.Entities
         public int[] instant_pots; // array max = 2, combiend value max = 4 (see line above)
         public List<Item> extras; // unlimited number of extra items, these are mainly for questlines or auxillary stuff so not entirely important
 
+        public Inventory(Grimoire[] grimoires, Card[] cards = null, int[] regen_pots = null, int[] instant_pots = null, List<Item> extras = null)
+        {
+            this.grimoires = grimoires;
+
+            // set the player's cards
+            if (cards == null)
+                this.cards = new Card[0];
+            else 
+                this.cards = cards;
+
+            // set the player's number of regen pots
+            if (regen_pots == null)
+                this.regen_pots = new int[2] { 0, 0 };
+            else
+                this.regen_pots = regen_pots;
+
+            // set the player's number of instant pots
+            if (instant_pots == null)
+                this.instant_pots = new int[2] { 0, 0 };
+            else
+                this.instant_pots = instant_pots;
+
+            // set the player's key items
+            if (extras == null)
+                this.extras = new List<Item>();
+            else
+                this.extras = extras;
+        }
+
         public static Grimoire[] ParseGrimoires(string[] grim_data)
         {
             return new Grimoire[]
@@ -67,7 +96,7 @@ namespace Abyss.Entities
         /// <param name="data"></param>
         public void LoadSave(PlayerData data)
         {
-            this.pos = data.position;
+            this.pos = data.position * new System.Numerics.Vector2(16,16);
             this.health = data.current_hp;
             this.max_health = data.max_hp;
             this.mana = data.current_mana;

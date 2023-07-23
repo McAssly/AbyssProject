@@ -88,6 +88,7 @@ namespace Abyss.Map
 
         public void SetCurrent(Side? side)
         {
+            int previous_index = this.GetIndex();
             switch (side.Value)
             {
                 case Side.LEFT: current = Maps[current.GetNext()[3]]; break;
@@ -95,7 +96,12 @@ namespace Abyss.Map
                 case Side.TOP: current = Maps[current.GetNext()[0]]; break;
                 case Side.BOTTOM: current = Maps[current.GetNext()[2]]; break;
             }
-            current_entities = current.GetEntities().ToList();
+            if (this.GetIndex() != previous_index) current_entities = current.GetEntities().ToList();
+        }
+
+        public int GetIndex()
+        {
+            return Array.IndexOf(Maps, current);
         }
 
         /** Gets the level's maximum position

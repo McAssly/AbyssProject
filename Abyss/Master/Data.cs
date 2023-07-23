@@ -47,7 +47,7 @@ namespace Abyss.Master
         /// <param name="save_file"></param>
         /// <param name="GM"></param>
         /// <param name="player"></param>
-        public static void Save(string save_file, GameMaster GM)
+        public static void Save(string save_file, GameData data)
         {
             // Load the XML doc
             XmlDocument save = new XmlDocument();
@@ -61,11 +61,11 @@ namespace Abyss.Master
             if (pos_node != null && hp_node != null && mana_node != null)
             {
                 // save the position data
-                pos_node.InnerText = WriteData(new int[] { GM.GetMapIndex(), (int)GM.player.GetPosition().X / 16, (int)GM.player.GetPosition().Y / 16 }, ',');
+                pos_node.InnerText = WriteData(new int[] { data.map_index, (int)data.player.position.X / 16, (int)data.player.position.Y / 16 }, ',');
                 // save the health data
-                hp_node.InnerText = WriteData(new int[] { (int)GM.player.GetHealth(), (int)GM.player.GetMaxHealth() }, '/');
+                hp_node.InnerText = WriteData(new int[] { (int)data.player.current_hp, (int)data.player.max_hp }, '/');
                 // save the mana data
-                mana_node.InnerText = WriteData(new int[] { (int)GM.player.GetMana(), (int)GM.player.GetMaxMana() }, '/');
+                mana_node.InnerText = WriteData(new int[] { (int)data.player.current_mana, (int)data.player.max_mana }, '/');
                 // overite the data
                 save.Save(save_file);
             }
@@ -82,6 +82,9 @@ namespace Abyss.Master
             // load the XML document
             XmlDocument save = new XmlDocument();
             save.Load(save_file);
+
+            // determine if the player is in the tutorial or not
+            bool in_tutorial = bool.Parse(save.DocumentElement.SelectSingleNode("/player/tutorial").InnerText);
 
             // Get the player variables ------------------------------
             string pos_data = save.DocumentElement.SelectSingleNode("/player/pos").InnerText;
@@ -101,7 +104,7 @@ namespace Abyss.Master
 
             // convert them into usable variables ------------------------------
             PlayerData data = new PlayerData(
-                new Vector2(parsed_pos[1] * 16, parsed_pos[2] * 16),
+                new Vector2(parsed_pos[1], parsed_pos[2]),
                 parsed_hp[0], parsed_hp[1],
                 parsed_mana[0], parsed_mana[1]
                 );
@@ -114,11 +117,8 @@ namespace Abyss.Master
                 ParseData(regen_data, ',')
                 );
 
-            // have the player load this data
-            GM.player.LoadSave(data);
-
-            // load the map index
-            GM.LoadSave(parsed_pos[0]);
+            // load the save data
+            GM.LoadSave(parsed_pos[0], data, in_tutorial);
         }
 
         /// <summary>
