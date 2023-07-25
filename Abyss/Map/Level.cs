@@ -82,8 +82,12 @@ namespace Abyss.Map
 
         public void SetCurrent(int index)
         {
-            current = Maps[index];
-            current_entities = Maps[index].GetEntities().ToList();
+            int previous = this.GetIndex();
+            if (previous != index)
+            {
+                current = Maps[index];
+                current_entities = Maps[index].GetEntities().ToList();
+            }
         }
 
         public int GetNextMap(Side side)
