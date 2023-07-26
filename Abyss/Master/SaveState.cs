@@ -28,13 +28,13 @@ namespace Abyss.Master
     {
         public static GameData tutorial = new GameData(
             true,
-            0, 7, 12,
+            0, 8, 8,
             100, 100, 100, 100,
             new Inventory(new Grimoire[2] { new Grimoire(), new WaterGrimoire() })
             );
         public static GameData start = new GameData(
             false,
-            1, 12, 12,
+            1, 8, 12,
             100, 100, 100, 100,
             new Inventory(new Grimoire[2] { new Grimoire(), new WaterGrimoire() })
             );
