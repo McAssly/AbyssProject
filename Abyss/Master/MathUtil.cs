@@ -7,12 +7,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Master
 {
@@ -25,6 +27,52 @@ namespace Abyss.Master
             this.x = x;
             this.y = y;
         }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + x.GetHashCode();
+                hash = hash * 23 + y.GetHashCode();
+                return hash;
+            }
+        }
+
+        public static bool operator ==(NullableVector a, NullableVector b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(NullableVector a, NullableVector b)
+        {
+            return !a.Equals(b);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is NullableVector other)
+            {
+                return x == other.x && y == other.y;
+            }
+            return false;
+        }
+
+        public Vector2 Convert()
+        {
+            Vector2 output = new Vector2();
+            if (x != null) output.X = x.Value;
+            if (y != null) output.Y = y.Value;
+
+            return output;
+        }
+
+        public static NullableVector Convert(Vector2 vector)
+        {
+            return new NullableVector((int) vector.X, (int) vector.Y);
+        }
+
+        public static readonly NullableVector NULL = new NullableVector(null, null);
     }
 
     internal struct Vector
@@ -122,6 +170,17 @@ namespace Abyss.Master
             }
 
             return (T)cloned_obj;
+        }
+
+        public static Vector2 VectorAtAngle(double angle)
+        {
+            float x = (float)Math.Cos(angle);
+            float y = (float)Math.Sin(angle);
+
+            // we must normalize the vector to around r = 1
+            float length = (float)Math.Sqrt(x * x + y * y);
+
+            return new Vector2(x / length, y / length);
         }
 
         /**

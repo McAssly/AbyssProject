@@ -1,14 +1,17 @@
 ﻿using Abyss.Entities;
 using Abyss.Entities.Magic;
+using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Color = Microsoft.Xna.Framework.Color;
 
 namespace Abyss.Draw
 {
@@ -34,17 +37,23 @@ namespace Abyss.Draw
         {
             if (Globals.BaseSpell == null) return;
             foreach (var particle in grimoire.Particles)
-            {
                 Draw(particle, Globals.BaseSpell);
-            }
+            if (grimoire.is_connected)
+                DrawLinesBetween(grimoire.Particles);
+        }
+
+        public void DrawLinesBetween(List<Particle> particles)
+        {
+            for (int i = 0; i < particles.Count - 1; i++)
+                this.DrawLine(particles[i].position, particles[i + 1].position, Color.White);
         }
 
         public void Draw(Particle particle, Texture2D texture)
         {
             foreach (SubParticle sub_particle in particle.particles)
-            {
                 this.Draw(sub_particle, particle, texture);
-            }
+            if (particle.connection != null)
+                this.DrawLine(particle.position, particle.connection.position, Color.White);
         }
 
         public void Draw(SubParticle sub_particle, Particle parent, Texture2D texture)

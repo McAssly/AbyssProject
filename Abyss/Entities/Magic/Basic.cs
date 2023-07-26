@@ -1,7 +1,9 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Master;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +16,7 @@ namespace Abyss.Entities.Magic
 
         public WaterGrimoire() : base()
         {
-            primary = new ParticleController(Element.water, 1.0, 2, 1, 1, 0.4, 0.05);
+            primary = new ParticleController(Element.water, 1.0, 3, 2, 3, 0.4, 0.7);
             secondary = new ParticleController(Element.water, 0, 0, 0, 10, 0, 1.0);
 
             sub_particles = new SubParticle[2]
@@ -22,6 +24,8 @@ namespace Abyss.Entities.Magic
                 new SubParticle(0, 0, 0, 0, 0, 0),
                 new SubParticle(-2,-2,0,0,0,1.0)
             };
+
+            is_connected = false;
         }
 
 
@@ -62,6 +66,46 @@ namespace Abyss.Entities.Magic
         }
     }
 
+    internal class FireGrimoire : Grimoire
+    {
+        public FireGrimoire() : base()
+        {
+            primary = new ParticleController(Element.water, 0.7, 1, 2, 1, 0.4, 0.1, true);
+            secondary = new ParticleController(Element.water, 0.3, 2, 2, 3, 0.3, 0.1, true);
+
+            sub_particles = new SubParticle[1]
+                {
+                    new SubParticle(0, 0, 0, 0, 0, 0)
+                };
+
+            is_connected = false;
+        }
+
+        public override void Primary(Entity parent, Vector2 target_pos)
+        {
+            Particle connection = new Particle(parent);
+            if (Particles.Count > 0) connection = Particles[Particles.Count - 1];
+            Vector2 target = MathUtil.MoveToward(parent.GetPosition(), target_pos, primary.base_speed);
+            GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X), connection);
+        }
+
+        public override void Secondary(Entity parent, Vector2 target_pos)
+        {
+            double[] rotations = new double[8] { 0.0, 0.785398163397, 1.57079632679, 2.35619449019, 3.14159265359, 3.92699081699, 4.71238898038, 5.49778714378 };
+            foreach (double rot in rotations)
+            {
+                Particle connection = new Particle(parent);
+                if (Particles.Count > 0) connection = Particles[Particles.Count - 1];
+                GenerateParticle(parent, MathUtil.VectorAtAngle(rot), 1, rot, connection);
+            }
+        }
+
+        public override string ToString()
+        {
+            return "fire";
+        }
+    }
+
     internal class WindGrimoire : Grimoire
     {
         public override string ToString()
@@ -75,14 +119,6 @@ namespace Abyss.Entities.Magic
         public override string ToString()
         {
             return "earth";
-        }
-    }
-
-    internal class FireGrimoire : Grimoire
-    {
-        public override string ToString()
-        {
-            return "fire";
         }
     }
 

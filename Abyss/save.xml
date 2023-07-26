@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <player>
 	<tutorial>true</tutorial>
-	<pos>1,12,12</pos>
+	<pos>1,8,12</pos>
 	<hp>100/100</hp>
 	<mana>100/100</mana>
 	<inventory>
-		<grim>base,water</grim>
+		<grim>fire,water</grim>
 		<cards>0,0,0,0,0,0</cards>
 		<regen>0,0</regen>
 		<instant>0,0</instant>

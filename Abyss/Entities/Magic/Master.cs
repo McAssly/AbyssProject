@@ -35,8 +35,9 @@ namespace Abyss.Entities.Magic
         public readonly double mana_cost;
         public readonly double cooldown_max;
         public double cooldown;
+        public bool pierce;
 
-        public ParticleController(Element element, double lifetime, double base_damage, double base_speed, double mana_cost, double accel, double cooldown_max)
+        public ParticleController(Element element, double lifetime, double base_damage, double base_speed, double mana_cost, double accel, double cooldown_max, bool pierce = false)
         {
             this.element = element;
             this.lifetime = lifetime;
@@ -46,6 +47,7 @@ namespace Abyss.Entities.Magic
             this.accel = accel;
             this.cooldown_max = cooldown_max;
             cooldown = 0;
+            this.pierce = pierce;
         }
     }
 
@@ -90,10 +92,13 @@ namespace Abyss.Entities.Magic
         public readonly Element element;
         public double damage;
         public double rotation;
+        public bool pierce;
+
+        public Particle connection;
 
 
         /** PARTICLE CONSTRUCTOR */
-        public Particle(Entity parent, Vector2 position, Vector2 velocity, ParticleController pc, double damage, double rotation, SubParticle[] sub_particles)
+        public Particle(Entity parent, Vector2 position, Vector2 velocity, ParticleController pc, double damage, double rotation, SubParticle[] sub_particles, Particle? connection_point = null)
         {
             this.parent = parent;
             this.position = position;
@@ -104,6 +109,26 @@ namespace Abyss.Entities.Magic
             this.damage = damage;
             this.rotation = rotation;
             particles = sub_particles;
+            this.pierce = pc.pierce;
+
+            if (connection_point != null) this.connection = connection_point;
+            else this.connection = null;
+        }
+
+        public Particle(Entity entity)
+        {
+            this.parent = entity;
+            this.position = entity.GetPosition() + new Vector2(8,8);
+            this.velocity = Vector2.Zero;
+            this.accel = 0;
+            this.lifetime = 0;
+            this.element = Element.NULL;
+            this.damage = 0;
+            this.rotation = 0;
+            particles = new SubParticle[0] { };
+            this.pierce = false;
+
+            this.connection = null;
         }
 
 
@@ -166,6 +191,7 @@ namespace Abyss.Entities.Magic
         private protected ParticleController secondary;
 
         private protected SubParticle[] sub_particles;
+        public bool is_connected;
 
         public Grimoire() 
         {
@@ -177,6 +203,8 @@ namespace Abyss.Entities.Magic
                     new SubParticle(0, 0, 0, 0, 0, 0),
                     new SubParticle(1, 1, 0, 0, 0, 0.3)
                 };
+
+            is_connected = false;
     }
 
         /**    ATTACK SEQUENCE    */
@@ -259,24 +287,40 @@ namespace Abyss.Entities.Magic
             if (dealer != null)
             {
                 double damage = dealer.damage;
-                Particles.Remove(dealer);
+                if (!dealer.pierce) Particles.Remove(dealer);
                 return damage;
             }
             return 0;
         }
 
-        public void GenerateParticle(Entity parent, Vector2 velocity, byte type, double rotation)
+        public void GenerateParticle(Entity parent, Vector2 velocity, byte type, double rotation, Particle? connection_point = null)
         {
             if (parent == null) return;
-            switch (type)
+            if (connection_point != null)
             {
-                case 0:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
-                    break;
-                case 1:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
-                    break;
-                default: break;
+                switch (type)
+                {
+                    case 0:
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone(), connection_point));
+                        break;
+                    case 1:
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone(), connection_point));
+                        break;
+                    default: break;
+                }
+            }
+            else
+            {
+                switch (type)
+                {
+                    case 0:
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
+                        break;
+                    case 1:
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
+                        break;
+                    default: break;
+                }
             }
         }
 
