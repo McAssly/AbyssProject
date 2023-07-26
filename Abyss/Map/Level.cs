@@ -90,6 +90,11 @@ namespace Abyss.Map
             }
         }
 
+        public void ResetEntities()
+        {
+            current_entities = Maps[GetIndex()].GetEntities().ToList();
+        }
+
         public int GetNextMap(Side side)
         {
             switch(side)

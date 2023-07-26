@@ -58,7 +58,7 @@ namespace Abyss.Draw
 
         public void Draw(SubParticle sub_particle, Particle parent, Texture2D texture)
         {
-            Draw(texture, parent.position + sub_particle.displacement, null, Color.White, (float)parent.rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1, SpriteEffects.None, 0);
+            Draw(texture, parent.position + sub_particle.displacement, null, sub_particle.color, (float)parent.rotation, new Vector2(texture.Width / 2, texture.Height / 2), (float)sub_particle.scale, SpriteEffects.None, 0);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,8 @@ namespace Abyss.Entities.Magic.Infusions
 
             sub_particles = new SubParticle[2]
             {
-                new SubParticle(0, 0, 0, 0, 0, 0),
-                new SubParticle(-2,-2,0,0,0,1.0)
+                new SubParticle(0, 0, 0, 0, 0, 0, Color.White),
+                new SubParticle(-2,-2,0,0,0,1.0, Color.White)
             };
 
             is_connected = false;

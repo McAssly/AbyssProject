@@ -304,6 +304,7 @@ namespace Abyss.Master
                     this.LoadSaveState(SaveState.tutorial);
                 else
                     this.LoadSaveState(SaveState.start);
+                this.current_level.ResetEntities();
             }
         }
 

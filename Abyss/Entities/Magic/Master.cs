@@ -58,14 +58,18 @@ namespace Abyss.Entities.Magic
         public readonly double accel;
         public double rotation;
         public readonly double angular_vel;
+        public readonly double scale;
+        public readonly Color color;
 
-        public SubParticle(double x, double y, double vx, double vy, double accel, double angular_vel)
+        public SubParticle(double x, double y, double vx, double vy, double accel, double angular_vel, Color color, double scale = 1)
         {
             displacement = new Vector2((float)x, (float)y);
             velocity = new Vector2((float)vx, (float)vy);
             this.accel = accel;
             rotation = 0;
             this.angular_vel = angular_vel;
+            this.scale = scale;
+            this.color = color;
         }
 
         public void Update(double delta)
@@ -200,8 +204,8 @@ namespace Abyss.Entities.Magic
 
             sub_particles = new SubParticle[2]
                 {
-                    new SubParticle(0, 0, 0, 0, 0, 0),
-                    new SubParticle(1, 1, 0, 0, 0, 0.3)
+                    new SubParticle(0, 0, 0, 0, 0, 0, Color.White),
+                    new SubParticle(1, 1, 0, 0, 0, 0.3, Color.White)
                 };
 
             is_connected = false;
@@ -324,6 +328,12 @@ namespace Abyss.Entities.Magic
             }
         }
 
+        public Particle GetConnection(Entity parent)
+        {
+            Particle connection = new Particle(parent);
+            if (Particles.Count > 0 && Particles[Particles.Count - 1].lifetime > 0) connection = Particles[Particles.Count - 1];
+            return connection;
+        }
 
 
 
