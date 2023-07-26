@@ -70,6 +70,10 @@ namespace Abyss
             // Load sprites
             Globals.TestBox = Content.Load<Texture2D>("testbox");
             Globals.BaseSpell = Content.Load<Texture2D>("spells/spell");
+            Globals.FireSpell = Content.Load<Texture2D>("spells/fire");
+            Globals.WaterSpell = Content.Load<Texture2D>("spells/water");
+            Globals.BoilSpell = Content.Load<Texture2D>("spells/boil");
+            Globals.SteamSpell = Content.Load<Texture2D>("spells/steam");
 
             // Load the Primary Game / UI
             GameMaster.TestLevel = Levels.Eastwoods;

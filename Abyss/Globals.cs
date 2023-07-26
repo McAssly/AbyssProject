@@ -47,7 +47,15 @@ namespace Abyss
 
         // TEXTURES / fonts
         public static SpriteFont Font;
+
+        // spells
         public static Texture2D BaseSpell = null;
+        public static Texture2D FireSpell = null;
+        public static Texture2D WaterSpell = null;
+
+        // infused
+        public static Texture2D SteamSpell = null;
+        public static Texture2D BoilSpell = null;
 
         // DRAW LAYERS
         public static readonly float floor_z = 0.05f;

@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Abyss.Map;
 using System.Reflection.PortableExecutable;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Abyss.Entities.Magic
 {
@@ -60,13 +61,17 @@ namespace Abyss.Entities.Magic
         public readonly double angular_vel;
         public readonly double scale;
         public readonly Color color;
+        public double spin;
+        public bool is_spinning = false;
 
-        public SubParticle(double x, double y, double vx, double vy, double accel, double angular_vel, Color color, double scale = 1)
+        public SubParticle(double x, double y, double vx, double vy, double accel, double angular_vel, Color color, double scale = 1, bool spin = false)
         {
             displacement = new Vector2((float)x, (float)y);
             velocity = new Vector2((float)vx, (float)vy);
             this.accel = accel;
             rotation = 0;
+            this.spin = 0;
+            this.is_spinning = spin;
             this.angular_vel = angular_vel;
             this.scale = scale;
             this.color = color;
@@ -74,6 +79,7 @@ namespace Abyss.Entities.Magic
 
         public void Update(double delta)
         {
+            if (is_spinning) spin += angular_vel;
             rotation += angular_vel;
             if (accel > 0) velocity += MathUtil.ApplyAcceleration(velocity, accel * delta);
             displacement += velocity * new Vector2((float)(delta * Globals.FRAME_FACTOR));
@@ -202,10 +208,9 @@ namespace Abyss.Entities.Magic
             primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1);
             secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
 
-            sub_particles = new SubParticle[2]
+            sub_particles = new SubParticle[1]
                 {
-                    new SubParticle(0, 0, 0, 0, 0, 0, Color.White),
-                    new SubParticle(1, 1, 0, 0, 0, 0.3, Color.White)
+                    new SubParticle(0, 0, 0, 0, 0, 0.5, Color.White, 1.1, true)
                 };
 
             is_connected = false;
@@ -305,10 +310,10 @@ namespace Abyss.Entities.Magic
                 switch (type)
                 {
                     case 0:
-                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone(), connection_point));
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(8, 8), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone(), connection_point));
                         break;
                     case 1:
-                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone(), connection_point));
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(8, 8), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone(), connection_point));
                         break;
                     default: break;
                 }
@@ -318,10 +323,10 @@ namespace Abyss.Entities.Magic
                 switch (type)
                 {
                     case 0:
-                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(8, 8), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
                         break;
                     case 1:
-                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(4, 4), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
+                        Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(8, 8), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, (SubParticle[])sub_particles.Clone()));
                         break;
                     default: break;
                 }
@@ -406,6 +411,16 @@ namespace Abyss.Entities.Magic
                     return new LightningGrimoire();
                 default: return new Grimoire();
             }
+        }
+
+        public static Texture2D GetTexture(Grimoire grimoire)
+        {
+            if (grimoire is FireGrimoire)
+                return Globals.FireSpell;
+            else if (grimoire is WaterGrimoire)
+                return Globals.WaterSpell;
+            else
+                return Globals.BaseSpell;
         }
 
         /// <summary>

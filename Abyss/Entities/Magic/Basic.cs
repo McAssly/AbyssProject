@@ -19,13 +19,9 @@ namespace Abyss.Entities.Magic
             primary = new ParticleController(Element.water, 1.0, 3, 1, 3, 0.4, 0.7);
             secondary = new ParticleController(Element.water, 0, 0, 0, 10, 0, 1.0);
 
-            sub_particles = new SubParticle[5]
+            sub_particles = new SubParticle[1]
             {
-                new SubParticle(0, 0, 0, 0, 0, 0, new Color(46, 139, 232)),
-                new SubParticle(-2,-2,0,0,0, 0.75, new Color(46, 139, 232)),
-                new SubParticle(2,2,0,0,0, 0.75, new Color(46, 139, 232)),
-                new SubParticle(2,-2,0,0,0, 0.75, new Color(46, 139, 232)),
-                new SubParticle(-2,2,0,0,0, 0.75, new Color(46, 139, 232))
+                new SubParticle(0, 0, 0, 0, 0, 0.3, Color.White, 1.5, true), // CENTER
             };
 
             is_connected = false;
@@ -73,12 +69,12 @@ namespace Abyss.Entities.Magic
     {
         public FireGrimoire() : base()
         {
-            primary = new ParticleController(Element.water, 0.7, 1, 2, 1, 0.4, 0.1, true);
-            secondary = new ParticleController(Element.water, 0.3, 2, 2, 3, 0.3, 0.1, true);
+            primary = new ParticleController(Element.water, 0.7, 0.1, 1.5, 0.5, 0.1, 0.05, true);
+            secondary = new ParticleController(Element.water, 0.3, 0.5, 2, 1, 0.3, 0.05, true);
 
             sub_particles = new SubParticle[1]
                 {
-                    new SubParticle(0, 0, 0, 0, 0, 0, new Color(232, 105, 46))
+                    new SubParticle(0, 0, 0, 0, 0, 0, Color.White, 2)
                 };
 
             is_connected = false;
@@ -87,14 +83,14 @@ namespace Abyss.Entities.Magic
         public override void Primary(Entity parent, Vector2 target_pos)
         {
             Vector2 target = MathUtil.MoveToward(parent.GetPosition(), target_pos, primary.base_speed);
-            GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X), this.GetConnection(parent));
+            GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X));
         }
 
         public override void Secondary(Entity parent, Vector2 target_pos)
         {
             double[] rotations = new double[8] { 0.0, 0.785398163397, 1.57079632679, 2.35619449019, 3.14159265359, 3.92699081699, 4.71238898038, 5.49778714378 };
             foreach (double rot in rotations)
-                GenerateParticle(parent, MathUtil.VectorAtAngle(rot), 1, rot, this.GetConnection(parent));
+                GenerateParticle(parent, MathUtil.VectorAtAngle(rot), 1, rot);
         }
 
         public override string ToString()
