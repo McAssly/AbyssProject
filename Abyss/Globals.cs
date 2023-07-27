@@ -1,4 +1,5 @@
-﻿using Abyss.Map;
+﻿using Abyss.Draw;
+using Abyss.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -49,13 +50,13 @@ namespace Abyss
         public static SpriteFont Font;
 
         // spells
-        public static Texture2D BaseSpell = null;
-        public static Texture2D FireSpell = null;
-        public static Texture2D WaterSpell = null;
+        public static AnimatedSprite BaseSpell = null;
+        public static AnimatedSprite FireSpell = null;
+        public static AnimatedSprite WaterSpell = null;
 
         // infused
-        public static Texture2D SteamSpell = null;
-        public static Texture2D BoilSpell = null;
+        public static AnimatedSprite SteamSpell = null;
+        public static AnimatedSprite BoilSpell = null;
 
         // DRAW LAYERS
         public static readonly float floor_z = 0.05f;

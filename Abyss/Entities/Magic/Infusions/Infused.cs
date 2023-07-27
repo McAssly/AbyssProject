@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Abyss.Draw;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,5 +21,9 @@ namespace Abyss.Entities.Magic.Infusions
         private protected ParticleController L1_R2;
         private protected ParticleController L2_R1;
         private protected ParticleController L2_R2;
+
+        // two spell sprites
+        private protected AnimatedSprite sprite0;
+        private protected AnimatedSprite sprite1;
     }
 }

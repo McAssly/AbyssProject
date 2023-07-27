@@ -17,13 +17,8 @@ namespace Abyss.Entities.Magic.Infusions
             L1_R1 = new ParticleController(Element.NULL, 0.2, 1, 2, 3, 1, 0.1);
             L1_R2 = new ParticleController(Element.NULL, 0.5, 10, 2, 15, 0.3, 1.0);
 
-            sub_particles = new SubParticle[2]
-            {
-                new SubParticle(0, 0, 0, 0, 0, 0, Color.White),
-                new SubParticle(-2,-2,0,0,0,1.0, Color.White)
-            };
-
-            is_connected = false;
+            sprite0 = Globals.BoilSpell;
+            sprite1 = Globals.SteamSpell;
         }
     }
 }

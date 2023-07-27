@@ -1,9 +1,11 @@
 ﻿using Abyss.Entities;
 using Abyss.Entities.Magic;
+using Abyss.Map;
 using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGame.Extended.Sprites;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace Abyss.Draw
 {
@@ -37,9 +40,7 @@ namespace Abyss.Draw
         {
             if (Globals.BaseSpell == null) return;
             foreach (var particle in grimoire.Particles)
-                Draw(particle, Grimoire.GetTexture(grimoire));
-            if (grimoire.is_connected)
-                DrawLinesBetween(grimoire.Particles);
+                Draw(particle);
         }
 
         public void DrawLinesBetween(List<Particle> particles)
@@ -48,17 +49,9 @@ namespace Abyss.Draw
                 this.DrawLine(particles[i].position, particles[i + 1].position, Color.White);
         }
 
-        public void Draw(Particle particle, Texture2D texture)
+        public void Draw(Particle particle)
         {
-            foreach (SubParticle sub_particle in particle.particles)
-                this.Draw(sub_particle, particle, texture);
-            if (particle.connection != null)
-                this.DrawLine(particle.position, particle.connection.position, particle.particles[0].color, (float)particle.particles[0].scale*3);
-        }
-
-        public void Draw(SubParticle sub_particle, Particle parent, Texture2D texture)
-        {
-            Draw(texture, parent.position + sub_particle.displacement, null, sub_particle.color, (float)parent.rotation + (float)sub_particle.spin, new Vector2(texture.Width / 2, texture.Height / 2), (float)sub_particle.scale, SpriteEffects.None, 0);
+            this.Draw(particle.sprite, particle.position, particle.rotation);
         }
     }
 }

@@ -16,15 +16,10 @@ namespace Abyss.Entities.Magic
 
         public WaterGrimoire() : base()
         {
-            primary = new ParticleController(Element.water, 1.0, 3, 1, 3, 0.4, 0.7);
+            primary = new ParticleController(Element.water, 1.0, 3, 3, 3, 0.4, 0.7);
             secondary = new ParticleController(Element.water, 0, 0, 0, 10, 0, 1.0);
 
-            sub_particles = new SubParticle[1]
-            {
-                new SubParticle(0, 0, 0, 0, 0, 0.3, Color.White, 1.5, true), // CENTER
-            };
-
-            is_connected = false;
+            sprite = Globals.WaterSpell;
         }
 
 
@@ -72,12 +67,7 @@ namespace Abyss.Entities.Magic
             primary = new ParticleController(Element.water, 0.7, 0.1, 1.5, 0.5, 0.1, 0.05, true);
             secondary = new ParticleController(Element.water, 0.3, 0.5, 2, 1, 0.3, 0.05, true);
 
-            sub_particles = new SubParticle[1]
-                {
-                    new SubParticle(0, 0, 0, 0, 0, 0, Color.White, 2)
-                };
-
-            is_connected = false;
+            sprite = Globals.FireSpell;
         }
 
         public override void Primary(Entity parent, Vector2 target_pos)

@@ -128,50 +128,6 @@ namespace Abyss.Master
             new Vector2(Globals.TILE_SIZE / 2, Globals.TILE_SIZE)
         };
 
-        public static T[] CloneArray<T>(T[] array)
-        {
-            List<T> cloned_list = new List<T>(array.Length);
-            foreach (T t in array)
-            {
-                T cloned = DeepClone(t);
-                cloned_list.Add(cloned);
-            }
-            return cloned_list.ToArray();
-        }
-
-        public static T DeepClone<T>(T src)
-        {
-            if (src == null) return default;
-
-            Type type = src.GetType();
-            if (type.IsValueType || type == typeof(string)) return src;
-
-            object cloned_obj = Activator.CreateInstance(type);
-
-            // Get all fields, including private and non-public ones
-            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            foreach (FieldInfo field_info in fields)
-            {
-                object field = field_info.GetValue(src);
-                object cloned_field = DeepClone(field);
-                field_info.SetValue(cloned_obj, cloned_field);
-            }
-
-            // Get all properties with a public getter and setter
-            PropertyInfo[] properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            foreach (PropertyInfo property_info in properties)
-            {
-                if (property_info.CanRead && property_info.CanWrite)
-                {
-                    object property = property_info.GetValue(src);
-                    object cloned_property = DeepClone(property);
-                    property_info.SetValue(cloned_obj, cloned_property);
-                }
-            }
-
-            return (T)cloned_obj;
-        }
-
         public static Vector2 VectorAtAngle(double angle)
         {
             float x = (float)Math.Cos(angle);
