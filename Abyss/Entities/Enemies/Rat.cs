@@ -10,8 +10,7 @@ namespace Abyss.Entities.Enemies
 {
     internal class Rat : Entity
     {
-        public Rat() { }
-        public Rat(float x, float y) : base(x, y)
+        public Rat(float x, float y) : base(x,y)
         {
             this.draw_obj = new Rectangle(0,0,16,16);
             this.max_health = 5;
@@ -25,6 +24,11 @@ namespace Abyss.Entities.Enemies
             this.attack_cooldown_max = 1;
 
             UpdateDrawObj();
+        }
+
+        public override Entity Clone()
+        {
+            return new Rat(this.pos.X * 16, this.pos.Y * 16);
         }
     }
 }

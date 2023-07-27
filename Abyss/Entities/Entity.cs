@@ -62,14 +62,9 @@ namespace Abyss.Entities
         // for crits
         private protected static readonly Random random = new Random();
 
-        public Entity()
-        {
-
-        }
-
         public Entity(float x, float y)
         {
-            this.pos = new Vector2(x * 16, y * 16);
+            this.pos = new Vector2(x, y);
         }
 
         public Entity(Texture2D texture)
@@ -253,6 +248,14 @@ namespace Abyss.Entities
             // the same goes for the y-axis
             if (draw_obj.Y != pos.Y)
                 draw_obj.Y = (int)pos.Y;
+        }
+
+
+
+        // clones the entity
+        public virtual Entity Clone()
+        {
+            return new Entity(this.pos.X * 16, this.pos.Y * 16);
         }
     }
 }

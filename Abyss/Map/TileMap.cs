@@ -95,7 +95,12 @@ namespace Abyss.Map
 
         public Entity[] GetEntities()
         {
-            return DeepCloneHelper.CloneArray(entities);
+            List<Entity> entities = new List<Entity>();
+            foreach (Entity e in this.entities)
+            {
+                entities.Add(e.Clone());
+            }
+            return entities.ToArray();
         }
 
         public MapLayer GetCollisionLayer() { return this.collision_layer; }
