@@ -72,6 +72,7 @@ namespace Abyss.Draw
 
         public Rectangle DestinationRectangle()
         {
+            if (frame >= frame_limit) frame = frame_limit;
             return sprites[(int)frame];
         }
 

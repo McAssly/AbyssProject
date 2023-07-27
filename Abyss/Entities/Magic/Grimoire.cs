@@ -109,16 +109,15 @@ namespace Abyss.Entities.Magic
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public double Hits(Entity entity)
+        public Particle Hits(Entity entity)
         {
             Particle dealer = Particles.Find(x => x.IsColliding(entity));
             if (dealer != null)
             {
-                double damage = dealer.damage;
                 if (!dealer.pierce) Particles.Remove(dealer);
-                return damage;
+                return dealer;
             }
-            return 0;
+            return null;
         }
 
         public void GenerateParticle(Entity parent, Vector2 velocity, byte type, double rotation)
@@ -167,6 +166,7 @@ namespace Abyss.Entities.Magic
                 Tile tile = game_state.GetCurrentTileMap().GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
                 if (particle.IsColliding(tile) && !tile.NULL)
                 {
+                    game_state.Burst(particle.position);
                     _particles.Add(particle);
                     break;
                 }

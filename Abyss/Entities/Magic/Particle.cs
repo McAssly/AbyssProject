@@ -64,8 +64,6 @@ namespace Abyss.Entities.Magic
         public double rotation;
         public bool pierce;
 
-        public Particle connection;
-
 
         /** PARTICLE CONSTRUCTOR */
         public Particle(Entity parent, Vector2 position, Vector2 velocity, ParticleController pc, double damage, double rotation, AnimatedSprite sprite, Particle? connection_point = null)
@@ -80,25 +78,6 @@ namespace Abyss.Entities.Magic
             this.rotation = rotation;
             this.sprite = sprite;
             this.pierce = pc.pierce;
-
-            if (connection_point != null) this.connection = connection_point;
-            else this.connection = null;
-        }
-
-        public Particle(Entity entity)
-        {
-            this.parent = entity;
-            this.position = entity.GetPosition() + new Vector2(8, 8);
-            this.velocity = Vector2.Zero;
-            this.accel = 0;
-            this.lifetime = 0;
-            this.element = Element.NULL;
-            this.damage = 0;
-            this.rotation = 0;
-            this.sprite = null;
-            this.pierce = false;
-
-            this.connection = null;
         }
 
 

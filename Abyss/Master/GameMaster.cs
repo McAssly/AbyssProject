@@ -1,5 +1,6 @@
 ﻿using Abyss.Draw;
 using Abyss.Entities;
+using Abyss.Entities.Magic;
 using Abyss.Map;
 using Abyss.UI;
 using Microsoft.Xna.Framework;
@@ -45,12 +46,18 @@ namespace Abyss.Master
         // declare debug vars
         protected internal double fps;
 
+        // draw data
+        protected internal List<Effect> effects;
+
         // save data
         protected internal GameData save;
         private bool in_tutorial;
 
         // declare basic constructor
-        public GameMaster() { }
+        public GameMaster() 
+        { 
+            effects = new List<Effect>();
+        }
 
 
 
@@ -171,6 +178,13 @@ namespace Abyss.Master
 
 
 
+        // EFFECTS
+        public void Burst(Vector2 position)
+        {
+            effects.Add(Effect.BurstEffect(position));
+        }
+
+
 
 
 
@@ -262,6 +276,7 @@ namespace Abyss.Master
                         // clear particles
                         player.Inventory.grimoires[0].Clear();
                         player.Inventory.grimoires[1].Clear();
+                        effects.Clear();
                     }
                 }
             }
@@ -281,9 +296,12 @@ namespace Abyss.Master
                 // enemies take damage
                 for (int i = 0; i < 2; i++)
                 {
-                    double damage_dealt = player.Inventory.grimoires[i].Hits(entity);
-                    if (damage_dealt != 0)
-                        entity.ReduceHealth(damage_dealt);
+                    Particle damager = player.Inventory.grimoires[i].Hits(entity);
+                    if (damager != null)
+                    {
+                        this.Burst(damager.position);
+                        entity.ReduceHealth(damager.damage);
+                    }
                 }
 
                 // enemies deal damage
@@ -306,6 +324,9 @@ namespace Abyss.Master
                     this.LoadSaveState(SaveState.start);
                 this.current_level.ResetEntities();
             }
+
+            foreach (Effect effect in effects) effect.Update(delta);
+            effects.RemoveAll(fx => fx.IsDead());
         }
 
 
@@ -333,6 +354,8 @@ namespace Abyss.Master
             // draw the particles of the game
             sprite_batch.Draw(player.Inventory.grimoires[0]);
             sprite_batch.Draw(player.Inventory.grimoires[1]);
+
+            foreach (Effect fx in effects) sprite_batch.Draw(fx);
         }
 
         /// <summary>

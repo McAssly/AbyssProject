@@ -9,6 +9,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
+using Effect = Abyss.Master.Effect;
 
 namespace Abyss.Draw
 {
@@ -23,6 +24,12 @@ namespace Abyss.Draw
                 Color.White,
                 (float)rotation, new Vector2(sprite.width / 2, sprite.height / 2),
                 SpriteEffects.None, 0);
+        }
+
+
+        public void Draw(Effect fx)
+        {
+            this.Draw(fx.sprite, fx.position, 0);
         }
     }
 }

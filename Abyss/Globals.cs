@@ -58,6 +58,9 @@ namespace Abyss
         public static AnimatedSprite SteamSpell = null;
         public static AnimatedSprite BoilSpell = null;
 
+        // particle effects
+        public static AnimatedSprite BurstEffect = null;
+
         // DRAW LAYERS
         public static readonly float floor_z = 0.05f;
         public static readonly float deco_z = 0.04f;

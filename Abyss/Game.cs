@@ -70,6 +70,8 @@ namespace Abyss
             // Load sprites
             Globals.TestBox = Content.Load<Texture2D>("testbox");
 
+            Texture2D burst_texture = Content.Load<Texture2D>("particles/burst");
+
             Texture2D base_spell_texture = Content.Load<Texture2D>("spells/spell");
             Texture2D fire_spell_texture = Content.Load<Texture2D>("spells/fire");
             Texture2D water_spell_texture = Content.Load<Texture2D>("spells/water");
@@ -78,7 +80,9 @@ namespace Abyss
 
             Globals.BaseSpell = new AnimatedSprite(base_spell_texture, 20, 20, 71);
             Globals.FireSpell = new AnimatedSprite(fire_spell_texture, 19, 19, 71);
-            Globals.WaterSpell = new AnimatedSprite(water_spell_texture, 20, 20, 71);
+            Globals.WaterSpell = new AnimatedSprite(water_spell_texture, 20, 20, 63, 2);
+
+            Globals.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19);
 
             // Load the Primary Game / UI
             GameMaster.TestLevel = Levels.Eastwoods;
