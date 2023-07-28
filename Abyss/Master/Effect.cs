@@ -34,9 +34,9 @@ namespace Abyss.Master
             return lifetime <= 0;
         }
 
-        public static Effect BurstEffect(Vector2 position)
+        public static void BurstEffect(Vector2 position, GameMaster game_state)
         {
-            return new Effect(position, Globals.BurstEffect, 0.28);
+            game_state.effects.Add(new Effect(position, Globals.BurstEffect, 0.28));
         }
     }
 }

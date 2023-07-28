@@ -118,20 +118,20 @@ namespace Abyss.Entities
             // get the keyboard controls (off by default)
             bool kb_atk_1 = false;
             bool kb_atk_2 = false;
-            if (Controls.AttackKey1.HasValue) kb_atk_1 = KB.IsKeyDown(Controls.AttackKey1.Value);
-            if (Controls.AttackKey2.HasValue) kb_atk_2 = KB.IsKeyDown(Controls.AttackKey2.Value);
+            if (Controls.AttackKey_1.HasValue) kb_atk_1 = KB.IsKeyDown(Controls.AttackKey_1.Value);
+            if (Controls.AttackKey_2.HasValue) kb_atk_2 = KB.IsKeyDown(Controls.AttackKey_2.Value);
 
             // detect keyboard/mouse buttons, if the corresponding ones are pressed then active the corresponding grimoire and spell
-            if (kb_atk_1 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag1))
+            if (kb_atk_1 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag_1))
             {
                 // there are secondary spells and to activate them the control sequence has to be pressed (default: l-shift)
-                if (KB.IsKeyDown(Controls.Secondary))
+                if (KB.IsKeyDown(Controls.GrimoireSecondary_1))
                     this.Cast(0, 2); // secondary spell
                 else this.Cast(0, 1); // primary spell
             }
-            if (kb_atk_2 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag2))
+            if (kb_atk_2 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag_2))
             {
-                if (KB.IsKeyDown(Controls.Secondary))
+                if (KB.IsKeyDown(Controls.GrimoireSecondary_2))
                     this.Cast(1, 2); // secondary spell
                 else this.Cast(1, 1); // primary spell
             }

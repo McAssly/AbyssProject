@@ -61,7 +61,7 @@ namespace Abyss.Master
             if (pos_node != null && hp_node != null && mana_node != null)
             {
                 // save the position data
-                pos_node.InnerText = WriteData(new int[] { data.map_index, (int)data.player.position.X / 16, (int)data.player.position.Y / 16 }, ',');
+                pos_node.InnerText = WriteData(new int[] { data.level_index, data.map_index, (int)data.player.position.X / 16, (int)data.player.position.Y / 16 }, ',');
                 // save the health data
                 hp_node.InnerText = WriteData(new int[] { (int)data.player.current_hp, (int)data.player.max_hp }, '/');
                 // save the mana data
@@ -75,9 +75,9 @@ namespace Abyss.Master
         /// Loads the given save data into the game
         /// </summary>
         /// <param name="save_file"></param>
-        /// <param name="GM"></param>
+        /// <param name="game_state"></param>
         /// <param name="player"></param>
-        public static void Load(string save_file, GameMaster GM)
+        public static void Load(string save_file, GameMaster game_state)
         {
             // load the XML document
             XmlDocument save = new XmlDocument();
@@ -104,7 +104,7 @@ namespace Abyss.Master
 
             // convert them into usable variables ------------------------------
             PlayerData data = new PlayerData(
-                new Vector2(parsed_pos[1], parsed_pos[2]),
+                new Vector2(parsed_pos[2], parsed_pos[3]),
                 parsed_hp[0], parsed_hp[1],
                 parsed_mana[0], parsed_mana[1]
                 );
@@ -118,7 +118,7 @@ namespace Abyss.Master
                 );
 
             // load the save data
-            GM.LoadSave(parsed_pos[0], data, in_tutorial);
+            game_state.LoadSave(parsed_pos[0], parsed_pos[1], data, in_tutorial);
         }
 
         /// <summary>

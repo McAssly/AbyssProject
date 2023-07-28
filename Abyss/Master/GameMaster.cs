@@ -30,14 +30,14 @@ namespace Abyss.Master
                     new Text("Goodbye.", Globals.DialoguePosition + Globals.OptionOffset[2], 0.3f, Globals.DialogueSize, true)
                 }
             );
-        public static Level TestLevel;
         // --------------------------------------------------------------------------------------------------------------------------
 
 
 
 
         // Declare the game managers (UI/Level)
-        private Level current_level;
+        private Level[] levels;
+        private int level_index;
         private Ui current_ui;
 
         // Declare game entities
@@ -55,7 +55,11 @@ namespace Abyss.Master
 
         // declare basic constructor
         public GameMaster() 
-        { 
+        {
+            levels = new Level[1] 
+            {
+                Levels.Eastwoods
+            };
             effects = new List<Effect>();
         }
 
@@ -68,11 +72,9 @@ namespace Abyss.Master
         /// <summary>
         /// Sets up both the current level and current ui of the game within the game master
         /// </summary>
-        /// <param name="level"></param>
         /// <param name="ui"></param>
-        public void Setup(Level level, Ui ui)
+        public void Setup(Ui ui)
         {
-            this.current_level = level;
             this.current_ui = ui;
         }
 
@@ -82,7 +84,13 @@ namespace Abyss.Master
         /// </summary>
         /// <param name="Content"></param>
         /// <param name="initial_map"></param>
-        public static void LoadLevels(ContentManager Content, int initial_map) { TestLevel.LoadLevel(Content, initial_map); }
+        public void LoadLevels(ContentManager Content, int initial_map = 0) 
+        {
+            foreach (Level level in levels)
+            {
+                level.LoadLevel(Content, initial_map);
+            }
+        }
 
 
         /// <summary>
@@ -92,19 +100,20 @@ namespace Abyss.Master
         public void LoadPlayer(Texture2D texture) { player = new Player(texture); }
 
         /// <summary>
-        /// Loads the current save file <--- placeholder
+        /// Loads the current save file
         /// </summary>
         /// <param name="map_index"></param>
-        public void LoadSave(int map_index, PlayerData player, bool in_tutorial)
-        { 
-            current_level.SetCurrent(map_index); 
+        public void LoadSave(int level_index, int map_index, PlayerData player, bool in_tutorial)
+        {
+            this.level_index = level_index;
+            levels[this.level_index].SetCurrent(map_index); 
             this.player.LoadSave(player);
             this.in_tutorial = in_tutorial;
         }
 
         public void LoadSaveState(GameData data)
         {
-            current_level.SetCurrent(data.map_index);
+            levels[level_index].SetCurrent(data.map_index);
             this.player.LoadSave(data.player);
             this.in_tutorial = data.in_tutorial;
         }
@@ -159,7 +168,7 @@ namespace Abyss.Master
         public void Save()
         {
             this.save = new GameData(
-                this.in_tutorial,
+                this.in_tutorial, this.level_index,
                 this.GetMapIndex(),
                 (int)this.player.GetPosition().X,
                 (int)this.player.GetPosition().Y,
@@ -178,15 +187,6 @@ namespace Abyss.Master
 
 
 
-        // EFFECTS
-        public void Burst(Vector2 position)
-        {
-            effects.Add(Effect.BurstEffect(position));
-        }
-
-
-
-
 
 
 
@@ -201,7 +201,7 @@ namespace Abyss.Master
         /// Grabs the current level the game state is playing in
         /// </summary>
         /// <returns>the game state's current level</returns>
-        public Level CurrentLevel() { return current_level; }
+        public Level CurrentLevel() { return levels[level_index]; }
 
         /// <summary>
         /// Grabs the current ui the game state is running
@@ -213,13 +213,13 @@ namespace Abyss.Master
         /// Grabs the current tile map that the game state is rendering
         /// </summary>
         /// <returns>the game state's current tile map</returns>
-        public TileMap GetCurrentTileMap() { return current_level.GetCurrent(); }
+        public TileMap GetCurrentTileMap() { return levels[level_index].GetCurrent(); }
 
         /// <summary>
         /// Grabs which map index the current level is running in
         /// </summary>
         /// <returns>the game state's current map index</returns>
-        public int GetMapIndex() { return Array.IndexOf(current_level.GetMaps(), current_level.GetCurrent()); }
+        public int GetMapIndex() { return Array.IndexOf(levels[level_index].GetMaps(), levels[level_index].GetCurrent()); }
 
 
 
@@ -251,8 +251,8 @@ namespace Abyss.Master
             if (player.ExittingSide().HasValue)
             {
                 // get the next map the current map links to (at the exitting side)
-                int next_map = current_level.GetNextMap(player.ExittingSide().Value);
-                int next_map_index = current_level.GetCurrent().GetNext()[next_map];
+                int next_map = levels[level_index].GetNextMap(player.ExittingSide().Value);
+                int next_map_index = levels[level_index].GetCurrent().GetNext()[next_map];
                 // get the new position the player will take
                 NullableVector new_position = player.GetNextPosition(player.ExittingSide().Value);
 
@@ -263,13 +263,13 @@ namespace Abyss.Master
                 Vector tile_coords = MathUtil.CoordsToTileCoords(new_pos);
 
                 // if the new position on the next map is not a collision tile then allow the player to move into the next map
-                if (current_level.GetMaps()[next_map_index].GetCollisionLayer().GetTiles()[tile_coords.y, tile_coords.x].NULL)
+                if (levels[level_index].GetMaps()[next_map_index].GetCollisionLayer().GetTiles()[tile_coords.y, tile_coords.x].NULL)
                 {
                     // change to the new map
-                    var prev_map = current_level.GetCurrent();
-                    current_level.SetCurrent(next_map_index);
+                    var prev_map = levels[level_index].GetCurrent();
+                    levels[level_index].SetCurrent(next_map_index);
                     // wrap the player's position to the new one
-                    if (current_level.GetCurrent() != prev_map) // if the map properly changed
+                    if (levels[level_index].GetCurrent() != prev_map) // if the map properly changed
                     {
                         // set the new position
                         player.SetPosition(new_pos);
@@ -290,8 +290,8 @@ namespace Abyss.Master
 
             // Update the entities
             // enemies
-            current_level.GetEntities().RemoveAll(x => x.GetHealth() <= 0);
-            foreach (Entity entity in current_level.GetEntities())
+            levels[level_index].GetEntities().RemoveAll(x => x.GetHealth() <= 0);
+            foreach (Entity entity in levels[level_index].GetEntities())
             {
                 // enemies take damage
                 for (int i = 0; i < 2; i++)
@@ -299,7 +299,7 @@ namespace Abyss.Master
                     Particle damager = player.Inventory.grimoires[i].Hits(entity);
                     if (damager != null)
                     {
-                        this.Burst(damager.position);
+                        Effect.BurstEffect(damager.position, this);
                         entity.ReduceHealth(damager.damage);
                     }
                 }
@@ -322,7 +322,7 @@ namespace Abyss.Master
                     this.LoadSaveState(SaveState.tutorial);
                 else
                     this.LoadSaveState(SaveState.start);
-                this.current_level.ResetEntities();
+                this.levels[level_index].ResetEntities();
             }
 
             foreach (Effect effect in effects) effect.Update(delta);
@@ -342,11 +342,11 @@ namespace Abyss.Master
         public void Draw(DrawBatch sprite_batch)
         {
             // draw the current level map
-            sprite_batch.Draw(current_level.GetCurrent());
+            sprite_batch.Draw(levels[level_index].GetCurrent());
 
             // draw the entities
-            if (current_level.GetEntities().Count > 0)
-                sprite_batch.Draw(current_level.GetEntities());
+            if (levels[level_index].GetEntities().Count > 0)
+                sprite_batch.Draw(levels[level_index].GetEntities());
 
             // draw the player
             sprite_batch.Draw(player);

@@ -13,6 +13,8 @@ using System.Reflection.PortableExecutable;
 using System.Diagnostics;
 using System.Threading;
 using Abyss.Draw;
+using Abyss.Entities.Magic.Grimoires;
+using Effect = Abyss.Master.Effect;
 
 namespace Abyss.Entities.Magic
 {
@@ -166,7 +168,7 @@ namespace Abyss.Entities.Magic
                 Tile tile = game_state.GetCurrentTileMap().GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
                 if (particle.IsColliding(tile) && !tile.NULL)
                 {
-                    game_state.Burst(particle.position);
+                    Effect.BurstEffect(particle.position, game_state);
                     _particles.Add(particle);
                     break;
                 }
@@ -196,15 +198,15 @@ namespace Abyss.Entities.Magic
                 case "base":
                     return new Grimoire();
                 case "water":
-                    return new WaterGrimoire();
+                    return new Water();
                 case "wind":
-                    return new WindGrimoire();
+                    return new Wind();
                 case "earth":
-                    return new EarthGrimoire();
+                    return new Earth();
                 case "fire":
-                    return new FireGrimoire();
+                    return new Fire();
                 case "lightning":
-                    return new LightningGrimoire();
+                    return new Lightning();
                 default: return new Grimoire();
             }
         }
