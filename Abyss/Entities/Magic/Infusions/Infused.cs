@@ -1,4 +1,4 @@
-﻿using Abyss.Draw;
+﻿using Abyss.Sprite;
 using System;
 using System.Collections.Generic;
 using System.Linq;

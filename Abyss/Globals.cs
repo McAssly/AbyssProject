@@ -1,5 +1,5 @@
-﻿using Abyss.Draw;
-using Abyss.Map;
+﻿using Abyss.Map;
+using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -16,6 +16,7 @@ namespace Abyss
         public static double WindowSize = 1.5; // inverse size (bigger = smaller)
         public static int WindowW = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / WindowSize), WindowH = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / WindowSize);
         public static readonly double FRAME_SPEED = 1.5;
+        public static readonly double ANIMATION_SPEED = 100;
 
         // GAME CONSTANTS
         public static readonly int TILE_SIZE = 16;

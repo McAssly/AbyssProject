@@ -1,6 +1,6 @@
-﻿using Abyss.Draw;
-using Abyss.Map;
+﻿using Abyss.Map;
 using Abyss.Master;
+using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;

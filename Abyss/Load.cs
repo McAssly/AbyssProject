@@ -1,5 +1,6 @@
 ﻿using Abyss.Draw;
 using Abyss.Master;
+using Abyss.Sprite;
 using Abyss.UI;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;

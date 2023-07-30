@@ -12,9 +12,9 @@ using Abyss.Map;
 using System.Reflection.PortableExecutable;
 using System.Diagnostics;
 using System.Threading;
-using Abyss.Draw;
 using Abyss.Entities.Magic.Grimoires;
-using Effect = Abyss.Master.Effect;
+using Effect = Abyss.Entities.Effect;
+using Abyss.Sprite;
 
 namespace Abyss.Entities.Magic
 {

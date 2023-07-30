@@ -51,7 +51,7 @@ namespace Abyss.Draw
 
         public void Draw(Particle particle)
         {
-            this.Draw(particle.sprite, particle.position, particle.rotation);
+            this.Draw(particle.sprite, particle.position, particle.rotation, 1, true);
         }
     }
 }

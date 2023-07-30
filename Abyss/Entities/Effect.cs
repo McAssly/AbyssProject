@@ -1,5 +1,6 @@
-﻿using Abyss.Draw;
-using Abyss.Entities.Magic;
+﻿using Abyss.Entities.Magic;
+using Abyss.Master;
+using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Master
+namespace Abyss.Entities
 {
     internal class Effect
     {
@@ -23,7 +24,7 @@ namespace Abyss.Master
             this.lifetime = lifetime;
         }
 
-        public void Update(double delta)
+        public void Update(double delta) 
         {
             sprite.Update(delta);
             lifetime -= delta;
@@ -36,7 +37,7 @@ namespace Abyss.Master
 
         public static void BurstEffect(Vector2 position, GameMaster game_state)
         {
-            game_state.effects.Add(new Effect(position, Globals.BurstEffect, 0.28));
+            game_state.effects.Add(new Effect(position, Globals.BurstEffect.Clone(), 0.28));
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Draw
+namespace Abyss.Sprite
 {
     internal class AnimatedSprite
     {
@@ -29,23 +29,23 @@ namespace Abyss.Draw
         /// <param name="px_height"></param>
         public AnimatedSprite(Texture2D loaded_sprite, int px_width, int px_height, int frame_limit = 0, double frame_speed = 1, double start_frame = 0)
         {
-            this.sprite_map = loaded_sprite;
-            this.frame = start_frame;
-            this.timer = 0.0;
+            sprite_map = loaded_sprite;
+            frame = start_frame;
+            timer = 0.0;
 
             List<Rectangle> frames = new List<Rectangle>();
             for (int y = 0; y < loaded_sprite.Height / px_height; y++)
                 for (int x = 0; x < loaded_sprite.Width / px_width; x++)
                     frames.Add(new Rectangle(x * px_width, y * px_height, px_width, px_height));
 
-            this.sprites = frames.ToArray();
+            sprites = frames.ToArray();
             if (frame_limit == 0)
                 this.frame_limit = frames.Count - 1;
             else
                 this.frame_limit = frame_limit;
 
-            this.width = px_width;
-            this.height = px_height;
+            width = px_width;
+            height = px_height;
             this.frame_speed = frame_speed;
         }
 
@@ -62,7 +62,7 @@ namespace Abyss.Draw
             if (frame >= frame_limit)
                 frame = 0;
             else
-                frame += frame_speed;
+                frame += delta * Globals.ANIMATION_SPEED * frame_speed;
         }
 
         public Texture2D GetSpriteMap()
@@ -79,7 +79,7 @@ namespace Abyss.Draw
 
         public AnimatedSprite Clone()
         {
-            return new AnimatedSprite(this.sprite_map, this.width, this.height, this.frame_limit, this.frame_speed, this.frame);
+            return new AnimatedSprite(sprite_map, width, height, frame_limit, frame_speed, frame);
         }
     }
 }

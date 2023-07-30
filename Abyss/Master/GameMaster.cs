@@ -14,6 +14,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Effect = Abyss.Entities.Effect;
 
 namespace Abyss.Master
 {
