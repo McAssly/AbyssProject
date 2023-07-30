@@ -267,5 +267,11 @@ namespace Abyss.Entities
         {
             return new Entity(this.texture, this.pos.X * 16, this.pos.Y * 16);
         }
+
+        internal Rectangle CreateRectangle()
+        {
+            Vector rounded_position = Vector.Round(this.pos);
+            return new Rectangle(rounded_position.x, rounded_position.y, width, height);
+        }
     }
 }

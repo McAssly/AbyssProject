@@ -41,6 +41,11 @@ namespace Abyss.Master
             this.y = y;
         }
 
+        public static Vector Round(Vector2 vector)
+        {
+            return new Vector((int)Math.Round(vector.X), (int)Math.Round(vector.Y));
+        }
+
         public static Vector Convert(Vector2 vector)
         {
             return new Vector((int)vector.X, (int)vector.Y);
@@ -117,7 +122,7 @@ namespace Abyss.Master
             if (delta >= distance)
                 return vec2;
             else // otherwise move in that direciton
-                return vec1 + direction * (int)delta;
+                return vec1 + direction * (float)delta;
         }
 
         /**

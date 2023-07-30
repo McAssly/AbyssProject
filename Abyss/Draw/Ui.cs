@@ -46,7 +46,7 @@ namespace Abyss.Draw
             {
                 Draw(new Text("HP: " + GM.player.GetHealth() + "/" + GM.player.GetMaxHealth(), 16, 16, 0.5f));
                 Draw(new Text("MN: " + GM.player.GetMana() + "/" + GM.player.GetMaxMana(), 16, 32, 0.5f));
-                Draw(new Text("POS: " + (int)GM.player.GetPosition().X + ", " + (int)GM.player.GetPosition().Y + "\nTPOS: " +
+                Draw(new Text("POS: " + GM.player.GetPosition().X + ", " + GM.player.GetPosition().Y + "\nTPOS: " +
                     MathUtil.CoordsToTileCoords(GM.player.GetPosition()).x + ", " + MathUtil.CoordsToTileCoords(GM.player.GetPosition()).y
                     , 16, 48, 0.3f));
                 Draw(new Text("Ms-W: " + (int)MathUtil.MousePosition().X + ", " + (int)MathUtil.MousePosition().Y, 16, 64, 0.4f));

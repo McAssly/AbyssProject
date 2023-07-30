@@ -24,7 +24,7 @@ namespace Abyss.Draw
     {
         public void Draw(Player player) // placeholder
         {
-            Draw(player.texture, new Rectangle((int)player.GetPosition().X, (int)player.GetPosition().Y, player.GetWidth(), player.GetHeight()), null, Color.White);
+            Draw(player.texture, player.CreateRectangle(), null, Color.White);
         }
 
         public void Draw(List<Entity> entities)
@@ -35,7 +35,7 @@ namespace Abyss.Draw
 
         public void Draw(Entity entity)
         {
-            Draw(entity.texture, new Rectangle((int)entity.GetPosition().X, (int)entity.GetPosition().Y, entity.GetWidth(), entity.GetHeight()), null, Color.Red);
+            Draw(entity.texture, entity.CreateRectangle(), null, Color.Red);
         }
         public void Draw(Grimoire grimoire)
         {
