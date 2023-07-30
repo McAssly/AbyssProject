@@ -117,6 +117,7 @@ namespace Abyss.Entities.Magic
             if (dealer != null)
             {
                 if (!dealer.pierce) Particles.Remove(dealer);
+                if (dealer.pierce) dealer.ReduceDamage();
                 return dealer;
             }
             return null;

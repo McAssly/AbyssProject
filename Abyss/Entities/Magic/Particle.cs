@@ -4,6 +4,7 @@ using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,6 +79,18 @@ namespace Abyss.Entities.Magic
             this.rotation = rotation;
             this.sprite = sprite;
             this.pierce = pc.pierce;
+        }
+
+
+
+        /// <summary>
+        /// in the case of a particle reducing its damage (typically when piercing a target)
+        /// </summary>
+        public void ReduceDamage()
+        {
+            this.damage = this.damage * 0.77;
+            if (this.damage < 0.01)
+                this.lifetime = 0;
         }
 
 
