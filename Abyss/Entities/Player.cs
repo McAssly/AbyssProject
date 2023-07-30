@@ -83,8 +83,6 @@ namespace Abyss.Entities
 
         public Player(Texture2D texture) :base(texture)
         {
-            // draw object is currently a placeholder as there is no player texture as of now
-            this.draw_obj = new Rectangle(0, 0, 16, 16);
             this.pos = new Vector2();
             this.speed = 1.5;
             this.crit_dmg = 0.7; // 70%
@@ -149,7 +147,7 @@ namespace Abyss.Entities
         {
             CalcInputVector(KB);
             Move(GM.GetCurrentTileMap(), delta);
-            UpdateDrawObj();
+            ClampPosition();
 
             /* ATTACK DETECTION AND CASTING */
             GM.player.Attack(KB, MS);

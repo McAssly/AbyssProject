@@ -48,6 +48,8 @@ namespace Abyss.Map
             for (int i = 0; i < length; i++)
             {
                 Maps[i] = new TileMap(maps[i], _tileset);
+                foreach (Entity entity in Maps[i].GetEntities(false))
+                    entity.Load();
             }
 
             current = Maps[current_index];

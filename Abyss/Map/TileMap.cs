@@ -93,14 +93,18 @@ namespace Abyss.Map
             this.height = this.layers[0].GetHeight();
         }
 
-        public Entity[] GetEntities()
+        public Entity[] GetEntities(bool clone = true)
         {
-            List<Entity> entities = new List<Entity>();
-            foreach (Entity e in this.entities)
+            if (clone)
             {
-                entities.Add(e.Clone());
+                List<Entity> entities = new List<Entity>();
+                foreach (Entity e in this.entities)
+                {
+                    entities.Add(e.Clone());
+                }
+                return entities.ToArray();
             }
-            return entities.ToArray();
+            return entities;
         }
 
         public MapLayer GetCollisionLayer() { return this.collision_layer; }

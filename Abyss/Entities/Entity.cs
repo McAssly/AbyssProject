@@ -14,11 +14,12 @@ namespace Abyss.Entities
 {
     internal class Entity
     {
-        private protected Rectangle draw_obj;
-        private protected Texture2D texture;
+        public Texture2D texture;
         private protected int draw_size = Globals.TILE_SIZE; // by default we will use the global tile size
         // offsets for the entity, useful for knowing where each corner and face are located on the entity's draw object
         private protected readonly Vector2[] _offsets;
+
+        private protected int width, height;
 
         // declare max values for the entity
         private protected readonly int max_speed = 1;
@@ -62,6 +63,14 @@ namespace Abyss.Entities
         // for crits
         private protected static readonly Random random = new Random();
 
+        public Entity(Texture2D texutre, float x, float y)
+        {
+            this.texture = texutre;
+            this.width = this.texture.Width;
+            this.height = this.texture.Height;
+            this.pos = new Vector2(x, y);
+        }
+
         public Entity(float x, float y)
         {
             this.pos = new Vector2(x, y);
@@ -71,6 +80,8 @@ namespace Abyss.Entities
         {
             this.statuses = new List<StatusEffect>();
             this.texture = texture;
+            this.width = texture.Width;
+            this.height = texture.Height;
             _offsets = new Vector2[8]
                 {
                     Vector2.Zero,
@@ -232,22 +243,21 @@ namespace Abyss.Entities
         public double GetMana() { return mana; }
         public Vector2 GetPosition() { return pos; }
         public Vector2 GetVelocity() { return vel; }
-        public Rectangle GetDrawObj() { return draw_obj; }
-        public int GetWidth() { return draw_obj.Width; }
-        public int GetHeight() { return draw_obj.Height; }
+        public int GetWidth() { return width; }
+        public int GetHeight() { return height; }
         /**
          * Simply updates the draw object's position
          */
-        public void UpdateDrawObj()
+        public void ClampPosition()
         {
             pos = Vector2.Clamp(pos, new Vector2(-1), new Vector2(16 * 16 - 16 + 1));
-            // if the player's position updated then therefore so does the draw object's
-            if (draw_obj.X != pos.X)
-                draw_obj.X = (int)pos.X;
+        }
 
-            // the same goes for the y-axis
-            if (draw_obj.Y != pos.Y)
-                draw_obj.Y = (int)pos.Y;
+        public virtual void Load()
+        {
+            this.texture = Globals.TestBox;
+            this.width = this.texture.Width;
+            this.height = this.texture.Height;
         }
 
 
@@ -255,7 +265,7 @@ namespace Abyss.Entities
         // clones the entity
         public virtual Entity Clone()
         {
-            return new Entity(this.pos.X * 16, this.pos.Y * 16);
+            return new Entity(this.texture, this.pos.X * 16, this.pos.Y * 16);
         }
     }
 }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
@@ -22,7 +23,7 @@ namespace Abyss.Draw
     {
         public void Draw(Player player) // placeholder
         {
-            Draw(Globals.TestBox, player.GetDrawObj(), null, Color.White);
+            Draw(player.texture, new Rectangle((int)player.GetPosition().X, (int)player.GetPosition().Y, player.GetWidth(), player.GetHeight()), null, Color.White);
         }
 
         public void Draw(List<Entity> entities)
@@ -33,16 +34,14 @@ namespace Abyss.Draw
 
         public void Draw(Entity entity)
         {
-            Draw(Globals.TestBox, entity.GetDrawObj(), null, Color.Red);
+            Draw(entity.texture, new Rectangle((int)entity.GetPosition().X, (int)entity.GetPosition().Y, entity.GetWidth(), entity.GetHeight()), null, Color.Red);
         }
-
         public void Draw(Grimoire grimoire)
         {
             if (Globals.BaseSpell == null) return;
             foreach (var particle in grimoire.Particles)
                 Draw(particle);
         }
-
         public void DrawLinesBetween(List<Particle> particles)
         {
             for (int i = 0; i < particles.Count - 1; i++)
