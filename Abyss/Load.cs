@@ -17,10 +17,10 @@ namespace Abyss
         public static void LoadContent(ContentManager Content, GameMaster game_state)
         {
             // Load the game font
-            Globals.Font = Content.Load<SpriteFont>("font");
+            Sprites.Font = Content.Load<SpriteFont>("font");
 
             // Load sprites
-            Globals.TestBox = Content.Load<Texture2D>("testbox");
+            Sprites.TestBox = Content.Load<Texture2D>("testbox");
 
             Texture2D burst_texture = Content.Load<Texture2D>("particles/burst");
 
@@ -30,17 +30,17 @@ namespace Abyss
             //Texture2D boil_spell_texture = Content.Load<Texture2D>("spells/boil");
             //Texture2D steam_spell_texture = Content.Load<Texture2D>("spells/steam");
 
-            Globals.BaseSpell = new AnimatedSprite(base_spell_texture, 20, 20, 71);
-            Globals.FireSpell = new AnimatedSprite(fire_spell_texture, 19, 19, 71);
-            Globals.WaterSpell = new AnimatedSprite(water_spell_texture, 20, 20, 63, 2);
+            Sprites.BaseSpell = new AnimatedSprite(base_spell_texture, 20, 20, 71);
+            Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 19, 19, 71);
+            Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 20, 20, 63, 2);
 
-            Globals.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19);
+            Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19);
 
             // load the maps
             game_state.LoadLevels(Content);
 
             // load all entities
-            game_state.LoadPlayer(Globals.TestBox);
+            game_state.LoadPlayer(Sprites.TestBox);
             Data.Load("save.xml", game_state);
 
             

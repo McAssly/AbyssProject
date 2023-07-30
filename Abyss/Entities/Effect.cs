@@ -37,7 +37,7 @@ namespace Abyss.Entities
 
         public static void BurstEffect(Vector2 position, GameMaster game_state)
         {
-            game_state.effects.Add(new Effect(position, Globals.BurstEffect.Clone(), 0.28));
+            game_state.effects.Add(new Effect(position, Sprites.BurstEffect.Clone(), 0.28));
         }
     }
 }

@@ -44,24 +44,6 @@ namespace Abyss
             new Vector2(0, DialogueSize.Y * 5)
         };
 
-        // DEBUG
-        public static Texture2D TestBox;
-
-        // TEXTURES / fonts
-        public static SpriteFont Font;
-
-        // spells
-        public static AnimatedSprite BaseSpell = null;
-        public static AnimatedSprite FireSpell = null;
-        public static AnimatedSprite WaterSpell = null;
-
-        // infused
-        public static AnimatedSprite SteamSpell = null;
-        public static AnimatedSprite BoilSpell = null;
-
-        // particle effects
-        public static AnimatedSprite BurstEffect = null;
-
         // DRAW LAYERS
         public static readonly float floor_z = 0.05f;
         public static readonly float deco_z = 0.04f;

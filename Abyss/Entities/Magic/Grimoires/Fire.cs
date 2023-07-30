@@ -1,4 +1,5 @@
 ﻿using Abyss.Master;
+using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace Abyss.Entities.Magic.Grimoires
             primary = new ParticleController(Element.fire, 0.7, 0.1, 1.5, 0.5, 0.1, 0.05, true);
             secondary = new ParticleController(Element.fire, 0.3, 0.5, 2, 1, 0.3, 0.05, true);
 
-            sprite = Globals.FireSpell;
+            sprite = Sprites.FireSpell;
         }
 
         public override void Primary(Entity parent, Vector2 target_pos)

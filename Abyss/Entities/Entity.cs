@@ -1,6 +1,7 @@
 ﻿using Abyss.Entities.Enemies;
 using Abyss.Map;
 using Abyss.Master;
+using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -255,7 +256,7 @@ namespace Abyss.Entities
 
         public virtual void Load()
         {
-            this.texture = Globals.TestBox;
+            this.texture = Sprites.TestBox;
             this.width = this.texture.Width;
             this.height = this.texture.Height;
         }

@@ -2,6 +2,7 @@
 using Abyss.Entities.Magic;
 using Abyss.Map;
 using Abyss.Master;
+using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -38,7 +39,7 @@ namespace Abyss.Draw
         }
         public void Draw(Grimoire grimoire)
         {
-            if (Globals.BaseSpell == null) return;
+            if (Sprites.BaseSpell == null) return;
             foreach (var particle in grimoire.Particles)
                 Draw(particle);
         }

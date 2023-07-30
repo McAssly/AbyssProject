@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Sprite;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -39,7 +40,7 @@ namespace Abyss.Entities.Enemies
 
         public override void Load()
         {
-            this.texture = Globals.TestBox;
+            this.texture = Sprites.TestBox;
             this.width = texture.Width;
             this.height = texture.Height;
         }

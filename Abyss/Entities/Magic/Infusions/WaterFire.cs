@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Sprite;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,8 +18,8 @@ namespace Abyss.Entities.Magic.Infusions
             L1_R1 = new ParticleController(Element.NULL, 0.2, 1, 2, 3, 1, 0.1);
             L1_R2 = new ParticleController(Element.NULL, 0.5, 10, 2, 15, 0.3, 1.0);
 
-            sprite0 = Globals.BoilSpell;
-            sprite1 = Globals.SteamSpell;
+            sprite0 = Sprites.BoilSpell;
+            sprite1 = Sprites.SteamSpell;
         }
     }
 }

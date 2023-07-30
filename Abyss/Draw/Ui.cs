@@ -1,5 +1,6 @@
 ﻿using Abyss.Entities;
 using Abyss.Master;
+using Abyss.Sprite;
 using Abyss.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,7 +35,7 @@ namespace Abyss.Draw
             {
                 this.FillRectangle(new RectangleF(text.GetX(), text.GetY(), text.GetWidth(), text.GetHeight()), bg);
             }
-            DrawString(Globals.Font, text.GetText(), text.GetPosition(), fg, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
+            DrawString(Sprites.Font, text.GetText(), text.GetPosition(), fg, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
         }
 
 
@@ -70,7 +71,7 @@ namespace Abyss.Draw
         public void Draw(UI.Console console)
         {
             this.FillRectangle(new RectangleF(0, 0, Globals.WindowW, Globals.TILE_SIZE * 2), Globals.Black);
-            DrawString(Globals.Font, Game._TextInput.ToString(), new Vector2(8, 8), Color.White, 0, Vector2.Zero, (float)0.3, SpriteEffects.None, 0);
+            DrawString(Sprites.Font, Game._TextInput.ToString(), new Vector2(8, 8), Color.White, 0, Vector2.Zero, (float)0.3, SpriteEffects.None, 0);
         }
 
         public void Draw(UI.Dialogue dialogue)

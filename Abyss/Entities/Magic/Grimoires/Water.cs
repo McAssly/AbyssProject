@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Abyss.Sprite;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Abyss.Entities.Magic.Grimoires
             primary = new ParticleController(Element.water, 1.0, 3, 3, 3, 0.4, 0.7);
             secondary = new ParticleController(Element.water, 0, 0, 0, 10, 0, 1.0);
 
-            sprite = Globals.WaterSpell;
+            sprite = Sprites.WaterSpell;
         }
 
 

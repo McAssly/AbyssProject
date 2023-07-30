@@ -34,7 +34,7 @@ namespace Abyss.Entities.Magic
             primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1);
             secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
 
-            sprite = Globals.BaseSpell;
+            sprite = Sprites.BaseSpell;
         }
 
         /**    ATTACK SEQUENCE    */
