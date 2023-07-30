@@ -43,7 +43,7 @@ namespace Abyss.Entities.Magic
             this.mana_cost = mana_cost;
             this.accel = accel;
             this.cooldown_max = cooldown_max;
-            cooldown = 0;
+            this.cooldown = 0;
             this.pierce = pierce;
         }
     }

@@ -16,7 +16,6 @@ namespace Abyss.Entities
     internal class Entity
     {
         public Texture2D texture;
-        private protected int draw_size = Globals.TILE_SIZE; // by default we will use the global tile size
         // offsets for the entity, useful for knowing where each corner and face are located on the entity's draw object
         private protected readonly Vector2[] _offsets;
 
@@ -86,14 +85,14 @@ namespace Abyss.Entities
             _offsets = new Vector2[8]
                 {
                     Vector2.Zero,
-                    new Vector2(draw_size),
-                    new Vector2(draw_size, 0),
-                    new Vector2(0, draw_size),
+                    new Vector2(width, height),
+                    new Vector2(width, 0),
+                    new Vector2(0, height),
 
-                    new Vector2(0, draw_size / 2),
-                    new Vector2(draw_size, draw_size / 2),
-                    new Vector2(draw_size / 2, 0),
-                    new Vector2(draw_size / 2, draw_size)
+                    new Vector2(0, height / 2),
+                    new Vector2(width, height / 2),
+                    new Vector2(width / 2, 0),
+                    new Vector2(width / 2, height)
                 };
         }
 

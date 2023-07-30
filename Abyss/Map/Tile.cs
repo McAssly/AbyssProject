@@ -35,10 +35,10 @@ namespace Abyss.Map
         {
             Vector2 target_pos = entity.GetPosition() + entity.GetVelocity();
             // 1st: Get the four corners of the target object
-            Vector2 p0 = target_pos;                                      // TOP LEFT CORNER
-            Vector2 p1 = target_pos + new Vector2(Globals.TILE_SIZE, 0);  // TOP RIGHT
-            Vector2 p2 = target_pos + new Vector2(0, Globals.TILE_SIZE);  // BOTTOM LEFT
-            Vector2 p3 = target_pos + new Vector2(Globals.TILE_SIZE);     // BOTTOM RIGHT
+            Vector2 p0 = target_pos;                                                          // TOP LEFT CORNER
+            Vector2 p1 = target_pos + new Vector2(entity.GetWidth(), 0);                      // TOP RIGHT
+            Vector2 p2 = target_pos + new Vector2(0, entity.GetHeight());                     // BOTTOM LEFT
+            Vector2 p3 = target_pos + new Vector2(entity.GetWidth(), entity.GetHeight());     // BOTTOM RIGHT
 
             // 2nd: Get the four bounds of this tiled
             float left = this.pos.X;

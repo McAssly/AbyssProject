@@ -28,50 +28,6 @@ namespace Abyss.Master
             this.y = y;
         }
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 23 + x.GetHashCode();
-                hash = hash * 23 + y.GetHashCode();
-                return hash;
-            }
-        }
-
-        public static bool operator ==(NullableVector a, NullableVector b)
-        {
-            return a.Equals(b);
-        }
-
-        public static bool operator !=(NullableVector a, NullableVector b)
-        {
-            return !a.Equals(b);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is NullableVector other)
-            {
-                return x == other.x && y == other.y;
-            }
-            return false;
-        }
-
-        public Vector2 Convert()
-        {
-            Vector2 output = new Vector2();
-            if (x != null) output.X = x.Value;
-            if (y != null) output.Y = y.Value;
-
-            return output;
-        }
-
-        public static NullableVector Convert(Vector2 vector)
-        {
-            return new NullableVector((int) vector.X, (int) vector.Y);
-        }
-
         public static readonly NullableVector NULL = new NullableVector(null, null);
     }
 
