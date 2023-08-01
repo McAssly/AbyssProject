@@ -81,7 +81,7 @@ namespace Abyss.Entities
         // declare the player's inventory
         public Inventory Inventory;
 
-        public Player(Texture2D texture) :base(texture)
+        public Player(Texture2D texture, float scale) :base(texture, scale)
         {
             this.pos = new Vector2();
             this.speed = 1.5;

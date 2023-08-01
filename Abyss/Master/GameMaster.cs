@@ -98,7 +98,7 @@ namespace Abyss.Master
         /// Loads the player entity for the game
         /// </summary>
         /// <param name="texture"></param>
-        public void LoadPlayer(Texture2D texture) { player = new Player(texture); }
+        public void LoadPlayer(Texture2D texture, float scale) { player = new Player(texture, scale); }
 
         /// <summary>
         /// Loads the current save file

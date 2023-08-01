@@ -17,6 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
+using Vector = Abyss.Master.Vector;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Draw
 {

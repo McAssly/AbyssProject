@@ -40,7 +40,7 @@ namespace Abyss
             game_state.LoadLevels(Content);
 
             // load all entities
-            game_state.LoadPlayer(Sprites.TestBox);
+            game_state.LoadPlayer(Sprites.TestBox, 1);
             Data.Load("save.xml", game_state);
 
             

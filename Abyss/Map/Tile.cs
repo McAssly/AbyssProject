@@ -31,31 +31,10 @@ namespace Abyss.Map
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public bool Colliding(Entity entity)
+        public bool Colliding(Entity entity, Vector2 offset)
         {
-            Vector2 target_pos = entity.GetPosition() + entity.GetVelocity();
-            // 1st: Get the four corners of the target object
-            Vector2 p0 = target_pos;                                                          // TOP LEFT CORNER
-            Vector2 p1 = target_pos + new Vector2(entity.GetWidth(), 0);                      // TOP RIGHT
-            Vector2 p2 = target_pos + new Vector2(0, entity.GetHeight());                     // BOTTOM LEFT
-            Vector2 p3 = target_pos + new Vector2(entity.GetWidth(), entity.GetHeight());     // BOTTOM RIGHT
-
-            // 2nd: Get the four bounds of this tiled
-            float left = this.pos.X;
-            float right = this.pos.X + Globals.TILE_SIZE;
-            float top = this.pos.Y;
-            float bottom = this.pos.Y + Globals.TILE_SIZE;
-
-            return MathUtil.IsWithin(p0, left, right, top, bottom)
-                || MathUtil.IsWithin(p1, left, right, top, bottom)
-                || MathUtil.IsWithin(p2, left, right, top, bottom)
-                || MathUtil.IsWithin(p3, left, right, top, bottom);
-        }
-
-
-        public bool Colliding(Particle particle)
-        {
-            return MathUtil.IsWithin(particle.position, pos.X, pos.X + Globals.TILE_SIZE, pos.Y, pos.Y + Globals.TILE_SIZE);
+            Vector2 target_pos = entity.GetPosition() + offset;
+            return MathUtil.RectangleCollisionCheck(this.pos, new Vector2(16,16), target_pos, entity.GetSize());
         }
     }
 }

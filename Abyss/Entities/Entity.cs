@@ -4,6 +4,7 @@ using Abyss.Master;
 using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,10 +17,9 @@ namespace Abyss.Entities
     internal class Entity
     {
         public Texture2D texture;
-        // offsets for the entity, useful for knowing where each corner and face are located on the entity's draw object
-        private protected readonly Vector2[] _offsets;
 
         private protected int width, height;
+        private protected readonly float scale = 1;
 
         // declare max values for the entity
         private protected readonly int max_speed = 1;
@@ -76,34 +76,18 @@ namespace Abyss.Entities
             this.pos = new Vector2(x, y);
         }
 
-        public Entity(Texture2D texture)
+        public Entity(Texture2D texture, float scale)
         {
             this.statuses = new List<StatusEffect>();
             this.texture = texture;
             this.width = texture.Width;
             this.height = texture.Height;
-            _offsets = new Vector2[8]
-                {
-                    Vector2.Zero,
-                    new Vector2(width, height),
-                    new Vector2(width, 0),
-                    new Vector2(0, height),
-
-                    new Vector2(0, height / 2),
-                    new Vector2(width, height / 2),
-                    new Vector2(width / 2, 0),
-                    new Vector2(width / 2, height)
-                };
+            this.scale = scale;
         }
 
         public bool CollidesWith(Entity entity)
         {
-            foreach (Vector2 offset in _offsets)
-            {
-                if (MathUtil.IsWithin(pos + offset, entity.GetPosition().X, entity.GetPosition().X + entity.GetWidth(), entity.GetPosition().Y, entity.GetPosition().Y + entity.GetHeight()))
-                    return true;
-            }
-            return false;
+            return MathUtil.RectangleCollisionCheck(this.pos, this.GetSize(), entity.GetPosition(), entity.GetSize());
         }
 
         public double Hits(Player player)
@@ -179,51 +163,29 @@ namespace Abyss.Entities
                 vel = MathUtil.MoveToward(vel, Vector2.Zero, friction * delta);
 
             // handle collision, if they are about to collide we must alter our velocity before we move forward
-            if (this.WillCollideX(map) && vel.X != 0)
+            if (vel.X != 0 && this.CollisionCheck(map, new Vector2(vel.X, 0)))
                 vel.X = 0;
-            if (this.WillCollideY(map) && vel.Y != 0)
+            if (vel.Y != 0 && this.CollisionCheck(map, new Vector2(0, vel.Y)))
                 vel.Y = 0;
             pos += vel * new Vector2((float)(delta * Globals.FRAME_FACTOR));
         }
 
-        public bool WillCollideX(TileMap map)
+        public bool CollisionCheck(TileMap map, Vector2 offset)
         {
-            // the only offsets needed for the x axis are the left and right offsets
-            // therefore ignore offsets @ i = 6 & 7
-            for (int i = 0; i < 8; i++)
+            Vector[] tile_corners = new Vector[4]
             {
-                if (i == 6 || i == 7) continue;
-                if (vel.X > 0 && (i == 0 || i == 4 || i == 3)) continue; // ignore left side
-                if (vel.X < 0 && (i == 1 || i == 5 || i == 2)) continue; // ignore right side
-                if (CollisionCheckX(map, i)) return true;
+                MathUtil.CoordsToTileCoords(pos),
+                MathUtil.CoordsToTileCoords(pos + GetSize(true, false)),
+                MathUtil.CoordsToTileCoords(pos + GetSize(false, true)),
+                MathUtil.CoordsToTileCoords(pos + GetSize())
+            };
+            foreach (var corner in tile_corners)
+            {
+                Vector tile_pos = MathUtil.Clamp(corner.To2() + offset.NormalizedCopy());
+                Tile target_tile = map.GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
+                if (!target_tile.NULL && target_tile.Colliding(this, offset)) return true;
             }
             return false;
-        }
-        public bool WillCollideY(TileMap map)
-        {
-            // the only offsets needed for the y axis are the top and bottom offsets
-            // therefore ignore offsets @ i = 4 & 5
-            for (int i = 0; i < 8; i++)
-            {
-                if (i == 4 || i == 5) continue;
-                if (vel.Y > 0 && (i == 0 || i == 6 || i == 2)) continue; // ignore top side
-                if (vel.Y < 0 && (i == 3 || i == 7 || i == 1)) continue; // ignore bottom side
-                if (CollisionCheckY(map, i)) return true;
-            }
-            return false;
-        }
-
-        public bool CollisionCheckX(TileMap map, int offset)
-        {
-            Vector tilePos = MathUtil.CoordsToTileCoords(pos + new Vector2(vel.X, 0) + MathUtil.offsets[offset]);
-            Tile targetTile = map.GetCollisionLayer().GetTiles()[tilePos.y, tilePos.x];
-            return !targetTile.NULL && targetTile.Colliding(this);
-        }
-        public bool CollisionCheckY(TileMap map, int offset)
-        {
-            Vector tilePos = MathUtil.CoordsToTileCoords(pos + new Vector2(0, vel.Y) + MathUtil.offsets[offset]);
-            Tile targetTile = map.GetCollisionLayer().GetTiles()[tilePos.y, tilePos.x];
-            return !targetTile.NULL && targetTile.Colliding(this);
         }
 
 
@@ -245,6 +207,13 @@ namespace Abyss.Entities
         public Vector2 GetVelocity() { return vel; }
         public int GetWidth() { return width; }
         public int GetHeight() { return height; }
+        public Vector2 GetSize(bool x = true, bool y = true)
+        {
+            Vector2 size = new Vector2(width * scale, height * scale);
+            if (!x) size.X = 0;
+            if (!y) size.Y = 0;
+            return size;
+        }
         /**
          * Simply updates the draw object's position
          */
@@ -271,7 +240,7 @@ namespace Abyss.Entities
         internal Rectangle CreateRectangle()
         {
             Vector rounded_position = Vector.Round(this.pos);
-            return new Rectangle(rounded_position.x, rounded_position.y, width, height);
+            return new Rectangle(rounded_position.x, rounded_position.y, (int)(width * scale), (int)(height * scale));
         }
     }
 }

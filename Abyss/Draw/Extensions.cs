@@ -16,6 +16,12 @@ namespace Abyss.Draw
 {
     internal partial class DrawBatch : SpriteBatch
     {
+        public void Draw(SpriteSheet sheet, Vector2 source, double rotation = 0, float scalar = 1, bool centered = false)
+        {
+
+        }
+
+
         public void Draw(AnimatedSprite sprite, Vector2 source, double rotation = 0, float scalar = 1, bool centered = false)
         {
             // calculate the new width and height of the draw object based on scalar

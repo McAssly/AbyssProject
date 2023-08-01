@@ -12,8 +12,7 @@ namespace Abyss.Sprite
     internal class AnimatedSprite
     {
         private protected Texture2D sprite_map;
-        private protected Rectangle[] sprites;
-        private protected double timer;
+        private protected Rectangle[] frames;
         private protected double frame;
         private protected int frame_limit;
         private protected double frame_speed;
@@ -31,14 +30,13 @@ namespace Abyss.Sprite
         {
             sprite_map = loaded_sprite;
             frame = start_frame;
-            timer = 0.0;
 
             List<Rectangle> frames = new List<Rectangle>();
             for (int y = 0; y < loaded_sprite.Height / px_height; y++)
                 for (int x = 0; x < loaded_sprite.Width / px_width; x++)
                     frames.Add(new Rectangle(x * px_width, y * px_height, px_width, px_height));
 
-            sprites = frames.ToArray();
+            this.frames = frames.ToArray();
             if (frame_limit == 0)
                 this.frame_limit = frames.Count - 1;
             else
@@ -49,6 +47,31 @@ namespace Abyss.Sprite
             this.frame_speed = frame_speed;
         }
 
+
+        /// <summary>
+        /// For pre-generated frames
+        /// </summary>
+        /// <param name="loaded_sprite"></param>
+        /// <param name="frames"></param>
+        /// <param name="px_width"></param>
+        /// <param name="px_height"></param>
+        /// <param name="frame_limit"></param>
+        /// <param name="frame_speed"></param>
+        /// <param name="start_frame"></param>
+        public AnimatedSprite(Texture2D loaded_sprite, Rectangle[] frames, int px_width, int px_height, int frame_limit = 0, double frame_speed = 1, double start_frame = 0)
+        {
+            sprite_map = loaded_sprite;
+            frame = start_frame;
+            this.frames = frames;
+            if (frame_limit == 0)
+                this.frame_limit = this.frames.Length - 1;
+            else
+                this.frame_limit = frame_limit;
+
+            width = px_width;
+            height = px_height;
+            this.frame_speed = frame_speed;
+        }
 
 
 
@@ -73,7 +96,7 @@ namespace Abyss.Sprite
         public Rectangle DestinationRectangle()
         {
             if (frame >= frame_limit) frame = frame_limit;
-            return sprites[(int)frame];
+            return frames[(int)frame];
         }
 
 

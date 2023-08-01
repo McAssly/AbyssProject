@@ -1,4 +1,5 @@
 ﻿using Abyss.Map;
+using Abyss.Master;
 using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,10 +22,8 @@ namespace Abyss
         // GAME CONSTANTS
         public static readonly int TILE_SIZE = 16;
         public static double GameScale = Math.Sqrt(TILE_SIZE) / (float)WindowSize;
-        public static readonly double GAME_WINDOW_SIZE = 256*GameScale;
-        public static Vector3 DrawPosition = new Vector3(
-                (float)((WindowW - GAME_WINDOW_SIZE)/(2*GameScale)), 
-                (float)((WindowH - GAME_WINDOW_SIZE) / (2 * GameScale)),0);
+        public static readonly int GAME_WINDOW_SIZE = 256;
+        public static Vector3 DrawPosition = MathUtil.CenterWithinRectangle(WindowW, WindowH, GAME_WINDOW_SIZE, GAME_WINDOW_SIZE, GameScale).To3();
 
         public static readonly double FRAME_FACTOR = 50;
         public static readonly double PARTICLE_SUBTRACTOR = 0.5;

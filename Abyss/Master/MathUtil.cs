@@ -1,6 +1,7 @@
 ﻿using Abyss.Map;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using MonoGame.Extended;
 using MonoGame.Extended.Collections;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
+using Vector3 = Microsoft.Xna.Framework.Vector3;
 
 namespace Abyss.Master
 {
@@ -48,7 +50,17 @@ namespace Abyss.Master
 
         public static Vector Convert(Vector2 vector)
         {
-            return new Vector((int)vector.X, (int)vector.Y);
+            return new Vector((int)Math.Round(vector.X), (int)Math.Round(vector.Y));
+        }
+
+        public Vector2 To2()
+        {
+            return new Vector2(x, y);
+        }
+
+        public Vector3 To3()
+        {
+            return new Vector3(x, y, 0);
         }
     }
 
@@ -73,22 +85,6 @@ namespace Abyss.Master
             return MousePosition() - new Vector2(Globals.DrawPosition.X, Globals.DrawPosition.Y);
         }
 
-
-
-        // any useful math variables
-        public static Vector2[] offsets = new Vector2[8]
-        {
-            Vector2.Zero,
-            new Vector2(Globals.TILE_SIZE),
-            new Vector2(Globals.TILE_SIZE, 0),
-            new Vector2(0, Globals.TILE_SIZE),
-
-            new Vector2(0, Globals.TILE_SIZE / 2),
-            new Vector2(Globals.TILE_SIZE, Globals.TILE_SIZE / 2),
-            new Vector2(Globals.TILE_SIZE / 2, 0),
-            new Vector2(Globals.TILE_SIZE / 2, Globals.TILE_SIZE)
-        };
-
         public static Vector2 VectorAtAngle(double angle)
         {
             float x = (float)Math.Cos(angle);
@@ -98,6 +94,11 @@ namespace Abyss.Master
             float length = (float)Math.Sqrt(x * x + y * y);
 
             return new Vector2(x / length, y / length);
+        }
+
+        public static Vector Clamp(Vector2 vector)
+        {
+            return Vector.Convert(Vector2.Clamp(vector, new Vector2(0, 0), new Vector2(15, 15)));
         }
 
         /**
@@ -184,24 +185,30 @@ namespace Abyss.Master
         {
             Vector2 result = coords / Globals.TILE_SIZE;
             result.Floor();
-            return Vector.Convert(Vector2.Clamp(result, Vector2.Zero, new Vector2(16-1)));
+            return Clamp(result);
         }
 
-        /**
-         * Returns true if the given position is within the bounds of the given four points
-         * 
-         * 
-         * THIS FUNCTION MIGHT BE WRONG AND HAVE POOR LOGIC         <------------------------------------------------------ !!!!
-         * 
-         * @param   Vector2     the given position in question
-         * @param   float       left bound
-         * @param   float       right bound
-         * @param   float       top bound
-         * @param   float       bottom bound
-         */
-        public static bool IsWithin(Vector2 pos, float left, float right, float top, float bottom)
+
+        public static bool WithinRectangle(Vector2 pos1, Vector2 pos2, Vector2 size2)
         {
-            return pos.X >= left && pos.X <= right && pos.Y >= top && pos.Y <= bottom;
+            return 
+                pos1.X >= pos2.X &&
+                pos1.X <= pos2.X + size2.X &&
+                pos1.Y >= pos2.Y &&
+                pos1.Y <= pos2.Y + size2.Y;
+        }
+
+
+        public static bool RectangleCollisionCheck(Vector2 pos1, Vector2 size1, Vector2 pos2, Vector2 size2)
+        {
+            // determine the max/min values for each rectangle
+            Vector2 rect1_min = pos1;
+            Vector2 rect1_max = pos1 + size1;
+            Vector2 rect2_min = pos2;
+            Vector2 rect2_max = pos2 + size2;
+
+            // If there is overlap on both X and Y axes, then the collision check passed, otherwise it didn't; simple
+            return rect1_min.X <= rect2_max.X && rect1_max.X >= rect2_min.X && rect1_min.Y <= rect2_max.Y && rect1_max.Y >= rect2_min.Y;
         }
 
 
@@ -221,6 +228,17 @@ namespace Abyss.Master
                     return MS.RightButton == ButtonState.Pressed;
                 default: return false;
             }
+        }
+
+
+
+
+        public static Vector CenterWithinRectangle(int outer_width, int outer_height, int inner_width, int inner_height, double scalar = 1)
+        {
+            return new Vector(
+                (int)((outer_width - inner_width * scalar) / (2 * scalar)),
+                (int)((outer_height - inner_height * scalar) / (2 * scalar))
+            );
         }
     }
 }

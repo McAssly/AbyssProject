@@ -101,7 +101,7 @@ namespace Abyss.Entities.Magic
         /// <returns></returns>
         public bool IsColliding(Entity entity)
         {
-            return MathUtil.IsWithin(position, entity.GetPosition().X, entity.GetPosition().X + entity.GetWidth(), entity.GetPosition().Y, entity.GetPosition().Y + entity.GetHeight());
+            return MathUtil.RectangleCollisionCheck(position, new Vector2(1,1), entity.GetPosition(), entity.GetSize());
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace Abyss.Entities.Magic
         /// <returns></returns>
         public bool IsColliding(Tile tile)
         {
-            return tile.Colliding(this);
+            return MathUtil.WithinRectangle(position, tile.pos, new Vector2(16,16));
         }
 
         /// <summary>

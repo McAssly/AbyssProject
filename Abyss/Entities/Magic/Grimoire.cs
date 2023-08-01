@@ -15,6 +15,7 @@ using System.Threading;
 using Abyss.Entities.Magic.Grimoires;
 using Effect = Abyss.Entities.Effect;
 using Abyss.Sprite;
+using MonoGame.Extended;
 
 namespace Abyss.Entities.Magic
 {
