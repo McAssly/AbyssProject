@@ -2,6 +2,7 @@
 using Abyss.Entities;
 using Abyss.Entities.Magic;
 using Abyss.Map;
+using Abyss.Sprite;
 using Abyss.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -53,6 +54,7 @@ namespace Abyss.Master
         // save data
         protected internal GameData save;
         private bool in_tutorial;
+        private byte player_gender;
 
         // declare basic constructor
         public GameMaster() 
@@ -98,14 +100,23 @@ namespace Abyss.Master
         /// Loads the player entity for the game
         /// </summary>
         /// <param name="texture"></param>
-        public void LoadPlayer(Texture2D texture, float scale) { player = new Player(texture, scale); }
+        public void LoadPlayer(SpriteSheet sprite) { player = new Player(sprite); }
 
         /// <summary>
         /// Loads the current save file
         /// </summary>
         /// <param name="map_index"></param>
-        public void LoadSave(int level_index, int map_index, PlayerData player, bool in_tutorial)
+        public void LoadSave(int level_index, int map_index, PlayerData player, bool in_tutorial, string gender)
         {
+            switch (gender)
+            {
+                case "boy":
+                    this.LoadPlayer(Sprites.PlayerM);  this.player_gender = 0; break;
+                case "girl":
+                    this.LoadPlayer(Sprites.PlayerF);  this.player_gender = 1; break;
+                default:
+                    this.LoadPlayer(Sprites.PlayerF);  this.player_gender = 1; break;
+            }
             this.level_index = level_index;
             levels[this.level_index].SetCurrent(map_index); 
             this.player.LoadSave(player);
@@ -117,6 +128,11 @@ namespace Abyss.Master
             levels[level_index].SetCurrent(data.map_index);
             this.player.LoadSave(data.player);
             this.in_tutorial = data.in_tutorial;
+            this.player_gender = data.player_gender;
+            if (player_gender != 0 && player_gender != 1)
+            {
+                player_gender = Data.LoadGender("save.xml");
+            }
         }
 
 
@@ -169,7 +185,7 @@ namespace Abyss.Master
         public void Save()
         {
             this.save = new GameData(
-                this.in_tutorial, this.level_index,
+                this.in_tutorial, this.player_gender, this.level_index,
                 this.GetMapIndex(),
                 (int)this.player.GetPosition().X,
                 (int)this.player.GetPosition().Y,

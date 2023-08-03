@@ -85,6 +85,7 @@ namespace Abyss.Master
 
             // determine if the player is in the tutorial or not
             bool in_tutorial = bool.Parse(save.DocumentElement.SelectSingleNode("/player/tutorial").InnerText);
+            string gender = save.DocumentElement.SelectSingleNode("/player/gender").InnerText;
 
             // Get the player variables ------------------------------
             string pos_data = save.DocumentElement.SelectSingleNode("/player/pos").InnerText;
@@ -118,7 +119,20 @@ namespace Abyss.Master
                 );
 
             // load the save data
-            game_state.LoadSave(parsed_pos[0], parsed_pos[1], data, in_tutorial);
+            game_state.LoadSave(parsed_pos[0], parsed_pos[1], data, in_tutorial, gender);
+        }
+
+        public static byte LoadGender(string savefile)
+        {
+            XmlDocument save = new XmlDocument();
+            save.Load(savefile);
+            string gender = save.DocumentElement.SelectSingleNode("/player/gender").InnerText;
+            switch (gender)
+            {
+                case "boy": return 0;
+                case "girl": return 1;
+                default: return 1;
+            }
         }
 
         /// <summary>

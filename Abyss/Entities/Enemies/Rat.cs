@@ -25,11 +25,11 @@ namespace Abyss.Entities.Enemies
             this.attack_cooldown_max = 1;
         }
 
-        public Rat(Texture2D texture, float x, float y) : base(texture, x, y)
+        public Rat(SpriteSheet sprite, float x, float y) : base(sprite, x, y)
         {
-            this.texture = texture;
-            this.width = this.texture.Width;
-            this.height = this.texture.Height;
+            this.sprite = sprite;
+            this.width = this.sprite.width - 1;
+            this.height = this.sprite.height - 1;
             this.Initialize();
         }
 
@@ -40,14 +40,14 @@ namespace Abyss.Entities.Enemies
 
         public override void Load()
         {
-            this.texture = Sprites.TestBox;
-            this.width = texture.Width;
-            this.height = texture.Height;
+            this.sprite = Sprites.TestBox;
+            this.width = sprite.width - 1;
+            this.height = sprite.height - 1;
         }
 
         public override Entity Clone()
         {
-            return new Rat(this.texture, this.pos.X * 16, this.pos.Y * 16);
+            return new Rat(this.sprite, this.pos.X * 16, this.pos.Y * 16);
         }
     }
 }

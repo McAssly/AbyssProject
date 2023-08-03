@@ -9,17 +9,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Vector = Abyss.Master.Vector;
+using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Entities
 {
     internal class Entity
     {
-        public Texture2D texture;
+        public SpriteSheet sprite;
 
         private protected int width, height;
-        private protected readonly float scale = 1;
 
         // declare max values for the entity
         private protected readonly int max_speed = 1;
@@ -56,6 +58,8 @@ namespace Abyss.Entities
         // time elapsed
         private protected double time_elapsed = 0;
         public double regen_timer = 0;
+        private protected double idle_timer_max = 5;
+        private protected double idle_timer = 0;
 
         // last damage applied
         public double last_damage = 0;
@@ -63,11 +67,11 @@ namespace Abyss.Entities
         // for crits
         private protected static readonly Random random = new Random();
 
-        public Entity(Texture2D texutre, float x, float y)
+        public Entity(SpriteSheet sprite, float x, float y)
         {
-            this.texture = texutre;
-            this.width = this.texture.Width;
-            this.height = this.texture.Height;
+            this.sprite = sprite;
+            this.width = this.sprite.width - 1;
+            this.height = this.sprite.height - 1;
             this.pos = new Vector2(x, y);
         }
 
@@ -76,13 +80,12 @@ namespace Abyss.Entities
             this.pos = new Vector2(x, y);
         }
 
-        public Entity(Texture2D texture, float scale)
+        public Entity(SpriteSheet sprite)
         {
             this.statuses = new List<StatusEffect>();
-            this.texture = texture;
-            this.width = texture.Width;
-            this.height = texture.Height;
-            this.scale = scale;
+            this.sprite = sprite;
+            this.width = this.sprite.width - 1;
+            this.height = this.sprite.height - 1;
         }
 
         public bool CollidesWith(Entity entity)
@@ -172,20 +175,27 @@ namespace Abyss.Entities
 
         public bool CollisionCheck(TileMap map, Vector2 offset)
         {
-            Vector[] tile_corners = new Vector[4]
-            {
-                MathUtil.CoordsToTileCoords(pos),
-                MathUtil.CoordsToTileCoords(pos + GetSize(true, false)),
-                MathUtil.CoordsToTileCoords(pos + GetSize(false, true)),
-                MathUtil.CoordsToTileCoords(pos + GetSize())
-            };
-            foreach (var corner in tile_corners)
+            Vector[] tile_coords = GenerateTilePositions();
+            foreach (var corner in tile_coords)
             {
                 Vector tile_pos = MathUtil.Clamp(corner.To2() + offset.NormalizedCopy());
                 Tile target_tile = map.GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
                 if (!target_tile.NULL && target_tile.Colliding(this, offset)) return true;
             }
             return false;
+        }
+
+        public Vector[] GenerateTilePositions()
+        {
+            Vector origin = MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2));
+            List<Vector> tile_positions = new List<Vector> {MathUtil.Clamp(origin.To2())};
+            if (vel.X < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(-1, 0)));
+            if (vel.X > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(1, 0)));
+
+            if (vel.Y < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, -1)));
+            if (vel.Y > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, 1)));
+
+            return tile_positions.ToArray();
         }
 
 
@@ -209,7 +219,7 @@ namespace Abyss.Entities
         public int GetHeight() { return height; }
         public Vector2 GetSize(bool x = true, bool y = true)
         {
-            Vector2 size = new Vector2(width * scale, height * scale);
+            Vector2 size = new Vector2(width, height);
             if (!x) size.X = 0;
             if (!y) size.Y = 0;
             return size;
@@ -224,9 +234,9 @@ namespace Abyss.Entities
 
         public virtual void Load()
         {
-            this.texture = Sprites.TestBox;
-            this.width = this.texture.Width;
-            this.height = this.texture.Height;
+            this.sprite = Sprites.TestBox;
+            this.width = this.sprite.width - 1;
+            this.height = this.sprite.height - 1;
         }
 
 
@@ -234,13 +244,13 @@ namespace Abyss.Entities
         // clones the entity
         public virtual Entity Clone()
         {
-            return new Entity(this.texture, this.pos.X * 16, this.pos.Y * 16);
+            return new Entity(this.sprite, this.pos.X * 16, this.pos.Y * 16);
         }
 
         internal Rectangle CreateRectangle()
         {
             Vector rounded_position = Vector.Round(this.pos);
-            return new Rectangle(rounded_position.x, rounded_position.y, (int)(width * scale), (int)(height * scale));
+            return new Rectangle(rounded_position.x, rounded_position.y, width, height);
         }
     }
 }

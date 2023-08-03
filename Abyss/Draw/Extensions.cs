@@ -16,13 +16,13 @@ namespace Abyss.Draw
 {
     internal partial class DrawBatch : SpriteBatch
     {
-        public void Draw(SpriteSheet sheet, Vector2 source, double rotation = 0, float scalar = 1, bool centered = false)
+        public void Draw(SpriteSheet sheet, Vector2 source, Color color, double rotation = 0, float scalar = 1, bool centered = false)
         {
-
+            Draw(sheet.GetCurrent(), source - sheet.origin.To2(), color, rotation, scalar, false);
         }
 
 
-        public void Draw(AnimatedSprite sprite, Vector2 source, double rotation = 0, float scalar = 1, bool centered = false)
+        public void Draw(AnimatedSprite sprite, Vector2 source, Color color, double rotation = 0, float scalar = 1, bool centered = false)
         {
             // calculate the new width and height of the draw object based on scalar
             int width = (int)(sprite.width * scalar);
@@ -39,7 +39,7 @@ namespace Abyss.Draw
                 sprite.GetSpriteMap(),
                 new Rectangle((int)source.X, (int)source.Y, width, height),
                 sprite.DestinationRectangle(),
-                Color.White,
+                color,
                 (float)rotation, origin,
                 SpriteEffects.None, 0);
         }
@@ -47,7 +47,7 @@ namespace Abyss.Draw
 
         public void Draw(Effect fx)
         {
-            this.Draw(fx.sprite, fx.position, 0, 1, true);
+            this.Draw(fx.sprite, fx.position, Color.White, 0, 1, true);
         }
     }
 }

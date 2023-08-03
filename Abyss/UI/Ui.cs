@@ -27,10 +27,6 @@ namespace Abyss.UI
         // in game HUD
         public static Hud HUD = new Hud();
 
-
-        // debug
-        public static bool SHOW_DEBUG_HUD = true;
-
         /// <summary>
         /// Updates whether the given hud element in the command arguments should be enabled or disabled
         /// </summary>
@@ -51,7 +47,9 @@ namespace Abyss.UI
             switch (args[1])
             {
                 case "debug":
-                    SHOW_DEBUG_HUD = enable; break;
+                    Globals.Debug = enable; break;
+                case "collision":
+                    Globals.DebugCollision = enable; break;
                 default : break;
             }
         }

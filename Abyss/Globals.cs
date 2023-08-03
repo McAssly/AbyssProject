@@ -52,6 +52,10 @@ namespace Abyss
         public static readonly float exterior2_z = 0.0f;
 
 
+        public static bool DebugCollision = false;
+        public static bool Debug = true;
+
+
         /** Update the game scale when the window is resized:
          */
         public static void UpdateGameScale()

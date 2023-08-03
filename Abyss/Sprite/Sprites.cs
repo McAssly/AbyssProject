@@ -10,7 +10,7 @@ namespace Abyss.Sprite
     internal class Sprites
     {
         // DEBUG
-        public static Texture2D TestBox;
+        public static SpriteSheet TestBox;
 
         // TEXTURES / fonts
         public static SpriteFont Font;
@@ -26,5 +26,10 @@ namespace Abyss.Sprite
 
         // particle effects
         public static AnimatedSprite BurstEffect;
+
+
+        // players
+        public static SpriteSheet PlayerF;
+        public static SpriteSheet PlayerM;
     }
 }

@@ -74,6 +74,15 @@ namespace Abyss.Sprite
         }
 
 
+        public bool HasEnded()
+        {
+            return this.frame >= frame_limit;
+        }
+
+        public void Reset()
+        {
+            this.frame = 0;
+        }
 
 
         /// <summary>

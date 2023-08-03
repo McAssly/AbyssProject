@@ -24,9 +24,17 @@ namespace Abyss.Draw
 {
     internal partial class DrawBatch : SpriteBatch
     {
-        public void Draw(Player player) // placeholder
+        public void Draw(Player player)
         {
-            Draw(player.texture, player.CreateRectangle(), null, Color.White);
+            if (Globals.DebugCollision)
+            {
+                Vector[] tile_positions = player.GenerateTilePositions();
+                foreach (Vector tile_pos in tile_positions)
+                {
+                    this.DrawRectangle(new Rectangle(tile_pos.x * 16, tile_pos.y * 16, 16, 16), Color.White);
+                }
+            }
+            Draw(player.sprite, player.GetPosition(), Color.White);
         }
 
         public void Draw(List<Entity> entities)
@@ -37,7 +45,11 @@ namespace Abyss.Draw
 
         public void Draw(Entity entity)
         {
-            Draw(entity.texture, entity.CreateRectangle(), null, Color.Red);
+            Draw(entity.sprite, entity.GetPosition(), Color.Red);
+            this.DrawPoint(entity.GetPosition(), Color.Blue);
+            this.DrawPoint(entity.GetPosition() + entity.GetSize(true, false), Color.Blue);
+            this.DrawPoint(entity.GetPosition() + entity.GetSize(false, true), Color.Blue);
+            this.DrawPoint(entity.GetPosition() + entity.GetSize(), Color.Blue);
         }
         public void Draw(Grimoire grimoire)
         {
@@ -53,7 +65,7 @@ namespace Abyss.Draw
 
         public void Draw(Particle particle)
         {
-            this.Draw(particle.sprite, particle.position, particle.rotation, 1, true);
+            this.Draw(particle.sprite, particle.position, Color.White, particle.rotation, 1, true);
         }
     }
 }

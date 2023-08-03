@@ -1,6 +1,7 @@
 ﻿using Abyss.Entities.Magic;
 using Abyss.Map;
 using Abyss.Master;
+using Abyss.Sprite;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -81,7 +82,7 @@ namespace Abyss.Entities
         // declare the player's inventory
         public Inventory Inventory;
 
-        public Player(Texture2D texture, float scale) :base(texture, scale)
+        public Player(SpriteSheet sprite) :base(sprite)
         {
             this.pos = new Vector2();
             this.speed = 1.5;
@@ -135,7 +136,7 @@ namespace Abyss.Entities
             }
         }
 
-        
+
         /// <summary>
         /// updates the player instance
         /// </summary>
@@ -172,6 +173,37 @@ namespace Abyss.Entities
             }
             time_elapsed += delta;
             regen_timer += delta;
+
+            // handle animations
+            if (vel != Vector2.Zero) sprite.SetSection(1);
+            else sprite.SetSection(0);
+            switch (sprite.GetSection())
+            {
+                // IDLE animation
+                case 0:
+                    {
+                        sprite.UnLoop();
+                        Debug.WriteLine(idle_timer);
+                        if (sprite.IsPlaying() && sprite.HasEnded())
+                        {
+                            sprite.Stop();
+                            idle_timer = idle_timer_max;
+                        }
+
+                        if (idle_timer <= 0) sprite.Play();
+                        else if (idle_timer > 0) idle_timer -= delta;
+                        break;
+                    }
+                // RUNNING animation
+                case 1:
+                    sprite.Play(); sprite.Loop(); break;
+                // ATTACKING animation
+                case 2:
+                    sprite.Play(); sprite.UnLoop(); break;
+                default: sprite.Play(); break;
+            }
+
+            sprite.Update(delta, movement_vec);
         }
 
 

@@ -20,7 +20,7 @@ namespace Abyss
             Sprites.Font = Content.Load<SpriteFont>("font");
 
             // Load sprites
-            Sprites.TestBox = Content.Load<Texture2D>("testbox");
+            Sprites.TestBox = new SpriteSheet(Content.Load<Texture2D>("testbox"), 16, 16, 16, 16, 0);
 
             Texture2D burst_texture = Content.Load<Texture2D>("particles/burst");
 
@@ -36,11 +36,15 @@ namespace Abyss
 
             Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19);
 
+
+            // entity textures
+            Sprites.PlayerF = new SpriteSheet(Content.Load<Texture2D>("entity/player_f"), 27, 27, 19, 22, 4, 0, 0.05);
+            Sprites.PlayerM = new SpriteSheet(Content.Load<Texture2D>("entity/player_m"), 27, 27, 19, 24, 4, 0, 0.05);
+
             // load the maps
             game_state.LoadLevels(Content);
 
             // load all entities
-            game_state.LoadPlayer(Sprites.TestBox, 1);
             Data.Load("save.xml", game_state);
 
             

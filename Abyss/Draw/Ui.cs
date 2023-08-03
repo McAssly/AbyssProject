@@ -42,7 +42,7 @@ namespace Abyss.Draw
         public void Draw(Hud hud, GameMaster GM)
         {
             // draw the debug HUD on screen
-            if (UiControllers.SHOW_DEBUG_HUD)
+            if (Globals.Debug)
             {
                 Draw(new Text("HP: " + GM.player.GetHealth() + "/" + GM.player.GetMaxHealth(), 16, 16, 0.5f));
                 Draw(new Text("MN: " + GM.player.GetMana() + "/" + GM.player.GetMaxMana(), 16, 32, 0.5f));
