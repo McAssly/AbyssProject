@@ -187,14 +187,45 @@ namespace Abyss.Entities
 
         public Vector[] GenerateTilePositions()
         {
-            Vector origin = MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2));
-            List<Vector> tile_positions = new List<Vector> {MathUtil.Clamp(origin.To2())};
-            if (vel.X < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(-1, 0)));
-            if (vel.X > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(1, 0)));
+            /**
+            if (width < Globals.TILE_SIZE && height < Globals.TILE_SIZE)
+            {
+                Vector origin = MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2));
+                List<Vector> tile_positions = new List<Vector> { MathUtil.Clamp(origin.To2()) };
+                if (vel.X < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(-1, 0)));
+                if (vel.X > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(1, 0)));
 
-            if (vel.Y < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, -1)));
-            if (vel.Y > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, 1)));
+                if (vel.Y < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, -1)));
+                if (vel.Y > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, 1)));
 
+                return tile_positions.ToArray();
+            }
+            */
+            List<Vector> tile_positions = new List<Vector>();
+            if (movement_vec.X > 0)
+            {
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, 0)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height)));
+            }
+            if (movement_vec.X < 0)
+            {
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, 0)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, height / 2)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, height)));
+            }
+            if (movement_vec.Y > 0)
+            {
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, height / 2)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width, height / 2)));
+            }
+            if (movement_vec.Y < 0)
+            {
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, 0)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, 0)));
+                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width, 0)));
+            }
             return tile_positions.ToArray();
         }
 

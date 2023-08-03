@@ -184,7 +184,7 @@ namespace Abyss.Master
         public static Vector CoordsToTileCoords(Vector2 coords)
         {
             Vector2 result = coords / Globals.TILE_SIZE;
-            result.Floor();
+            result.Round();
             return Clamp(result);
         }
 
