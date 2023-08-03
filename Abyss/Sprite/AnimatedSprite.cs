@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,14 +64,13 @@ namespace Abyss.Sprite
             sprite_map = loaded_sprite;
             frame = start_frame;
             this.frames = frames;
-            if (frame_limit == 0)
-                this.frame_limit = this.frames.Length - 1;
-            else
-                this.frame_limit = frame_limit;
+            if (frame_limit == 0) this.frame_limit = this.frames.Length;
+            else this.frame_limit = frame_limit;
 
             width = px_width;
             height = px_height;
-            this.frame_speed = frame_speed;
+            if (frame_speed == -1) this.frame_speed = this.frame_limit / Globals.FRAME_CAP;
+            else this.frame_speed = frame_speed;
         }
 
 
@@ -91,15 +91,18 @@ namespace Abyss.Sprite
         /// <param name="delta"></param>
         public void Update(double delta)
         {
-            if (frame >= frame_limit)
-                frame = 0;
-            else
-                frame += delta * Globals.ANIMATION_SPEED * frame_speed;
+            frame += delta * Globals.ANIMATION_SPEED * frame_speed;
+            if (frame > frame_limit) frame = 0;
         }
 
         public Texture2D GetSpriteMap()
         {
             return sprite_map;
+        }
+
+        public int GetLimit()
+        {
+            return frame_limit;
         }
 
         public Rectangle DestinationRectangle()

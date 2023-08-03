@@ -183,7 +183,6 @@ namespace Abyss.Entities
                 case 0:
                     {
                         sprite.UnLoop();
-                        Debug.WriteLine(idle_timer);
                         if (sprite.IsPlaying() && sprite.HasEnded())
                         {
                             sprite.Stop();

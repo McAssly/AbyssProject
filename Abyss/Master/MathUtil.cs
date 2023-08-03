@@ -181,10 +181,11 @@ namespace Abyss.Master
          * 
          * @param   Vector2     the current coordinates
          */
-        public static Vector CoordsToTileCoords(Vector2 coords)
+        public static Vector CoordsToTileCoords(Vector2 coords, bool floor = false)
         {
             Vector2 result = coords / Globals.TILE_SIZE;
-            result.Round();
+            if (floor) result.Floor();
+            else result.Round();
             return Clamp(result);
         }
 

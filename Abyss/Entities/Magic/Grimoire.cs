@@ -166,7 +166,7 @@ namespace Abyss.Entities.Magic
             // get adjacent collision tiles
             foreach (Particle particle in Particles)
             {
-                Vector tile_pos = MathUtil.CoordsToTileCoords(particle.position);
+                Vector tile_pos = MathUtil.CoordsToTileCoords(particle.position, true);
                 Tile tile = game_state.GetCurrentTileMap().GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
                 if (particle.IsColliding(tile) && !tile.NULL)
                 {

@@ -37,7 +37,7 @@ namespace Abyss
 
             // Frame rates
             IsFixedTimeStep = true;
-            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / 60.0);
+            TargetElapsedTime = TimeSpan.FromSeconds(1.0 / Globals.FRAME_CAP);
         }
 
         protected override void Initialize()

@@ -41,7 +41,7 @@ namespace Abyss.Sprite
         /// <param name="frame_limit">the SHARED frame limit of every animation frame</param>
         /// <param name="frame_speed">the SHARED frame speed of every animation</param>
         /// <param name="start_frame">the SHARED starting frame for every animation</param>
-        public SpriteSheet(Texture2D sprite_sheet, int px_width, int px_height, int width, int height, int section_sperator, int frame_limit = 0, double frame_speed = 1, double start_frame = 0)
+        public SpriteSheet(Texture2D sprite_sheet, int px_width, int px_height, int width, int height, int section_sperator, double frame_speed = 1, int frame_limit = 0, double start_frame = 0)
         {
             this.sprite_sheet = sprite_sheet;
             this.sprite_index = 0;
@@ -86,11 +86,9 @@ namespace Abyss.Sprite
         {
             if (this.playing) this.Update(delta);
 
-            AnimatedSprite previous = this.animations[sprite_index];
             int direction = this.Direction(movement_vec);
             if (direction != -1)
             {
-                previous.Reset();
                 this.sprite_index = direction;
             }
         }
@@ -189,7 +187,7 @@ namespace Abyss.Sprite
 
         public SpriteSheet Clone()
         {
-            return new SpriteSheet(sprite_sheet, px_width, px_height, width, height, section_seperator, shared_frame_limit, shared_frame_speed, shared_start_frame);
+            return new SpriteSheet(sprite_sheet, px_width, px_height, width, height, section_seperator, shared_frame_speed, shared_frame_limit, shared_start_frame);
         }
     }
 }

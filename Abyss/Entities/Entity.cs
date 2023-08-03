@@ -163,7 +163,8 @@ namespace Abyss.Entities
             if (movement_vec != Vector2.Zero)
                 vel = MathUtil.MoveToward(vel, movement_vec * max_speed * (float)speed, max_accel * delta);
             else // otherwise it is not trying to move at all so slow it down to zero
-                vel = MathUtil.MoveToward(vel, Vector2.Zero, friction * delta);
+                //vel = MathUtil.MoveToward(vel, Vector2.Zero, friction * delta);
+                vel = Vector2.Zero;
 
             // handle collision, if they are about to collide we must alter our velocity before we move forward
             if (vel.X != 0 && this.CollisionCheck(map, new Vector2(vel.X, 0)))
