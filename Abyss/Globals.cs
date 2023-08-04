@@ -14,7 +14,7 @@ namespace Abyss
     internal static class Globals
     {
         // GAME VARIABLES
-        public static readonly double FRAME_CAP = 72;
+        public static readonly double FRAME_CAP = 144;
         public static double WindowSize = 1.5; // inverse size (bigger = smaller)
         public static int WindowW = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / WindowSize), WindowH = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / WindowSize);
         public static readonly double FRAME_SPEED = 1.5;

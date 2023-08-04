@@ -24,9 +24,9 @@ namespace Abyss.Entities
         private protected int width, height;
 
         // declare max values for the entity
-        private protected readonly int max_speed = 1;
-        private protected readonly int max_accel = 50;
-        private protected readonly int friction = 50;
+        private protected readonly double max_speed = 1;
+        private protected readonly double max_accel = 150;
+        private protected readonly double friction = 50;
 
         // declare the entity's stats
         private protected double speed = 1;
@@ -160,16 +160,19 @@ namespace Abyss.Entities
         public void Move(TileMap map, double delta)
         {
             // if the movement vector is not zero then the entity must be trying to move
+            Vector2 velocity_temp = Vector2.Zero;
             if (movement_vec != Vector2.Zero)
-                vel = MathUtil.MoveToward(vel, movement_vec * max_speed * (float)speed, max_accel * delta);
-            else // otherwise it is not trying to move at all so slow it down to zero
-                //vel = MathUtil.MoveToward(vel, Vector2.Zero, friction * delta);
-                vel = Vector2.Zero;
+            {
+                velocity_temp = MathUtil.MoveToward(velocity_temp, movement_vec * (float)max_speed * (float)speed, max_accel * delta);
+                vel = velocity_temp;
+            } // otherwise it is not trying to move at all so slow it down to zero
+            else
+                vel = MathUtil.MoveToward(vel, Vector2.Zero, delta*friction);
 
             // handle collision, if they are about to collide we must alter our velocity before we move forward
-            if (vel.X != 0 && this.CollisionCheck(map, new Vector2(vel.X, 0)))
+            if (velocity_temp.X != 0 && this.CollisionCheck(map, new Vector2(velocity_temp.X, 0)))
                 vel.X = 0;
-            if (vel.Y != 0 && this.CollisionCheck(map, new Vector2(0, vel.Y)))
+            if (velocity_temp.Y != 0 && this.CollisionCheck(map, new Vector2(0, velocity_temp.Y)))
                 vel.Y = 0;
             pos += vel * new Vector2((float)(delta * Globals.FRAME_FACTOR));
         }
