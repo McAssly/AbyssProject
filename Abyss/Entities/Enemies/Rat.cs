@@ -1,24 +1,19 @@
-﻿using Abyss.Sprite;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Abyss.Sprites;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abyss.Entities.Enemies
+namespace Abyss.Entities.enemies
 {
-    internal class Rat : Entity
+    internal class Rat : Enemy
     {
-
-        public void Initialize()
+        public override void Initialize()
         {
             this.max_health = 5;
             this.health = this.max_health;
             this.damage = 25;
-            this.crit_dmg = 0.0;
-            this.crit_rate = 0.0;
             this.defense = 1;
 
             this.attack_cooldown = 0;
@@ -27,27 +22,24 @@ namespace Abyss.Entities.Enemies
 
         public Rat(SpriteSheet sprite, float x, float y) : base(sprite, x, y)
         {
-            this.sprite = sprite;
-            this.width = this.sprite.width - 1;
-            this.height = this.sprite.height - 1;
             this.Initialize();
         }
 
-        public Rat(float x, float y) : base(x,y)
+        public Rat(float x, float y) : base(x, y)
         {
             this.Initialize();
         }
 
         public override void Load()
         {
-            this.sprite = Sprites.TestBox;
+            this.sprite = Abyss.Globals._Sprites.TestBox;
             this.width = sprite.width - 1;
             this.height = sprite.height - 1;
         }
 
-        public override Entity Clone()
+        public override Rat Clone()
         {
-            return new Rat(this.sprite, this.pos.X * 16, this.pos.Y * 16);
+            return new Rat(this.sprite, this.position.X * 16, this.position.Y * 16);
         }
     }
 }

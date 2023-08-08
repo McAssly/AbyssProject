@@ -1,33 +1,35 @@
-﻿using Abyss.Entities;
+﻿using Abyss.Globals;
+using Abyss.Magic;
 using Abyss.Master;
-using Abyss.Sprite;
 using Abyss.UI;
+using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using Text = Abyss.UI.Text;
 
 namespace Abyss.Draw
 {
-    internal partial class DrawBatch : SpriteBatch
+    internal partial class DrawState : SpriteBatch
     {
         public void Draw(Text text)
         {
             Color bg, fg;
             fg = Color.White;
-            bg = Globals.Black;
+            bg = Color.Black;
             // the text is selectable change the colors when hovering
             if (text.IsSelectable())
             {
                 if (text.Hovering()) // the user is hovering over the textbox
                 { // invert the background and foreground colors
                     bg = Color.White;
-                    fg = Globals.Black;
+                    fg = Color.Black;
                 }
                 this.FillRectangle(new RectangleF(text.GetX(), text.GetY(), text.GetWidth(), text.GetHeight()), bg);
             }
@@ -35,31 +37,31 @@ namespace Abyss.Draw
             {
                 this.FillRectangle(new RectangleF(text.GetX(), text.GetY(), text.GetWidth(), text.GetHeight()), bg);
             }
-            DrawString(Sprites.Font, text.GetText(), text.GetPosition(), fg, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
+            this.DrawString(_Sprites.Font, text.GetText(), text.GetPosition(), fg, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
         }
 
 
-        public void Draw(Hud hud, GameMaster GM)
+        public void Draw(Hud hud, GameState gs)
         {
             // draw the debug HUD on screen
-            if (Globals.Debug)
+            if (Variables.DebugDraw)
             {
-                Draw(new Text("HP: " + GM.player.GetHealth() + "/" + GM.player.GetMaxHealth(), 16, 16, 0.5f));
-                Draw(new Text("MN: " + GM.player.GetMana() + "/" + GM.player.GetMaxMana(), 16, 32, 0.5f));
-                Draw(new Text("POS: " + GM.player.GetPosition().X + ", " + GM.player.GetPosition().Y + "\nTPOS: " +
-                    MathUtil.CoordsToTileCoords(GM.player.GetPosition()).x + ", " + MathUtil.CoordsToTileCoords(GM.player.GetPosition()).y
+                Draw(new Text("HP: " + gs.player.GetHealth() + "/" + gs.player.GetMaxHealth(), 16, 16, 0.5f));
+                Draw(new Text("MN: " + gs.player.GetMana() + "/" + gs.player.GetMaxMana(), 16, 32, 0.5f));
+                Draw(new Text("POS: " + gs.player.GetPosition().X + ", " + gs.player.GetPosition().Y + "\nTPOS: " +
+                    Math0.CoordsToTileCoords(gs.player.GetPosition()).x + ", " + Math0.CoordsToTileCoords(gs.player.GetPosition()).y
                     , 16, 48, 0.3f));
-                Draw(new Text("Ms-W: " + (int)MathUtil.MousePosition().X + ", " + (int)MathUtil.MousePosition().Y, 16, 64, 0.4f));
-                Draw(new Text("Ms-G: " + (int)MathUtil.MousePositionInGame().X + ", " + (int)MathUtil.MousePositionInGame().Y, 16, 80, 0.4f));
-                Draw(new Text("Grim: " + GM.player.Inventory.grimoires[0].ToString() + ", " + GM.player.Inventory.grimoires[1].ToString(), 16, 96, 0.3f));
-                Draw(new Text("DMG: " + GM.player.last_damage, 16, 112, 0.3f));
-                Draw(new Text((int)GM.fps + " fps", (int) Globals.DrawPosition.X + 16 * 17, 16, 0.5f));
-                Draw(new Text(1 / GM.fps + "", (int)Globals.DrawPosition.X + 16 * 17, 32, 0.5f));
+                Draw(new Text("Ms-W: " + (int)InputUtility.MousePosition().X + ", " + (int)InputUtility.MousePosition().Y, 16, 64, 0.4f));
+                Draw(new Text("Ms-G: " + (int)InputUtility.MousePositionInGame().X + ", " + (int)InputUtility.MousePositionInGame().Y, 16, 80, 0.4f));
+                Draw(new Text("Grim: " + gs.player.inventory.grimoires[0].ToString() + ", " + gs.player.inventory.grimoires[1].ToString(), 16, 96, 0.3f));
+                Draw(new Text("DMG: " + gs.player.last_damage, 16, 112, 0.3f));
+                Draw(new Text((int)gs.fps + " fps", (int)Variables.DrawPosition.X + 16 * 17, 16, 0.5f));
+                Draw(new Text(1 / gs.fps + "", (int)Variables.DrawPosition.X + 16 * 17, 32, 0.5f));
                 // draw the status effects on the player
-                for (int i = 0; i < GM.player.statuses.Count; i++)
+                for (int i = 0; i < gs.player.statuses.Count; i++)
                 {
-                    StatusEffect effect = GM.player.statuses[i];
-                    Draw(new Text(effect.ToString(), (int)Globals.DrawPosition.X + 16 * 17, 48 + 8 * i, 0.3f));
+                    StatusEffect effect = gs.player.statuses[i];
+                    Draw(new Text(effect.ToString(), (int)Variables.DrawPosition.X + 16 * 17, 48 + 8 * i, 0.3f));
                 }
             }
             else // draw the regular HUD
@@ -70,8 +72,8 @@ namespace Abyss.Draw
 
         public void Draw(UI.Console console)
         {
-            this.FillRectangle(new RectangleF(0, 0, Globals.WindowW, Globals.TILE_SIZE * 2), Globals.Black);
-            DrawString(Sprites.Font, Game._TextInput.ToString(), new Vector2(8, 8), Color.White, 0, Vector2.Zero, (float)0.3, SpriteEffects.None, 0);
+            this.FillRectangle(new RectangleF(0, 0, Variables.WindowW, 16 * 2), Color.Black);
+            DrawString(_Sprites.Font, Game._TextInput.ToString(), new Vector2(8, 8), Color.White, 0, Vector2.Zero, (float)0.3, SpriteEffects.None, 0);
         }
 
         public void Draw(UI.Dialogue dialogue)
@@ -87,11 +89,11 @@ namespace Abyss.Draw
             this.Draw(interaction.GetDialogue());
         }
 
-        public void Draw(Ui ui, GameMaster GM)
+        public void Draw(Ui ui, GameState gs)
         {
             if (ui is Hud)
             {
-                Draw(ui as Hud, GM);
+                Draw(ui as Hud, gs);
             }
             else if (ui is UI.Console)
             {

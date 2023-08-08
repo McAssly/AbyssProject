@@ -1,4 +1,5 @@
 ﻿using Abyss.Master;
+using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,17 +15,17 @@ namespace Abyss.UI
 {
     internal class Text
     {
-        private protected Vector2 pos;
+        private protected Vector2 position;
         private protected Vector2 size;
         private protected float scale;
         private protected string text;
 
         private protected bool selectable;
         private protected bool selected = false;
-        public Text(string text, int x, int y, float scale, Vector2? size = null, bool selectable = false) 
-        { 
+        public Text(string text, int x, int y, float scale, Vector2? size = null, bool selectable = false)
+        {
             this.text = text;
-            this.pos = new Vector2(x, y);
+            this.position = new Vector2(x, y);
             this.scale = scale;
             this.selectable = selectable;
             if (size.HasValue)
@@ -34,7 +35,7 @@ namespace Abyss.UI
         public Text(string text, Vector2 position, float scale, Vector2? size = null, bool selectable = false)
         {
             this.text = text;
-            this.pos = position;
+            this.position = position;
             this.scale = scale;
             this.selectable = selectable;
             if (size.HasValue)
@@ -70,9 +71,9 @@ namespace Abyss.UI
 
         public bool Hovering()
         {
-            Vector2 m = MathUtil.MousePosition();
-            return m.X >= pos.X && m.X <= pos.X + size.X
-                && m.Y >= pos.Y && m.Y <= pos.Y + size.Y;
+            Vector2 m = InputUtility.MousePosition();
+            return m.X >= position.X && m.X <= position.X + size.X
+                && m.Y >= position.Y && m.Y <= position.Y + size.Y;
         }
 
         public bool IsSelectable()
@@ -82,15 +83,15 @@ namespace Abyss.UI
 
         public float GetX()
         {
-            return pos.X;
+            return position.X;
         }
         public float GetY()
         {
-            return pos.Y;
+            return position.Y;
         }
         public Vector2 GetPosition()
         {
-            return pos;
+            return position;
         }
         public float GetWidth()
         {

@@ -1,138 +1,85 @@
-﻿using Abyss.Entities.Magic;
-using Abyss.Map;
+﻿using Abyss.Globals;
+using Abyss.Magic;
 using Abyss.Master;
-using Abyss.Sprite;
+using Abyss.Sprites;
+using Abyss.Utility;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended.Timers;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
-using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
-using NullableVector = Abyss.Master.NullableVector;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Entities
 {
-    internal struct Inventory
-    {
-        public Grimoire[] grimoires; // max = 2, can only hold 2 grimoires
-        public Card[] cards; // max total = 8
-        public int[] regen_pots; // array max = 2, combined value max = 16  (both are counters), [0] = health, [1] = mana
-        public int[] instant_pots; // array max = 2, combiend value max = 4 (see line above)
-        public List<Item> extras; // unlimited number of extra items, these are mainly for questlines or auxillary stuff so not entirely important
-
-        public Inventory(Grimoire[] grimoires, Card[] cards = null, int[] regen_pots = null, int[] instant_pots = null, List<Item> extras = null)
-        {
-            this.grimoires = grimoires;
-
-            // set the player's cards
-            if (cards == null)
-                this.cards = new Card[0];
-            else 
-                this.cards = cards;
-
-            // set the player's number of regen pots
-            if (regen_pots == null)
-                this.regen_pots = new int[2] { 0, 0 };
-            else
-                this.regen_pots = regen_pots;
-
-            // set the player's number of instant pots
-            if (instant_pots == null)
-                this.instant_pots = new int[2] { 0, 0 };
-            else
-                this.instant_pots = instant_pots;
-
-            // set the player's key items
-            if (extras == null)
-                this.extras = new List<Item>();
-            else
-                this.extras = extras;
-        }
-
-        public static Grimoire[] ParseGrimoires(string[] grim_data)
-        {
-            return new Grimoire[]
-            {
-                Grimoire.Which(grim_data[0]),
-                Grimoire.Which(grim_data[1])
-            };
-        }
-
-        public static Card[] ParseCards(int[] card_data)
-        {
-            List<Card> cards = new List<Card>();
-            for (int id = 0; id < card_data.Length; id++)
-            {
-                if (Item.WhichCard(id) != null)
-                    cards.Add(Item.WhichCard(id));
-            }
-            return cards.ToArray();
-        }
-    }
-
     internal class Player : Entity
     {
-        // declare the player's inventory
-        public Inventory Inventory;
+        public Inventory inventory;
 
-        public Player(SpriteSheet sprite) :base(sprite)
+        // stats
+        private protected double max_mana;
+        private protected double mana;
+        private protected double crit_dmg; // percentage to increase damage by
+        private protected double crit_rate; // between 0 and 1, a percentage value
+
+        // for crits
+        private protected static readonly Random random = new Random();
+
+
+
+        public Player(SpriteSheet sprite) : base(sprite)
         {
-            this.pos = new Vector2();
-            this.speed = 1.5;
-            this.crit_dmg = 0.7; // 70%
-            this.crit_rate = 0.05; // 5%
-            this.damage = 1; // 1 base
-            this.defense = 1; // 1 divisor
+            this.position = new Vector2();
+            this.speed = 3;
+            this.crit_dmg = 0.7;
+            this.crit_rate = 0.05;
+            this.damage = 1;
+            this.defense = 1;
         }
 
+
         /// <summary>
-        /// loads the given save data into the player state
+        /// loads the given player data (save) into the player
         /// </summary>
         /// <param name="data"></param>
-        public void LoadSave(PlayerData data)
+        public void Load(PlayerData data)
         {
-            this.pos = data.position * new System.Numerics.Vector2(16,16);
+            this.position = data.position * new Vector2(16, 16);
             this.health = data.current_hp;
             this.max_health = data.max_hp;
             this.mana = data.current_mana;
             this.max_mana = data.max_mana;
-            // inventory
-            this.Inventory = data.inventory;
+            this.inventory = data.inventory;
         }
+
 
         /// <summary>
         /// Handles player attack sequence
         /// </summary>
-        /// <param name="KB"></param>
-        /// <param name="MS"></param>
-        public void Attack(KeyboardState KB, MouseState MS)
+        /// <param name="kb"></param>
+        /// <param name="ms"></param>
+        public void Attack(KeyboardState kb, MouseState ms)
         {
             // get the keyboard controls (off by default)
             bool kb_atk_1 = false;
             bool kb_atk_2 = false;
-            if (Controls.AttackKey_1.HasValue) kb_atk_1 = KB.IsKeyDown(Controls.AttackKey_1.Value);
-            if (Controls.AttackKey_2.HasValue) kb_atk_2 = KB.IsKeyDown(Controls.AttackKey_2.Value);
+            if (Controls.AttackKey_1.HasValue) kb_atk_1 = kb.IsKeyDown(Controls.AttackKey_1.Value);
+            if (Controls.AttackKey_2.HasValue) kb_atk_2 = kb.IsKeyDown(Controls.AttackKey_2.Value);
 
             // detect keyboard/mouse buttons, if the corresponding ones are pressed then active the corresponding grimoire and spell
-            if (kb_atk_1 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag_1))
+            if (kb_atk_1 || InputUtility.IsClicked(ms, Controls.AttackMouseFlag_1))
             {
                 // there are secondary spells and to activate them the control sequence has to be pressed (default: l-shift)
-                if (KB.IsKeyDown(Controls.GrimoireSecondary_1))
-                    this.Cast(0, 2); // secondary spell
-                else this.Cast(0, 1); // primary spell
+                if (kb.IsKeyDown(Controls.GrimoireSecondary_1))
+                    this.CastSpell(0, 2); // secondary spell
+                else this.CastSpell(0, 1); // primary spell
             }
-            if (kb_atk_2 || MathUtil.IsClicked(MS, Controls.AttackMouseFlag_2))
+            if (kb_atk_2 || InputUtility.IsClicked(ms, Controls.AttackMouseFlag_2))
             {
-                if (KB.IsKeyDown(Controls.GrimoireSecondary_2))
-                    this.Cast(1, 2); // secondary spell
-                else this.Cast(1, 1); // primary spell
+                if (kb.IsKeyDown(Controls.GrimoireSecondary_2))
+                    this.CastSpell(1, 2); // secondary spell
+                else this.CastSpell(1, 1); // primary spell
             }
         }
 
@@ -141,20 +88,20 @@ namespace Abyss.Entities
         /// updates the player instance
         /// </summary>
         /// <param name="delta"></param>
-        /// <param name="KB"></param>
-        /// <param name="MS"></param>
-        /// <param name="GM"></param>
-        public void Update(double delta, KeyboardState KB, MouseState MS, GameMaster GM)
+        /// <param name="kb"></param>
+        /// <param name="ms"></param>
+        /// <param name="game_state"></param>
+        public void Update(double delta, KeyboardState kb, MouseState ms, GameState game_state)
         {
-            CalcInputVector(KB);
-            Move(GM.GetCurrentTileMap(), delta);
+            CalculateInputVector(kb);
+            Move(game_state.GetCollisionLayer(), delta);
             ClampPosition();
 
-            /* ATTACK DETECTION AND CASTING */
-            GM.player.Attack(KB, MS);
-            if (time_elapsed >= 1 && GM.player.GetMana() < GM.player.GetMaxMana())
+            /* ATTACK DETECTION AND CASTING SPELLS */
+            game_state.player.Attack(kb, ms);
+            if (time_elapsed >= 1 && game_state.player.GetMana() < game_state.player.GetMaxMana())
             {
-                GM.player.AddMana(1);
+                game_state.player.RegenerateMana(1);
                 time_elapsed = 0;
             }
 
@@ -174,60 +121,48 @@ namespace Abyss.Entities
             time_elapsed += delta;
             regen_timer += delta;
 
+
             // handle animations
-            if (vel != Vector2.Zero) sprite.SetSection(1);
-            else sprite.SetSection(0);
             switch (sprite.GetSection())
             {
-                // IDLE animation
-                case 0:
-                    {
-                        sprite.UnLoop();
-                        if (sprite.IsPlaying() && sprite.HasEnded())
-                        {
-                            sprite.Stop();
-                            idle_timer = idle_timer_max;
-                        }
-
-                        if (idle_timer <= 0) sprite.Play();
-                        else if (idle_timer > 0) idle_timer -= delta;
-                        break;
-                    }
                 // RUNNING animation
-                case 1:
-                    sprite.Play(); sprite.Loop(); break;
+                case 0:
+                    if (target_vector != Vector2.Zero) sprite.Play(); else sprite.Stop(true); sprite.Loop(); break;
                 // ATTACKING animation
                 case 2:
                     sprite.Play(); sprite.UnLoop(); break;
                 default: sprite.Play(); break;
             }
+            
 
-            sprite.Update(delta, movement_vec);
+            sprite.Update(delta, target_vector);
         }
 
 
         /// <summary>
         /// attacks using the primary grimoire
         /// </summary>
-        public void Cast(int index, int type)
+        public void CastSpell(int index, int type)
         {
-            if (mana > 0) Inventory.grimoires[index].Attack(this, MathUtil.MousePositionInGame(), type);
+            if (mana > 0) inventory.grimoires[index].Attack(this, InputUtility.MousePositionInGame(), type);
         }
+
 
         /// <summary>
         /// Determines the input vector of the player and normalizes it to a radius of 1
         /// </summary>
         /// <param name="KB"></param>
-        public void CalcInputVector(KeyboardState KB)
+        public void CalculateInputVector(KeyboardState KB)
         {
             // If a key is being pressed it is = 1, if it is not then it is = 0
             // Therefore if the player is pressing the right key their input.x should be (+), if left then (-), if both then (0)
-            this.movement_vec.X = MathUtil.KeyStrength(KB, Controls.Right) - MathUtil.KeyStrength(KB, Controls.Left);
-            this.movement_vec.Y = MathUtil.KeyStrength(KB, Controls.Down) - MathUtil.KeyStrength(KB, Controls.Up);
+            this.target_vector.X = InputUtility.KeyStrength(KB, Controls.Right) - InputUtility.KeyStrength(KB, Controls.Left);
+            this.target_vector.Y = InputUtility.KeyStrength(KB, Controls.Down) - InputUtility.KeyStrength(KB, Controls.Up);
 
-            if (this.movement_vec != Vector2.Zero)
-                this.movement_vec.Normalize();
+            if (this.target_vector != Vector2.Zero)
+                this.target_vector.Normalize();
         }
+
 
 
         /// <summary>
@@ -237,7 +172,7 @@ namespace Abyss.Entities
         public Side? ExittingSide()
         {
             // Check on the x-axis, LEFT / RIGHT
-            switch (pos.X)
+            switch (position.X)
             {
                 case -1: // if they are just left of the game window
                     return Side.LEFT; // left
@@ -246,7 +181,7 @@ namespace Abyss.Entities
                 default: break;
             }
             // Check on the y-axis, TOP / BOTTOM
-            switch (pos.Y)
+            switch (position.Y)
             {
                 case -1: // if they are just above the game window (map)
                     return Side.TOP; // then its the top
@@ -259,6 +194,11 @@ namespace Abyss.Entities
         }
 
 
+        /// <summary>
+        /// gets the next possible position for the player across map areas
+        /// </summary>
+        /// <param name="side"></param>
+        /// <returns></returns>
         public NullableVector GetNextPosition(Side side)
         {
             switch (side)
@@ -272,21 +212,85 @@ namespace Abyss.Entities
         }
 
 
+        /// <summary>
+        /// gets the position of the player, but also adds on a modifier
+        /// </summary>
+        /// <param name="modifier"></param>
+        /// <returns></returns>
         public Vector2 GetPosition(NullableVector? modifier)
         {
-            if (!modifier.HasValue) return this.pos;
+            if (!modifier.HasValue) return this.position;
             if (modifier.Value.x.HasValue && modifier.Value.y.HasValue)
                 return new Vector2(modifier.Value.x.Value, modifier.Value.y.Value);
             else if (modifier.Value.x.HasValue)
-                return new Vector2(modifier.Value.x.Value, this.pos.Y);
+                return new Vector2(modifier.Value.x.Value, this.position.Y);
             else if (modifier.Value.y.HasValue)
-                return new Vector2(this.pos.X, modifier.Value.y.Value);
-            return this.pos;
+                return new Vector2(this.position.X, modifier.Value.y.Value);
+            return this.position;
         }
 
-        public void SetPosition(Vector2 _new)
+
+
+
+        /// <summary>
+        /// reduces the player's mana by a given amount
+        /// </summary>
+        /// <param name="amount"></param>
+        public void ReduceMana(double amount)
         {
-            this.pos = _new;
+            mana -= amount;
+            if (mana < 0) mana = 0;
         }
+
+        /// <summary>
+        /// regenerates a given amount of mana instantly
+        /// </summary>
+        /// <param name="amount"></param>
+        public void RegenerateMana(double amount)
+        {
+            mana += amount;
+        }
+
+
+        /// <summary>
+        /// calculates the player's damage
+        /// </summary>
+        /// <param name="base_damage"></param>
+        /// <returns></returns>
+        public override double CalculateDamage(double base_damage = 1)
+        {
+            // do the temp variables
+            double crit_dmg = this.crit_dmg;
+            double crit_rate = this.crit_rate;
+            double damage = base_damage * this.damage;
+
+            // find any required statuses and apply the status effects
+            if (statuses != null)
+            {
+                StatusEffect? crit_rate_effect = statuses.Find(effect => effect.application_id == 0);
+                StatusEffect? crit_dmg_effect = statuses.Find(effect => effect.application_id == 1);
+                StatusEffect? damage_effect = statuses.Find(effect => effect.application_id == 2);
+
+                // if the efffects existed then apply the effect
+                if (crit_rate_effect.HasValue) crit_rate += crit_rate_effect.Value.value;
+                if (crit_dmg_effect.HasValue) crit_dmg += crit_dmg_effect.Value.value;
+                if (damage_effect.HasValue) damage += damage_effect.Value.value;
+            }
+
+            // calculate the actual damage values
+            int iterations = 0;
+            while (random.NextDouble() < crit_rate && iterations < 3)
+            {
+                damage = damage + (damage * crit_dmg / (iterations + 1));
+                iterations++;
+            }
+            this.last_damage = damage;
+            return damage;
+        }
+
+
+        public double GetMaxMana() { return max_mana; }
+
+        public double GetMana() { return mana; }
     }
 }

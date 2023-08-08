@@ -1,27 +1,46 @@
-﻿using Abyss.Entities.Magic;
-using Abyss.Map;
+﻿using Abyss.Magic;
+using Abyss.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
-using Effect = Abyss.Entities.Effect;
-using Abyss.Sprite;
+using Effect = Abyss.Magic.Effect;
 
 namespace Abyss.Draw
 {
-    internal partial class DrawBatch : SpriteBatch
+    internal partial class DrawState : SpriteBatch
     {
+        public DrawState(GraphicsDevice graphicsDevice) : base(graphicsDevice) { }
+        public DrawState(GraphicsDevice graphicsDevice, int capacity) : base(graphicsDevice, capacity) { }
+
+
+        /// <summary>
+        /// draws the given sprite sheet
+        /// </summary>
+        /// <param name="sheet"></param>
+        /// <param name="source"></param>
+        /// <param name="color"></param>
+        /// <param name="rotation"></param>
+        /// <param name="scalar"></param>
+        /// <param name="centered"></param>
         public void Draw(SpriteSheet sheet, Vector2 source, Color color, double rotation = 0, float scalar = 1, bool centered = false)
         {
             Draw(sheet.GetCurrent(), source - sheet.origin.To2(), color, rotation, scalar, false);
         }
 
 
+        /// <summary>
+        /// draws the given animated sprite
+        /// </summary>
+        /// <param name="sprite"></param>
+        /// <param name="source"></param>
+        /// <param name="color"></param>
+        /// <param name="rotation"></param>
+        /// <param name="scalar"></param>
+        /// <param name="centered"></param>
         public void Draw(AnimatedSprite sprite, Vector2 source, Color color, double rotation = 0, float scalar = 1, bool centered = false)
         {
             // calculate the new width and height of the draw object based on scalar
@@ -45,6 +64,10 @@ namespace Abyss.Draw
         }
 
 
+        /// <summary>
+        /// draws the given effect
+        /// </summary>
+        /// <param name="fx"></param>
         public void Draw(Effect fx)
         {
             this.Draw(fx.sprite, fx.position, Color.White, 0, 1, true);

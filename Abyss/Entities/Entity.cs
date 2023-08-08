@@ -1,26 +1,21 @@
-﻿using Abyss.Entities.Enemies;
-using Abyss.Map;
-using Abyss.Master;
-using Abyss.Sprite;
+﻿using Abyss.Globals;
+using Abyss.Levels;
+using Abyss.Magic;
+using Abyss.Sprites;
+using Abyss.Utility;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Vector = Abyss.Master.Vector;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Entities
 {
     internal class Entity
     {
         public SpriteSheet sprite;
-
         private protected int width, height;
 
         // declare max values for the entity
@@ -31,26 +26,18 @@ namespace Abyss.Entities
         // declare the entity's stats
         private protected double speed = 1;
         private protected double max_health;
-        private protected double max_mana;
 
         // current stats
         private protected double health;
-        private protected double mana;
 
         // declare the entity's substats
         private protected double damage;
-        private protected double crit_dmg; // percentage to increase damage by
-        private protected double crit_rate; // between 0 and 1, a percentage value
-        private protected double defense;    // damage resistence
+        private protected double defense;
 
         // declare position variables
-        private protected Vector2 movement_vec = Vector2.Zero;
-        private protected Vector2 pos;
-        private protected Vector2 vel = Vector2.Zero; // starts off not moving
-
-        // declare the enemy attack cooldown
-        public double attack_cooldown;
-        public double attack_cooldown_max;
+        private protected Vector2 target_vector = Vector2.Zero;
+        private protected Vector2 position;
+        private protected Vector2 velocity = Vector2.Zero; // starts off not moving
 
         // declare the status effects to be applied
         public List<StatusEffect> statuses;
@@ -58,26 +45,21 @@ namespace Abyss.Entities
         // time elapsed
         private protected double time_elapsed = 0;
         public double regen_timer = 0;
-        private protected double idle_timer_max = 5;
-        private protected double idle_timer = 0;
 
         // last damage applied
         public double last_damage = 0;
 
-        // for crits
-        private protected static readonly Random random = new Random();
-
         public Entity(SpriteSheet sprite, float x, float y)
         {
             this.sprite = sprite;
-            this.width = this.sprite.width - 1;
-            this.height = this.sprite.height - 1;
-            this.pos = new Vector2(x, y);
+            this.width = sprite.width - 1;
+            this.height = sprite.height - 1;
+            this.position = new Vector2(x, y);
         }
 
         public Entity(float x, float y)
         {
-            this.pos = new Vector2(x, y);
+            this.position = new Vector2(x, y);
         }
 
         public Entity(SpriteSheet sprite)
@@ -88,108 +70,68 @@ namespace Abyss.Entities
             this.height = this.sprite.height - 1;
         }
 
-        public bool CollidesWith(Entity entity)
+        public virtual void Load()
         {
-            return MathUtil.RectangleCollisionCheck(this.pos, this.GetSize(), entity.GetPosition(), entity.GetSize());
+            this.sprite = _Sprites.TestBox;
+            this.width = this.sprite.width - 1;
+            this.height = this.sprite.height - 1;
         }
 
-        public double Hits(Player player)
+
+        /// <summary>
+        /// moves the entity based on its target vector
+        /// </summary>
+        /// <param name="collision_layer"></param>
+        /// <param name="delta"></param>
+        public void Move(Layer collision_layer, double delta)
         {
-            double damage = this.CalculateDamage(1);
-            if (player.CollidesWith(this))
-            {
-                return damage;
-            }
-            return 0;
-        }
-
-        public double CalculateDamage(double base_dmg)
-        {
-            // do the temp variables
-            double crit_dmg = this.crit_dmg;
-            double crit_rate = this.crit_rate;
-            double damage = base_dmg * this.damage;
-
-            // find any required statuses and apply the status effects
-            if (statuses != null)
-            {
-                StatusEffect? crit_rate_effect = statuses.Find(effect => effect.application_id == 0);
-                StatusEffect? crit_dmg_effect = statuses.Find(effect => effect.application_id == 1);
-                StatusEffect? damage_effect = statuses.Find(effect => effect.application_id == 2);
-
-                // if the efffects existed then apply the effect
-                if (crit_rate_effect.HasValue) crit_rate += crit_rate_effect.Value.value;
-                if (crit_dmg_effect.HasValue) crit_dmg += crit_dmg_effect.Value.value;
-                if (damage_effect.HasValue) damage += damage_effect.Value.value;
-            }
-
-            // calculate the actual damage values
-            int iterations = 0;
-            while (random.NextDouble() < crit_rate && iterations < 3)
-            {
-                damage = damage + (damage * crit_dmg / (iterations + 1));
-                iterations++;
-            }
-            this.last_damage = damage;
-            return damage;
-        }
-
-        public void ReduceHealth(double amount)
-        {
-            health -= amount / defense;
-            if (health < 0) health = 0;
-        }
-
-        public void ReduceMana(double cost)
-        {
-            mana -= cost;
-            if (mana < 0) mana = 0;
-        }
-
-        public void AddMana(double amount)
-        {
-            mana += amount;
-        }
-
-        /**
-         * Moves the entity based on the current movement vector (already normalized)
-         * 
-         * @param TileMap   the current map level the entity is playing in
-         * @param double    the time it took the last frame to load (seconds)
-         */
-        public void Move(TileMap map, double delta)
-        {
+            //Vector2 velocity_temp = Vector2.Zero;
             // if the movement vector is not zero then the entity must be trying to move
-            Vector2 velocity_temp = Vector2.Zero;
-            if (movement_vec != Vector2.Zero)
+            if (target_vector != Vector2.Zero)
             {
-                velocity_temp = MathUtil.MoveToward(velocity_temp, movement_vec * (float)max_speed * (float)speed, max_accel * delta);
-                vel = velocity_temp;
+                velocity = Math0.MoveToward(velocity, target_vector * (float)max_speed * (float)speed, max_accel * delta);
+                //velocity = velocity;
             } // otherwise it is not trying to move at all so slow it down to zero
             else
-                vel = MathUtil.MoveToward(vel, Vector2.Zero, delta*friction);
+                velocity = Math0.MoveToward(velocity, Vector2.Zero, delta * friction);
 
             // handle collision, if they are about to collide we must alter our velocity before we move forward
-            if (velocity_temp.X != 0 && this.CollisionCheck(map, new Vector2(velocity_temp.X, 0)))
-                vel.X = 0;
-            if (velocity_temp.Y != 0 && this.CollisionCheck(map, new Vector2(0, velocity_temp.Y)))
-                vel.Y = 0;
-            pos += vel * new Vector2((float)(delta * Globals.FRAME_FACTOR));
+            if (velocity.X != 0 && this.CollisionCheck(collision_layer, new Vector2(velocity.X, 0)))
+                velocity.X = 0;
+            if (velocity.Y != 0 && this.CollisionCheck(collision_layer, new Vector2(0, velocity.Y)))
+                velocity.Y = 0;
+            position += velocity * new Vector2((float)(delta * Variables.FRAME_FACTOR));
         }
 
-        public bool CollisionCheck(TileMap map, Vector2 offset)
+
+        /// <summary>
+        /// determines if the entity is colliding with a collision tile
+        /// </summary>
+        /// <param name="collision_layer"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
+        public bool CollisionCheck(Layer collision_layer, Vector2 offset)
         {
-            Vector[] tile_coords = GenerateTilePositions();
+            Vector[] tile_coords = AdjacentTiles();
             foreach (var corner in tile_coords)
             {
-                Vector tile_pos = MathUtil.Clamp(corner.To2() + offset.NormalizedCopy());
-                Tile target_tile = map.GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
+                Vector tile_pos = Math0.Clamp(corner.To2() + offset.NormalizedCopy());
+                Tile target_tile = collision_layer.GetTiles()[tile_pos.y, tile_pos.x];
                 if (!target_tile.NULL && target_tile.Colliding(this, offset)) return true;
             }
             return false;
         }
 
-        public Vector[] GenerateTilePositions()
+        public void ClampPosition()
+        {
+            position = Vector2.Clamp(position, new Vector2(-1), new Vector2(16 * 16 - 16 + 1));
+        }
+
+        /// <summary>
+        /// generates a list of tiles the entity is on and adjacent to
+        /// </summary>
+        /// <returns></returns>
+        public Vector[] AdjacentTiles()
         {
             /**
             if (width < Globals.TILE_SIZE && height < Globals.TILE_SIZE)
@@ -206,50 +148,102 @@ namespace Abyss.Entities
             }
             */
             List<Vector> tile_positions = new List<Vector>();
-            if (movement_vec.X > 0)
+            if (target_vector.X > 0)
             {
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, 0)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height / 2)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height)));
             }
-            if (movement_vec.X < 0)
+            if (target_vector.X < 0)
             {
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, 0)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, height / 2)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, height)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, 0)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, height / 2)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, height)));
             }
-            if (movement_vec.Y > 0)
+            if (target_vector.Y > 0)
             {
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, height / 2)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width, height / 2)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, height / 2)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height / 2)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width, height / 2)));
             }
-            if (movement_vec.Y < 0)
+            if (target_vector.Y < 0)
             {
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(0, 0)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, 0)));
-                tile_positions.Add(MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width, 0)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, 0)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0)));
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width, 0)));
             }
             return tile_positions.ToArray();
         }
 
 
-        // set the entities position
-        public void SetPosition(float? x, float? y)
+        /// <summary>
+        /// reduces the entity's health by a given amount
+        /// </summary>
+        /// <param name="amount"></param>
+        public void ReduceHealth(double amount)
         {
-            if (x != null) pos.X = x.Value;
-            if (y != null) pos.Y = y.Value;
+            health -= amount / defense;
+            if (health < 0) { health = 0; }
         }
 
-        /**
-         * Getters/Setters
-         */
+
+        /// <summary>
+        /// determines if the entity is colliding with another given entity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public bool CollidesWith(Entity entity)
+        {
+            return Math0.RectangleCollisionCheck(this.position, this.GetSize(), entity.GetPosition(), entity.GetSize());
+        }
+
+
+        /// <summary>
+        /// determines if the entity hits another entity and returns its damage
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public double DealDamage(Entity entity)
+        {
+            double damage = this.CalculateDamage();
+            if (entity.CollidesWith(this))
+            {
+                return damage;
+            }
+            return 0;
+        }
+
+
+        /// <summary>
+        /// calculates the entity's damage
+        /// </summary>
+        /// <param name="base_damage"></param>
+        /// <returns></returns>
+        public virtual double CalculateDamage(double base_damage = 1) 
+        {
+            // do the temp variable
+            double damage = base_damage * this.damage;
+
+            // find any required statuses and apply the status effects
+            if (statuses != null)
+            {
+                StatusEffect? damage_effect = statuses.Find(effect => effect.application_id == 2);
+
+                // if the efffects existed then apply the effect
+                if (damage_effect.HasValue) damage += damage_effect.Value.value;
+            }
+            this.last_damage = damage;
+            return damage;
+        }
+
+        public void SetPosition(Vector2 _new)
+        {
+            this.position = _new;
+        }
         public double GetMaxHealth() { return max_health; }
-        public double GetMaxMana() { return max_mana; }
         public double GetHealth() { return health; }
-        public double GetMana() { return mana; }
-        public Vector2 GetPosition() { return pos; }
-        public Vector2 GetVelocity() { return vel; }
+        public Vector2 GetPosition() { return position; }
+        public Vector2 GetVelocity() { return velocity; }
         public int GetWidth() { return width; }
         public int GetHeight() { return height; }
         public Vector2 GetSize(bool x = true, bool y = true)
@@ -259,32 +253,17 @@ namespace Abyss.Entities
             if (!y) size.Y = 0;
             return size;
         }
-        /**
-         * Simply updates the draw object's position
-         */
-        public void ClampPosition()
-        {
-            pos = Vector2.Clamp(pos, new Vector2(-1), new Vector2(16 * 16 - 16 + 1));
-        }
-
-        public virtual void Load()
-        {
-            this.sprite = Sprites.TestBox;
-            this.width = this.sprite.width - 1;
-            this.height = this.sprite.height - 1;
-        }
-
 
 
         // clones the entity
         public virtual Entity Clone()
         {
-            return new Entity(this.sprite, this.pos.X * 16, this.pos.Y * 16);
+            return new Entity(this.sprite, this.position.X * 16, this.position.Y * 16);
         }
 
         internal Rectangle CreateRectangle()
         {
-            Vector rounded_position = Vector.Round(this.pos);
+            Vector rounded_position = Vector.Convert(this.position, true);
             return new Rectangle(rounded_position.x, rounded_position.y, width, height);
         }
     }

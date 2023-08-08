@@ -1,4 +1,5 @@
 ﻿using Abyss.Entities;
+using Abyss.Globals;
 using Abyss.Master;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -47,10 +48,10 @@ namespace Abyss.UI
             switch (args[1])
             {
                 case "debug":
-                    Globals.Debug = enable; break;
+                    Variables.DebugDraw = enable; break;
                 case "collision":
-                    Globals.DebugCollision = enable; break;
-                default : break;
+                    Variables.DebugCollision = enable; break;
+                default: break;
             }
         }
 
@@ -59,14 +60,14 @@ namespace Abyss.UI
         /// opens a ui element
         /// </summary>
         /// <param name="args"></param>
-        /// <param name="GM"></param>
-        public static void CommandOpen(List<string> args, GameMaster GM)
+        /// <param name="game_state"></param>
+        public static void CommandOpen(List<string> args, UiState ui_state)
         {
             if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
             switch (args[1])
             {
                 case "dialogue":
-                    GM.OpenDialogue(GameMaster.TestDialogue); break;
+                    ui_state.OpenDialogue(UiState.TestDialogue); break;
                 default: break;
             }
         }
@@ -85,7 +86,7 @@ namespace Abyss.UI
         public bool close = false;
 
         public void Close() { close = true; }
-        public bool IsClosed() {  return close; }
+        public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public Hud() { }
 
@@ -130,12 +131,12 @@ namespace Abyss.UI
 
         public void Update(KeyboardState KB, MouseState MS) { }
 
-        public void ProcessCommand(GameMaster GM)
+        public void ProcessCommand(UiState ui_state, GameState game_state)
         {
             // first conver the text input to a readable string
             string input = Game._TextInput.Append("\n").ToString();
             Debug.WriteLine(input);
-            
+
             // next create a list of arguments that were passed into the console
             List<string> args = new List<string>();
             // need to build this list, by first starting with each argument
@@ -148,7 +149,8 @@ namespace Abyss.UI
                     // add the finished argument to the arguements list
                     args.Add(arg.ToString());
                     arg = new StringBuilder(); // reset the arguemnt builder to build more
-                } else
+                }
+                else
                     arg.Append(c);
             }
 
@@ -170,13 +172,13 @@ namespace Abyss.UI
             switch (primary)
             {
                 case "enable":
-                    UiControllers.EnableDebugHUD(args, true);  break;
+                    UiControllers.EnableDebugHUD(args, true); break;
                 case "disable":
                     UiControllers.EnableDebugHUD(args, false); break;
                 case "open":
-                    UiControllers.CommandOpen(args, GM); break;
+                    UiControllers.CommandOpen(args, ui_state); break;
                 case "save":
-                    GM.Save(); break;
+                    game_state.Save(); break;
                 case "set":
                     break;
                 default:

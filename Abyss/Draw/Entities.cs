@@ -1,34 +1,47 @@
 ﻿using Abyss.Entities;
-using Abyss.Entities.Magic;
-using Abyss.Map;
-using Abyss.Master;
-using Abyss.Sprite;
+using Abyss.Globals;
+using Abyss.Magic;
+using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
-using MonoGame.Extended.Sprites;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Color = Microsoft.Xna.Framework.Color;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
-using Vector = Abyss.Master.Vector;
-using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Draw
 {
-    internal partial class DrawBatch : SpriteBatch
+    internal partial class DrawState : SpriteBatch
     {
+        /// <summary>
+        /// draws the given entity
+        /// </summary>
+        /// <param name="entity"></param>
+        public void Draw(Entity entity)
+        {
+            Draw(entity.sprite, entity.GetPosition(), Color.White);
+        }
+
+        /// <summary>
+        /// draws the given enemy (as red)
+        /// </summary>
+        /// <param name="enemy"></param>
+        public void Draw(Enemy enemy)
+        {
+            Draw(enemy.sprite, enemy.GetPosition(), Color.Red);
+        }
+
+        /// <summary>
+        /// draws the given player
+        /// </summary>
+        /// <param name="player"></param>
         public void Draw(Player player)
         {
-            if (Globals.DebugCollision)
+            if (Variables.DebugCollision)
             {
-                Vector[] tile_positions = player.GenerateTilePositions();
+                Vector[] tile_positions = player.AdjacentTiles();
                 foreach (Vector tile_pos in tile_positions)
                 {
                     this.DrawRectangle(new Rectangle(tile_pos.x * 16, tile_pos.y * 16, 16, 16), Color.White);
@@ -37,32 +50,34 @@ namespace Abyss.Draw
             Draw(player.sprite, player.GetPosition(), Color.White);
         }
 
-        public void Draw(List<Entity> entities)
+
+        /// <summary>
+        /// if given a list of enemies draw them
+        /// </summary>
+        /// <param name="enemies"></param>
+        public void Draw(Enemy[] enemies)
         {
-            foreach (Entity entity in entities)
-                Draw(entity);
+            foreach (Enemy enemy in enemies)
+                Draw(enemy);
         }
 
-        public void Draw(Entity entity)
-        {
-            Draw(entity.sprite, entity.GetPosition(), Color.Red);
-            this.DrawPoint(entity.GetPosition(), Color.Blue);
-            this.DrawPoint(entity.GetPosition() + entity.GetSize(true, false), Color.Blue);
-            this.DrawPoint(entity.GetPosition() + entity.GetSize(false, true), Color.Blue);
-            this.DrawPoint(entity.GetPosition() + entity.GetSize(), Color.Blue);
-        }
+
+        /// <summary>
+        /// draw every particle within the grimoire
+        /// </summary>
+        /// <param name="grimoire"></param>
         public void Draw(Grimoire grimoire)
         {
-            if (Sprites.BaseSpell == null) return;
+            if (_Sprites.BaseSpell == null) return;
             foreach (var particle in grimoire.Particles)
                 Draw(particle);
         }
-        public void DrawLinesBetween(List<Particle> particles)
-        {
-            for (int i = 0; i < particles.Count - 1; i++)
-                this.DrawLine(particles[i].position, particles[i + 1].position, Color.White);
-        }
 
+
+        /// <summary>
+        /// draw the given particle
+        /// </summary>
+        /// <param name="particle"></param>
         public void Draw(Particle particle)
         {
             this.Draw(particle.sprite, particle.position, Color.White, particle.rotation, 1, true);
