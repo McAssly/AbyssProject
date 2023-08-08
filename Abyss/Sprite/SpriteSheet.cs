@@ -166,8 +166,8 @@ namespace Abyss.Sprite
 
                 switch (angle)
                 {
-                    case 0: case 0.785: case 5.498: return 2;
-                    case 3.142: case 2.356: case 3.927: return 0;
+                    case 0: case 0.785: case 5.498: return 0;
+                    case 3.142: case 2.356: case 3.927: return 2;
                     case 1.571: return 1;
                     case 4.712: return 3;
                 }

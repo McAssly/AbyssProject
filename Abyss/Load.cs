@@ -38,7 +38,7 @@ namespace Abyss
 
 
             // entity textures
-            Sprites.PlayerF = new SpriteSheet(Content.Load<Texture2D>("entity/player_f"), 27, 27, 19, 22, 4, -1);
+            Sprites.PlayerF = new SpriteSheet(Content.Load<Texture2D>("entity/player_f"), 25, 25, 17, 22, 4, -1);
             Sprites.PlayerM = new SpriteSheet(Content.Load<Texture2D>("entity/player_m"), 27, 27, 19, 24, 4, -1);
 
             // load the maps
