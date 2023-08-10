@@ -107,7 +107,7 @@ namespace Abyss
                 if (InputUtility.HandleInput(KB))
                 {
                     ui_state.CloseCurrent(); // force close the current ui
-                    UiControllers._Debug.ProcessCommand(ui_state, game_state); // process the given command
+                    UiControllers._Debug.ProcessCommand(ui_state, game_state, _graphics); // process the given command
                     _TextInput = new StringBuilder(); // reset the text
                 }
 

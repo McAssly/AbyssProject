@@ -29,12 +29,21 @@ namespace Abyss.Globals
         /// <summary>
         /// Whenever the window scalar is updated we need to update some more variables so here we do this.
         /// </summary>
-        public static void UpdateGameScaling()
+        public static void UpdateGameScaling(GraphicsDeviceManager _graphics)
         {
             GameScale = 4 / (float)Config.WindowScalar;
             WindowW = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / Config.WindowScalar);
             WindowH = (int)(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / Config.WindowScalar);
             DrawPosition = Math0.CenterWithinRectangle(WindowW, WindowH, 256, 256, GameScale).To3();
+
+            UpdateWindowSize(_graphics);
+        }
+
+        public static void UpdateWindowSize(GraphicsDeviceManager _graphics)
+        {
+            _graphics.PreferredBackBufferWidth = WindowW;
+            _graphics.PreferredBackBufferHeight = WindowH;
+            _graphics.ApplyChanges(); // apply changes to the screen
         }
 
 

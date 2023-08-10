@@ -33,7 +33,7 @@ namespace Abyss.UI
         /// </summary>
         /// <param name="args"></param>
         /// <param name="enable"></param>
-        public static void EnableDebugHUD(List<string> args, bool enable)
+        public static void EnableDebugHUD(List<string> args, bool enable, GraphicsDeviceManager _graphics)
         {
             if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
             // This command really only gives a shit about the first argument passed into the primary command
@@ -51,6 +51,8 @@ namespace Abyss.UI
                     Variables.DebugDraw = enable; break;
                 case "collision":
                     Variables.DebugCollision = enable; break;
+                case "fullscreen":
+                    Config.Fullscreen(enable, _graphics); break;
                 default: break;
             }
         }
@@ -68,6 +70,22 @@ namespace Abyss.UI
             {
                 case "dialogue":
                     ui_state.OpenDialogue(UiState.TestDialogue); break;
+                default: break;
+            }
+        }
+
+
+
+
+        public static void CommandSet(List<string> args, GraphicsDeviceManager _graphics)
+        {
+            if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
+            switch (args[1])
+            {
+                case "window.scale":
+                    if (args.Count <= 2) { Debug.WriteLine("No value given"); return; }
+                    Config.SetWindowScale(double.Parse(args[2]), _graphics);
+                    break;
                 default: break;
             }
         }
@@ -131,7 +149,7 @@ namespace Abyss.UI
 
         public void Update(KeyboardState KB, MouseState MS) { }
 
-        public void ProcessCommand(UiState ui_state, GameState game_state)
+        public void ProcessCommand(UiState ui_state, GameState game_state, GraphicsDeviceManager _graphics)
         {
             // first conver the text input to a readable string
             string input = Game._TextInput.Append("\n").ToString();
@@ -172,15 +190,15 @@ namespace Abyss.UI
             switch (primary)
             {
                 case "enable":
-                    UiControllers.EnableDebugHUD(args, true); break;
+                    UiControllers.EnableDebugHUD(args, true, _graphics); break;
                 case "disable":
-                    UiControllers.EnableDebugHUD(args, false); break;
+                    UiControllers.EnableDebugHUD(args, false, _graphics); break;
                 case "open":
                     UiControllers.CommandOpen(args, ui_state); break;
                 case "save":
                     game_state.Save(); break;
                 case "set":
-                    break;
+                    UiControllers.CommandSet(args, _graphics); break;
                 default:
                     break;
             }
