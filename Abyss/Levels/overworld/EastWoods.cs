@@ -76,7 +76,11 @@ namespace Abyss.Levels.overworld
                             {1,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0},
                             {0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0}
                         }),
-                    new Enemy[0]{},
+                    new Enemy[3]{
+                        new Rat(5, 7),
+                        new Rat(4, 12),
+                        new Rat(8, 9)
+                    },
                     default, 1, default, default),
                 new TileMap(
                     new TileLayer[2]
