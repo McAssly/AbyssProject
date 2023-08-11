@@ -30,6 +30,7 @@ namespace Abyss
 
         // declare the text input builder for the text input hook
         public static StringBuilder _TextInput;
+        public static Keys _KeyInput;
 
         // declare input controllers
         public static MouseState _MouseState;
@@ -68,6 +69,7 @@ namespace Abyss
             game_state = new GameState();
             ui_state = new UiState();
             _TextInput = new StringBuilder();
+            _KeyInput = Keys.None;
 
             base.Initialize();
         }
@@ -75,6 +77,8 @@ namespace Abyss
         protected override void LoadContent()
         {
             sprite_batch = new DrawState(GraphicsDevice);
+
+            Window.TextInput += InputUtility.RegisterKey;
 
             // load all necessary game content into the game state and ui state
             Load.LoadContent(Content, game_state, ui_state);
@@ -86,32 +90,8 @@ namespace Abyss
             _MouseState = Mouse.GetState();
             double delta = gameTime.ElapsedGameTime.TotalSeconds * Variables.FRAME_SPEED;
 
-            // update the current ui state, close it if it needs to close
-            ui_state.Close();
-
-            // open the debug menu
-            if (Keyboard.GetState().IsKeyDown(Controls.DebugMenu) && !(ui_state.CurrentUi() is UI.Console))
-            {
-                // Hook the text input function to the game window
-                Window.TextInput += InputUtility.RegisterInput;
-                ui_state.Open(UiControllers._Debug); // open the debug menu, but close the previous ui
-            }
-
             // update the current ui menu
-            ui_state.Update(KB, Mouse.GetState());
-
-
-
-            // CONSOLE PROCESS              CONSOLE     < --- (debug menu)
-            if (ui_state.CurrentUi() is UI.Console)
-                if (InputUtility.HandleInput(KB))
-                {
-                    ui_state.CloseCurrent(); // force close the current ui
-                    UiControllers._Debug.ProcessCommand(ui_state, game_state, _graphics); // process the given command
-                    _TextInput = new StringBuilder(); // reset the text
-                }
-
-
+            ui_state.Update(Window, _graphics, KB, _MouseState, game_state);
 
             /** ALL GAME RELATED CODE       GAME + HUD
              */
@@ -121,7 +101,16 @@ namespace Abyss
                 game_state.Update(delta, KB, _MouseState);
             }
 
+            Variables.ShiftingTimer += delta;
+            if (Variables.ShiftingTimer >= 0.25)
+            {
+                if (Variables.ShiftingColor == Color.White) Variables.ShiftingColor = Color.Black;
+                else Variables.ShiftingColor = Color.White;
+                Variables.ShiftingTimer = 0;
+            }
+
             _prevKeyboardState = KB;
+            _KeyInput = Keys.None;
             base.Update(gameTime);
         }
 
@@ -129,24 +118,33 @@ namespace Abyss
         {
             game_state.fps = 1 / gameTime.ElapsedGameTime.TotalSeconds;
 
-            GraphicsDevice.Clear(Color.Black); // background color and clears after each frame
-            sprite_batch.Begin(
-                SpriteSortMode.Deferred,
-                BlendState.AlphaBlend,
-                SamplerState.PointClamp,
-                DepthStencilState.Default,
-                RasterizerState.CullCounterClockwise,
-                null,
-                Matrix.Multiply(Matrix.CreateTranslation(Variables.DrawPosition), Matrix.CreateScale(Variables.GameScale))
-                ) ; // start drawing through the sprite batch
+            // if the game state is currently visible then display it
+            if (game_state.IsVisible())
+            {
+                // begin drawing the game
+                GraphicsDevice.Clear(Color.Black); // background color and clears after each frame
+                sprite_batch.Begin(
+                    SpriteSortMode.Deferred,
+                    BlendState.AlphaBlend,
+                    SamplerState.PointClamp,
+                    DepthStencilState.Default,
+                    RasterizerState.CullCounterClockwise,
+                    null,
+                    Matrix.Multiply(Matrix.CreateTranslation(Variables.DrawPosition), Matrix.CreateScale(Variables.GameScale))
+                    ); // start drawing through the sprite batch
 
-            // Draw the level and its entities
-            game_state.Draw(sprite_batch);
+                // Draw the level and its entities
+                game_state.Draw(sprite_batch);
 
-            sprite_batch.End(); // end the sprite batch
+                sprite_batch.End(); // end the sprite batch
+            }
+            else
+            {
+                GraphicsDevice.Clear(Color.Black);
+            }
 
 
-            // Draw UI
+            // Draw UI (always drawn)
 
             sprite_batch.Begin(
                 SpriteSortMode.Deferred,

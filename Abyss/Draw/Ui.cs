@@ -48,9 +48,8 @@ namespace Abyss.Draw
             {
                 Draw(new Text("HP: " + gs.player.GetHealth() + "/" + gs.player.GetMaxHealth(), 16, 16, 0.5f));
                 Draw(new Text("MN: " + gs.player.GetMana() + "/" + gs.player.GetMaxMana(), 16, 32, 0.5f));
-                Draw(new Text("POS: " + gs.player.GetPosition().X + ", " + gs.player.GetPosition().Y + "\nTPOS: " +
-                    Math0.CoordsToTileCoords(gs.player.GetPosition()).x + ", " + Math0.CoordsToTileCoords(gs.player.GetPosition()).y
-                    , 16, 48, 0.3f));
+                Draw(new Text("POS: " + gs.player.GetPosition().X + ", " + gs.player.GetPosition().Y, 16, 48, 0.3f));
+                Draw(new Text("TPOS: " + Math0.CoordsToTileCoords(gs.player.GetPosition()).x + ", " + Math0.CoordsToTileCoords(gs.player.GetPosition()).y, 16, 56, 0.3f));
                 Draw(new Text("Ms-W: " + (int)InputUtility.MousePosition().X + ", " + (int)InputUtility.MousePosition().Y, 16, 64, 0.4f));
                 Draw(new Text("Ms-G: " + (int)InputUtility.MousePositionInGame().X + ", " + (int)InputUtility.MousePositionInGame().Y, 16, 80, 0.4f));
                 Draw(new Text("Grim: " + gs.player.inventory.grimoires[0].ToString() + ", " + gs.player.inventory.grimoires[1].ToString(), 16, 96, 0.3f));
@@ -73,7 +72,8 @@ namespace Abyss.Draw
         public void Draw(UI.Console console)
         {
             this.FillRectangle(new RectangleF(0, 0, Variables.WindowW, 16 * 2), Color.Black);
-            DrawString(_Sprites.Font, Game._TextInput.ToString(), new Vector2(8, 8), Color.White, 0, Vector2.Zero, (float)0.3, SpriteEffects.None, 0);
+            DrawString(_Sprites.Font, Game._TextInput.ToString(), new Vector2(8, 8), Color.White, 0, Vector2.Zero, 0.4f, SpriteEffects.None, 0);
+            this.FillRectangle(new RectangleF(8 + Text.CalculatePixelWidth(Game._TextInput.ToString(), 0.4f), 8 + 10 * 0.4f, 14 * 0.4f, 19 * 0.4f), Variables.ShiftingColor);
         }
 
         public void Draw(UI.Dialogue dialogue)

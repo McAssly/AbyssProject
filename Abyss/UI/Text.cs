@@ -1,4 +1,5 @@
-﻿using Abyss.Master;
+﻿using Abyss.Globals;
+using Abyss.Master;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -40,6 +41,64 @@ namespace Abyss.UI
             this.selectable = selectable;
             if (size.HasValue)
                 this.size = size.Value;
+        }
+
+        public float GetPixelWidth()
+        {
+            return CalculatePixelWidth(text, scale);
+        }
+
+        public static float CalculatePixelWidth(string text, float scale)
+        {
+            int perfect = PerfectWidth(text);
+            int imperfect = ImperfectWidth(text);
+            return (perfect + imperfect) * scale;
+        }
+
+        private static int ImperfectWidth(string text)
+        {
+            StringBuilder imperfect_width = new StringBuilder();
+            foreach (char c in text)
+                if (!char.IsLetter(c) || !AcceptableWidth(c) || !char.IsDigit(c))
+                    imperfect_width.Append(c);
+            string imperfect = imperfect_width.ToString();
+            int width = 0;
+            foreach (char c in imperfect)
+                width += PxWidth(c);
+            return width;
+        }
+
+        private static int PerfectWidth(string text)
+        {
+            StringBuilder perfect_width = new StringBuilder();
+            foreach (char c in text)
+                if (char.IsLetter(c) || AcceptableWidth(c) || char.IsDigit(c))
+                    perfect_width.Append(c);
+            return perfect_width.Length * (14 + Variables.TextSpacing);
+        }
+
+        private static int PxWidth(char c)
+        {
+            switch (c)
+            {
+                case ' ': return 1 + Variables.TextSpacing;
+                case '!': case '|': case '\'': return 3 + Variables.TextSpacing;
+                case '*': case '-': case '"': return 9 + Variables.TextSpacing;
+                case '(': case ')': case '[': case ']': case '{': case '}': return 11 + Variables.TextSpacing;
+                case '.': case ',': case ';': case ':': return 6 + Variables.TextSpacing;
+                default: return 0;
+            }
+        }
+
+        private static bool AcceptableWidth(char c)
+        {
+            switch (c)
+            {
+                case '@': case '~': case '#': case '$': case '%': case '/': case '\\': case '^': case '&':
+                case '=': case '_': case '+': case '?': case '<': case '>':
+                    return true;
+                default: return false;
+            }
         }
 
         public void Append(string text)

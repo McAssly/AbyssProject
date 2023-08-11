@@ -23,7 +23,7 @@ namespace Abyss.Master
     internal class GameState
     {
         // declare whether the game state should be drawn and active
-        private protected bool visible;
+        private protected bool visible = true;
 
         // declare the levels and current level of the game state
         private protected Level[] levels;

@@ -100,5 +100,16 @@ namespace Abyss.Utility
             else if (k == Keys.Back && Game._TextInput.Length > 0)
                 Game._TextInput.Length--;
         }
+
+
+        /// <summary>
+        /// registers key inputs on a seperate stream from the update sequence
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public static void RegisterKey(object sender, TextInputEventArgs e)
+        {
+            Game._KeyInput = e.Key;
+        }
     }
 }

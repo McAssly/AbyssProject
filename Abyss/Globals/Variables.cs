@@ -52,6 +52,12 @@ namespace Abyss.Globals
         public static bool DebugDraw = true;
 
 
+        // text cursor
+        public static Color ShiftingColor = Color.White;
+        public static int TextSpacing = 4;
+        public static double ShiftingTimer = 0;
+
+
 
         // dialogue
         public static Vector2 DialoguePosition = new Vector2(DrawPosition.X + 16, DrawPosition.Y + 32);

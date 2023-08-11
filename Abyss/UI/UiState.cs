@@ -36,12 +36,46 @@ namespace Abyss.UI
         }
 
         /// <summary>
-        /// Updates the current ui
+        /// Updates the UI state
         /// </summary>
+        /// <param name="Window"></param>
+        /// <param name="_graphics"></param>
         /// <param name="kb"></param>
         /// <param name="ms"></param>
-        public void Update(KeyboardState kb, MouseState ms)
+        /// <param name="game_state"></param>
+        public void Update(GameWindow Window, GraphicsDeviceManager _graphics, KeyboardState kb, MouseState ms, GameState game_state)
         {
+            // update the current ui state, close it if it needs to close
+            Close(game_state);
+            Ui previous_ui = current_ui;
+
+            // open the debug menu
+            if (Game._KeyInput == Controls.DebugMenu && !(current_ui is UI.Console))
+            {
+                // Hook the text input function to the game window
+                Window.TextInput += InputUtility.RegisterInput;
+                Open(UiControllers._Debug, game_state); // open the debug menu, but close the previous ui
+            }
+
+            // open the options menu
+            if (Game._KeyInput == Controls.Options && !(current_ui is UI.Console))
+            {
+                if (!(current_ui is UI.Options))
+                    Open(UiControllers.Options, game_state, false);
+                else
+                    CloseCurrent();
+            }
+
+
+            // CONSOLE PROCESS              CONSOLE     < --- (debug menu)
+            if (current_ui is UI.Console)
+                if (InputUtility.HandleInput(kb))
+                {
+                    CloseCurrent(); // force close the current ui
+                    UiControllers._Debug.ProcessCommand(this, game_state, _graphics); // process the given command
+                    Game._TextInput = new StringBuilder(); // reset the text
+                }
+
             this.current_ui.Update(kb, ms);
         }
 
@@ -70,7 +104,11 @@ namespace Abyss.UI
         /// Opens the given UI, sets the current UI to the given
         /// </summary>
         /// <param name="ui"></param>
-        public void Open(Ui ui) { this.current_ui = ui; }
+        public void Open(Ui ui, GameState game_state, bool visibility = true) 
+        {
+            this.current_ui = ui;
+            game_state.SetVisible(visibility);
+        }
 
         /// <summary>
         /// opens the given dialogue in the dialogue ui window
@@ -90,7 +128,7 @@ namespace Abyss.UI
         /// If the current UI is subject to close then close it and reset back to the HUD
         /// . Otherwise simply do nothing
         /// </summary>
-        public void Close()
+        public void Close(GameState game_state)
         {
             if (this.current_ui.IsClosed())
             {
@@ -99,7 +137,7 @@ namespace Abyss.UI
                     Game.GameWindow.TextInput -= InputUtility.RegisterInput;
                 }
                 this.current_ui.UnClose();
-                this.current_ui = UiControllers.HUD;
+                this.Open(UiControllers.HUD, game_state);
             }
         }
 

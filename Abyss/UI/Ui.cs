@@ -23,7 +23,7 @@ namespace Abyss.UI
         public static Inventory Invenetory = new Inventory();
         public static Interaction Shop = new Interaction();
         public static Menu Main = new Menu();
-        public static Menu Options = new Menu();
+        public static Options Options = new Options();
 
         // in game HUD
         public static Hud HUD = new Hud();
@@ -137,6 +137,7 @@ namespace Abyss.UI
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
         public void Update(KeyboardState KB, MouseState MS) { }
+
     }
 
     internal class Console : Ui
@@ -206,6 +207,15 @@ namespace Abyss.UI
     }
 
     internal class Inventory : Ui
+    {
+        public bool close = false;
+        public void Close() { close = true; }
+        public bool IsClosed() { return close; }
+        public void UnClose() { close = false; }
+        public void Update(KeyboardState KB, MouseState MS) { }
+    }
+
+    internal class Options : Ui
     {
         public bool close = false;
         public void Close() { close = true; }

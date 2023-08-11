@@ -26,5 +26,6 @@ namespace Abyss.Globals
 
         // Master Controls
         public static Keys DebugMenu = Keys.OemTilde;
+        public static Keys Options = Keys.Escape;
     }
 }
