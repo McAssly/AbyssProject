@@ -31,7 +31,7 @@ namespace Abyss.Entities
         public Player(SpriteSheet sprite) : base(sprite)
         {
             this.position = new Vector2();
-            this.speed = 3;
+            this.speed = 1;
             this.crit_dmg = 0.7;
             this.crit_rate = 0.05;
             this.damage = 1;

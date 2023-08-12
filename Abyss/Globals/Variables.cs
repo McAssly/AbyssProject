@@ -14,7 +14,7 @@ namespace Abyss.Globals
         // game frame rates / animation speeds
         public static readonly double FRAME_FACTOR = 50;
         public static readonly double FRAME_SPEED = 1.0;
-        public static readonly double ANIMATION_SPEED = 100.0;
+        public static readonly double ANIMATION_SPEED = 10.0;
         internal static readonly double PARTICLE_SUBTRACTOR = 0.5;
 
         // window sizing

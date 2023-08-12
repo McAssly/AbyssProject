@@ -43,6 +43,18 @@ namespace Abyss.Utility
         }
 
 
+
+        /// <summary>
+        /// returns the absolute version of a vector
+        /// </summary>
+        /// <param name="vector"></param>
+        /// <returns></returns>
+        public static Vector2 Absolute(Vector2 vector)
+        {
+            return new Vector2(Math.Abs(vector.X), Math.Abs(vector.Y));
+        }
+
+
         /// <summary>
         /// moves the first vector towards the second based on a given delta
         /// </summary>

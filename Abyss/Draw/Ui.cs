@@ -54,6 +54,7 @@ namespace Abyss.Draw
                 Draw(new Text("Ms-G: " + (int)InputUtility.MousePositionInGame().X + ", " + (int)InputUtility.MousePositionInGame().Y, 16, 80, 0.4f));
                 Draw(new Text("Grim: " + gs.player.inventory.grimoires[0].ToString() + ", " + gs.player.inventory.grimoires[1].ToString(), 16, 96, 0.3f));
                 Draw(new Text("DMG: " + gs.player.last_damage, 16, 112, 0.3f));
+                Draw(new Text("VEL: " + Math.Round(gs.player.GetVelocity().X, 2) + ", " + Math.Round(gs.player.GetVelocity().Y, 2), 16, 128, 0.3f));
                 Draw(new Text((int)gs.fps + " fps", (int)Variables.DrawPosition.X + 16 * 17, 16, 0.5f));
                 Draw(new Text(1 / gs.fps + "", (int)Variables.DrawPosition.X + 16 * 17, 32, 0.5f));
                 // draw the status effects on the player

@@ -30,14 +30,14 @@ namespace Abyss.Master
             //Texture2D steam_spell_texture = Content.Load<Texture2D>("spells/steam");
 
             _Sprites.BaseSpell = new AnimatedSprite(base_spell_texture, 20, 20, 71);
-            _Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 19, 19, 71);
-            _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 20, 20, 63, 2);
+            _Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 19, 19, 71, 5);
+            _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 20, 20, 63, 9);
 
-            _Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19);
+            _Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19, 8);
 
 
             // entity textures
-            _Sprites.Player = new SpriteSheet(Content.Load<Texture2D>("entity/player_f"), 27, 27, 21, 22, 4, -1);
+            _Sprites.Player = new SpriteSheet(Content.Load<Texture2D>("entity/player"), 16, 16, 14, 16, 4, -1);
 
             game_state.InitializePlayer(_Sprites.Player);
 

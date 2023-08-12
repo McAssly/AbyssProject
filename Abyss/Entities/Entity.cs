@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,9 +20,9 @@ namespace Abyss.Entities
         private protected int width, height;
 
         // declare max values for the entity
-        private protected readonly double max_speed = 1;
-        private protected readonly double max_accel = 150;
-        private protected readonly double friction = 50;
+        private protected readonly double max_speed = 2;
+        private protected readonly double max_accel = 10;
+        private protected readonly double friction = 25;
 
         // declare the entity's stats
         private protected double speed = 1;
@@ -85,16 +86,18 @@ namespace Abyss.Entities
         /// <param name="delta"></param>
         public void Move(Layer collision_layer, double delta)
         {
-            //Vector2 velocity_temp = Vector2.Zero;
             // if the movement vector is not zero then the entity must be trying to move
             if (target_vector != Vector2.Zero)
             {
-                velocity = Math0.MoveToward(velocity, target_vector * (float)max_speed * (float)speed, max_accel * delta);
-                //velocity = velocity;
-            } // otherwise it is not trying to move at all so slow it down to zero
-            else
-                velocity = Math0.MoveToward(velocity, Vector2.Zero, delta * friction);
+                Vector2 target = target_vector * (float)max_speed * (float)speed;
+                velocity = Math0.MoveToward(velocity, target, max_accel * delta);
+            }
+            else velocity = Math0.MoveToward(velocity, Vector2.Zero, friction * delta);
 
+            Vector2 max_velocity = velocity.NormalizedCopy() * (float)max_speed * (float)speed;
+            velocity = Vector2.Clamp(velocity, -Math0.Absolute(max_velocity), Math0.Absolute(max_velocity));
+
+            //velocity = velocity_temp;
             // handle collision, if they are about to collide we must alter our velocity before we move forward
             if (velocity.X != 0 && this.CollisionCheck(collision_layer, new Vector2(velocity.X, 0)))
                 velocity.X = 0;
