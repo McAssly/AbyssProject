@@ -18,26 +18,27 @@ namespace Abyss.Draw
 {
     internal partial class DrawState : SpriteBatch
     {
-        public void Draw(Text text)
+        public void Draw(Text text, bool background = false)
         {
-            Color bg, fg;
-            fg = Color.White;
-            bg = Color.Black;
-            // the text is selectable change the colors when hovering
-            if (text.IsSelectable())
+            if (background)
+                this.FillRectangle(new RectangleF(text.GetX(), text.GetY(), text.GetWidth(), text.GetHeight()), Color.Black);
+            this.DrawString(_Sprites.Font, text.GetText(), text.GetPosition(), Color.White, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
+        }
+
+
+        public void Draw(Button button)
+        {
+            if (button.IsHovered())
             {
-                if (text.Hovering()) // the user is hovering over the textbox
-                { // invert the background and foreground colors
-                    bg = Color.White;
-                    fg = Color.Black;
-                }
-                this.FillRectangle(new RectangleF(text.GetX(), text.GetY(), text.GetWidth(), text.GetHeight()), bg);
+                this.FillRectangle(button.GetDrawBackground(), Color.White);
+                this.Draw(button.GetLabel());
             }
             else
             {
-                this.FillRectangle(new RectangleF(text.GetX(), text.GetY(), text.GetWidth(), text.GetHeight()), bg);
+                this.DrawRectangle(button.GetDrawBackground(), Color.White);
+                this.Draw(button.GetLabel());
             }
-            this.DrawString(_Sprites.Font, text.GetText(), text.GetPosition(), fg, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
+
         }
 
 
@@ -90,6 +91,12 @@ namespace Abyss.Draw
             this.Draw(interaction.GetDialogue());
         }
 
+        public void Draw(UI.Options options)
+        {
+            Draw(options.fullscreen);
+            Draw(options.close_button);
+        }
+
         public void Draw(Ui ui, GameState gs)
         {
             if (ui is Hud)
@@ -103,6 +110,10 @@ namespace Abyss.Draw
             else if (ui is UI.Interaction)
             {
                 Draw(ui as UI.Interaction);
+            }
+            else if (ui is UI.Options)
+            {
+                Draw(ui as UI.Options);
             }
         }
     }

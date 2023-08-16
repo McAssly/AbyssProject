@@ -15,7 +15,7 @@ namespace Abyss.UI
     internal class UiState
     {
         // declare testing placeholders ---------------------------------------------------------------------------------------------
-        public static Dialogue TestDialogue = new Dialogue
+        /*public static Dialogue TestDialogue = new Dialogue
             (
                 new Text("Hello World.", Variables.DialoguePosition, 0.3f, Variables.DialogueSize),
                 new Text[]
@@ -24,7 +24,7 @@ namespace Abyss.UI
                     new Text("Why?", Variables.DialoguePosition + Variables.OptionOffset[1], 0.3f, Variables.DialogueSize, true),
                     new Text("Goodbye.", Variables.DialoguePosition + Variables.OptionOffset[2], 0.3f, Variables.DialogueSize, true)
                 }
-            );
+            );*/
         // --------------------------------------------------------------------------------------------------------------------------
 
 
@@ -72,7 +72,7 @@ namespace Abyss.UI
                 if (InputUtility.HandleInput(kb))
                 {
                     CloseCurrent(); // force close the current ui
-                    UiControllers._Debug.ProcessCommand(this, game_state, _graphics); // process the given command
+                    UiControllers._Debug.ProcessCommand(this, game_state); // process the given command
                     Game._TextInput = new StringBuilder(); // reset the text
                 }
 

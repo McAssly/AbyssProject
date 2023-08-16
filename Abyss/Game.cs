@@ -71,6 +71,8 @@ namespace Abyss
             _TextInput = new StringBuilder();
             _KeyInput = Keys.None;
 
+            UiControllers.Options.Initialize(game_state, ui_state);
+
             base.Initialize();
         }
 
@@ -108,6 +110,9 @@ namespace Abyss
                 else Variables.ShiftingColor = Color.White;
                 Variables.ShiftingTimer = 0;
             }
+
+
+            Config.Update(_graphics);
 
             _prevKeyboardState = KB;
             _KeyInput = Keys.None;

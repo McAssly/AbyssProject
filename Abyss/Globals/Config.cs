@@ -14,15 +14,16 @@ namespace Abyss.Globals
     {
         public static double MaxFrameRate = 144;
         public static double WindowScalar = 1.5;
+        public static bool Fullscreen = false;
 
 
-        public static void SetWindowScale(double scale, GraphicsDeviceManager _graphics)
+        private static void SetWindowScale(double scale, GraphicsDeviceManager _graphics)
         {
             WindowScalar = scale;
             Variables.UpdateGameScaling(_graphics);
         }
 
-        public static void Fullscreen(bool enable, GraphicsDeviceManager _graphics)
+        private static void SetFullscreen(bool enable, GraphicsDeviceManager _graphics)
         {
             if (enable)
             {
@@ -31,13 +32,20 @@ namespace Abyss.Globals
                 Variables.WindowH = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
                 Variables.DrawPosition = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, 256, 256, 4).To3();
                 Variables.UpdateWindowSize(_graphics);
-                _graphics.ToggleFullScreen();
+                if (!_graphics.IsFullScreen) _graphics.ToggleFullScreen();
             }
             else
             {
-                _graphics.ToggleFullScreen();
+                if (_graphics.IsFullScreen) _graphics.ToggleFullScreen();
                 Variables.UpdateGameScaling(_graphics);
             }
+        }
+
+
+        public static void Update(GraphicsDeviceManager _graphics)
+        {
+            SetWindowScale(WindowScalar, _graphics);
+            SetFullscreen(Fullscreen, _graphics);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Abyss.Entities;
 using Abyss.Globals;
 using Abyss.Master;
+using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -33,7 +34,7 @@ namespace Abyss.UI
         /// </summary>
         /// <param name="args"></param>
         /// <param name="enable"></param>
-        public static void EnableDebugHUD(List<string> args, bool enable, GraphicsDeviceManager _graphics)
+        public static void EnableDebugHUD(List<string> args, bool enable)
         {
             if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
             // This command really only gives a shit about the first argument passed into the primary command
@@ -52,7 +53,7 @@ namespace Abyss.UI
                 case "collision":
                     Variables.DebugCollision = enable; break;
                 case "fullscreen":
-                    Config.Fullscreen(enable, _graphics); break;
+                    Config.Fullscreen = enable; break;
                 default: break;
             }
         }
@@ -68,8 +69,8 @@ namespace Abyss.UI
             if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
             switch (args[1])
             {
-                case "dialogue":
-                    ui_state.OpenDialogue(UiState.TestDialogue); break;
+                //case "dialogue":
+                  //  ui_state.OpenDialogue(UiState.TestDialogue); break;
                 default: break;
             }
         }
@@ -77,14 +78,14 @@ namespace Abyss.UI
 
 
 
-        public static void CommandSet(List<string> args, GraphicsDeviceManager _graphics)
+        public static void CommandSet(List<string> args)
         {
             if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
             switch (args[1])
             {
                 case "window.scale":
                     if (args.Count <= 2) { Debug.WriteLine("No value given"); return; }
-                    Config.SetWindowScale(double.Parse(args[2]), _graphics);
+                    Config.WindowScalar = double.Parse(args[2]);
                     break;
                 default: break;
             }
@@ -150,7 +151,7 @@ namespace Abyss.UI
 
         public void Update(KeyboardState KB, MouseState MS) { }
 
-        public void ProcessCommand(UiState ui_state, GameState game_state, GraphicsDeviceManager _graphics)
+        public void ProcessCommand(UiState ui_state, GameState game_state)
         {
             // first conver the text input to a readable string
             string input = Game._TextInput.Append("\n").ToString();
@@ -191,15 +192,15 @@ namespace Abyss.UI
             switch (primary)
             {
                 case "enable":
-                    UiControllers.EnableDebugHUD(args, true, _graphics); break;
+                    UiControllers.EnableDebugHUD(args, true); break;
                 case "disable":
-                    UiControllers.EnableDebugHUD(args, false, _graphics); break;
+                    UiControllers.EnableDebugHUD(args, false); break;
                 case "open":
                     UiControllers.CommandOpen(args, ui_state); break;
                 case "save":
                     game_state.Save(); break;
                 case "set":
-                    UiControllers.CommandSet(args, _graphics); break;
+                    UiControllers.CommandSet(args); break;
                 default:
                     break;
             }
@@ -218,15 +219,64 @@ namespace Abyss.UI
     internal class Options : Ui
     {
         public bool close = false;
+
+        private readonly int ui_width = 512;
+        private readonly int box_width = 8;
+        private Vector origin;
+
+        public byte previous;
+
+        public Button close_button;
+        public Slider volume;
+        public Slider window_scale;
+        public Button fullscreen;
+        public Slider framerate;
+
+
+        public void Initialize(GameState game_state, UiState ui_state)
+        {
+            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH, 1);
+            fullscreen = new Button(origin.x, origin.y, "fullscreen", origin.x + ui_width - box_width, origin.y, box_width);
+            close_button = new Button("close", origin.x, origin.y + 16 * 4, ui_width / box_width, 16);
+
+
+
+            fullscreen.Action += () =>
+            {
+                Config.Fullscreen = fullscreen.enabled;
+            };
+
+            close_button.Action += () =>
+            {
+                this.close = true;
+            };
+        }
+
+        public void UpdateOrigin()
+        {
+            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH, 1);
+        }
+
         public void Close() { close = true; }
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }
-        public void Update(KeyboardState KB, MouseState MS) { }
+        public void Update(KeyboardState KB, MouseState MS) 
+        {
+            UpdateOrigin();
+
+            fullscreen.Update(MS);
+            close_button.Update(MS);
+        }
     }
 
     internal class Menu : Ui
     {
         public bool close = false;
+
+        public bool is_main;
+        public Button[] main;
+        public Button[] game;
+
         public void Close() { close = true; }
         public bool IsClosed() { return close; }
         public void UnClose() { close = false; }

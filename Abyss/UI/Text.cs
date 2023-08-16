@@ -17,30 +17,32 @@ namespace Abyss.UI
     internal class Text
     {
         private protected Vector2 position;
-        private protected Vector2 size;
+        private protected float width;
+        private protected float height;
         private protected float scale;
         private protected string text;
 
-        private protected bool selectable;
-        private protected bool selected = false;
-        public Text(string text, int x, int y, float scale, Vector2? size = null, bool selectable = false)
+        public Text(string text, int x, int y, float scale)
         {
             this.text = text;
             this.position = new Vector2(x, y);
             this.scale = scale;
-            this.selectable = selectable;
-            if (size.HasValue)
-                this.size = size.Value;
         }
 
-        public Text(string text, Vector2 position, float scale, Vector2? size = null, bool selectable = false)
+        public Text(string text, int x, int y, int width, float height, float scale) 
+        {
+            this.text = text;
+            this.position = new Vector2(x, y);
+            this.width = width;
+            this.height = height;
+            this.scale = scale;
+        }
+
+        public Text(string text, Vector2 position, float scale)
         {
             this.text = text;
             this.position = position;
             this.scale = scale;
-            this.selectable = selectable;
-            if (size.HasValue)
-                this.size = size.Value;
         }
 
         public float GetPixelWidth()
@@ -101,6 +103,42 @@ namespace Abyss.UI
             }
         }
 
+
+        public static string FormatInWidth(string text, int width, float scale)
+        {
+            string[] lines = text.Split('\n');
+            StringBuilder formatted = new StringBuilder();
+
+            foreach (string line in lines)
+            {
+                string formatted_line = FormatLineInWidth(line, width, scale);
+                formatted.AppendLine(formatted_line);
+            }
+            return formatted.ToString().Trim();
+        }
+
+
+        private static string FormatLineInWidth(string line, int width, float scale)
+        {
+            StringBuilder formatted = new StringBuilder();
+            string[] words = line.Split(' ');
+
+            int length = 0;
+
+            foreach (string word in words)
+            {
+                float word_length = CalculatePixelWidth(word, scale);
+
+                if (length + word_length + 1 <= width) formatted.Append(word + ' ');
+                else formatted.Append('\n' + word + ' ');
+                length += (int)word_length + 1;
+            }
+
+            return formatted.ToString().Trim();
+        }
+
+
+
         public void Append(string text)
         {
             this.text += text;
@@ -120,53 +158,12 @@ namespace Abyss.UI
                 text = new_text;
         }
 
-        public void UpdateSelection(MouseState MS)
-        {
-            // if this text box is not selectable then who cares move on
-            if (!this.selectable) return;
-
-            // otherwise lets try and make it selectable
-        }
-
-        public bool Hovering()
-        {
-            Vector2 m = InputUtility.MousePosition();
-            return m.X >= position.X && m.X <= position.X + size.X
-                && m.Y >= position.Y && m.Y <= position.Y + size.Y;
-        }
-
-        public bool IsSelectable()
-        {
-            return this.selectable;
-        }
-
-        public float GetX()
-        {
-            return position.X;
-        }
-        public float GetY()
-        {
-            return position.Y;
-        }
-        public Vector2 GetPosition()
-        {
-            return position;
-        }
-        public float GetWidth()
-        {
-            return size.X;
-        }
-        public float GetHeight()
-        {
-            return size.Y;
-        }
-        public float GetScale()
-        {
-            return scale;
-        }
-        public string GetText()
-        {
-            return text;
-        }
+        public float GetWidth() { return width; }
+        public float GetHeight() { return height; }
+        public float GetX() { return position.X; }
+        public float GetY() { return position.Y; }
+        public Vector2 GetPosition() { return position; }
+        public float GetScale() { return scale; }
+        public string GetText() { return text; }
     }
 }

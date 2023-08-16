@@ -133,6 +133,18 @@ namespace Abyss.Utility
                 pos1.Y <= pos2.Y + size2.Y;
         }
 
+
+        /// <summary>
+        /// alternate
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="rect"></param>
+        /// <returns></returns>
+        public static bool WithinRectangle(Vector2 pos, Rectangle rect)
+        {
+            return WithinRectangle(pos, new Vector2(rect.X, rect.Y), new Vector2(rect.Width, rect.Height));
+        }
+
         /// <summary>
         /// applies the given acceleration to the given velocity and returns it
         /// </summary>
