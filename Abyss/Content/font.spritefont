@@ -10,6 +10,12 @@ with.
 
     <!--
     Modify this string to change the font that will be imported.
+	fonts:
+	Kubasta (great for = widths)
+	MMXSNES
+	CelticTime
+	TinyPixie2
+	BitFantasy
     -->
     <FontName>Kubasta</FontName>
 
