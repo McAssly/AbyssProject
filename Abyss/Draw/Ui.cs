@@ -25,13 +25,18 @@ namespace Abyss.Draw
             this.DrawString(_Sprites.Font, text.GetText(), text.GetPosition(), Color.White, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
         }
 
+        public void Draw(Text text, Color color)
+        {
+            this.DrawString(_Sprites.Font, text.GetText(), text.GetPosition(), color, 0, Vector2.Zero, text.GetScale(), SpriteEffects.None, 0);
+        }
+
 
         public void Draw(Button button)
         {
             if (button.IsHovered())
             {
                 this.FillRectangle(button.GetDrawBackground(), Color.White);
-                this.Draw(button.GetLabel());
+                this.Draw(button.GetLabel(), Color.Black);
             }
             else
             {
@@ -93,6 +98,7 @@ namespace Abyss.Draw
 
         public void Draw(UI.Options options)
         {
+            this.DrawRectangle(new RectangleF(options.origin.x, options.origin.y, 384, Variables.WindowH), Color.LimeGreen);
             Draw(options.fullscreen);
             Draw(options.close_button);
         }

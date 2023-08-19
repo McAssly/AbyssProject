@@ -41,6 +41,11 @@ namespace Abyss.Globals
             }
         }
 
+        public static void ToggleFullscreen()
+        {
+            Fullscreen = !Fullscreen;
+        }
+
 
         public static void Update(GraphicsDeviceManager _graphics)
         {

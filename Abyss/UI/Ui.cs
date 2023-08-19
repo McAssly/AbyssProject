@@ -220,9 +220,10 @@ namespace Abyss.UI
     {
         public bool close = false;
 
-        private readonly int ui_width = 512;
+        private readonly int ui_width = 384;
         private readonly int box_width = 8;
-        private Vector origin;
+        private readonly int padding = 16;
+        public Vector origin;
 
         public byte previous;
 
@@ -235,15 +236,16 @@ namespace Abyss.UI
 
         public void Initialize(GameState game_state, UiState ui_state)
         {
-            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH, 1);
-            fullscreen = new Button(origin.x, origin.y, "fullscreen", origin.x + ui_width - box_width, origin.y, box_width);
-            close_button = new Button("close", origin.x, origin.y + 16 * 4, ui_width / box_width, 16);
+            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
+
+            fullscreen = new Button("fullscreen", origin.x + padding, origin.y, (int)(ui_width * Variables.GameScale) / box_width, 16);
+            close_button = new Button("close", origin.x + padding, origin.y + 16 * 4, (int)(ui_width * Variables.GameScale) / box_width, 16);
 
 
 
             fullscreen.Action += () =>
             {
-                Config.Fullscreen = fullscreen.enabled;
+                Config.ToggleFullscreen();
             };
 
             close_button.Action += () =>
@@ -254,7 +256,7 @@ namespace Abyss.UI
 
         public void UpdateOrigin()
         {
-            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH, 1);
+            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
         }
 
         public void Close() { close = true; }

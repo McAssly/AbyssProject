@@ -19,7 +19,6 @@ namespace Abyss.UI
         private protected Rectangle bounds;
         public bool hovered;
         public bool enabled;
-        private protected readonly bool is_checkbox;
 
         public event ButtonAction Action;
 
@@ -37,26 +36,6 @@ namespace Abyss.UI
             this.label = Button.MakeCenteredLabel(label, bounds);
             this.enabled = false;
             this.hovered = false;
-            this.is_checkbox = false;
-        }
-
-
-        /// <summary>
-        /// Makes a checkbox type button
-        /// </summary>
-        /// <param name="label_x"></param>
-        /// <param name="label_y"></param>
-        /// <param name="label"></param>
-        /// <param name="box_x"></param>
-        /// <param name="box_y"></param>
-        /// <param name="size"></param>
-        public Button(int label_x, int label_y, string label, int box_x, int box_y, int size)
-        {
-            this.bounds =  new Rectangle(box_x, box_y, size, size);
-            this.label = new Text(label, label_x, label_y, 1);
-            this.enabled = false;
-            this.hovered = false;
-            this.is_checkbox = true;
         }
 
 
@@ -66,21 +45,11 @@ namespace Abyss.UI
         /// <param name="ms"></param>
         public void Update(MouseState ms)
         {
-            Vector2 mouse_position = InputUtility.MousePosition();
-            if (is_checkbox)
+            Press(ms, InputUtility.MousePosition());
+            if (enabled)
             {
-                bool prev_state = enabled;
-                Press(ms, mouse_position, !enabled);
-                if (prev_state != enabled) Action?.Invoke();
-            }
-            else
-            {
-                Press(ms, mouse_position);
-                if (enabled)
-                {
-                    Action?.Invoke();
-                    enabled = false;
-                }
+                Action?.Invoke();
+                enabled = false;
             }
         }
 
@@ -100,12 +69,6 @@ namespace Abyss.UI
             }
             else
                 hovered = !output;
-        }
-
-
-        public bool IsCheckBox()
-        {
-            return is_checkbox;
         }
 
         public bool IsHovered()
@@ -138,11 +101,10 @@ namespace Abyss.UI
         {
             // determine the inner bounds for the label based on the given padding
             int inner_width = bounds.Width - padding;
-            int inner_x = bounds.X + padding;
-            int inner_y = bounds.Y + padding;
+            Vector center_point = Math0.CenterWithinRectangle(bounds.Width, bounds.Height, (int)Text.CalculatePixelWidth(text, 0.5f), bounds.Height + 4);
 
-            text = Text.FormatInWidth(text, inner_width, 1);
-            return new Text(text, inner_x, inner_y, 1);
+            text = Text.FormatInWidth(text, inner_width, 0.5f);
+            return new Text(text, bounds.X + center_point.x, bounds.Y + center_point.y, 0.5f);
         }
     }
 }

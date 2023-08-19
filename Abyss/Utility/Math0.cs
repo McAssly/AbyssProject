@@ -118,6 +118,23 @@ namespace Abyss.Utility
         }
 
         /// <summary>
+        /// Determines the position to place a smaller rectangle within a larger rectangle, with a given scalar on different axis
+        /// </summary>
+        /// <param name="outer_width"></param>
+        /// <param name="outer_height"></param>
+        /// <param name="inner_width"></param>
+        /// <param name="inner_height"></param>
+        /// <param name="scalar">default = 1</param>
+        /// <returns></returns>
+        public static Vector CenterWithinRectangle(int outer_width, int outer_height, int inner_width, int inner_height, double x_scalar, double y_scalar)
+        {
+            return new Vector(
+                (int)((outer_width - inner_width * x_scalar) / (2 * x_scalar)),
+                (int)((outer_height - inner_height * y_scalar) / (2 * y_scalar))
+                );
+        }
+
+        /// <summary>
         /// determines if a point is within a rectangle
         /// </summary>
         /// <param name="pos1"></param>
