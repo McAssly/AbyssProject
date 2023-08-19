@@ -1,4 +1,5 @@
 ﻿using Abyss.Globals;
+using Abyss.Globals;
 using Abyss.Levels;
 using Abyss.Magic;
 using Abyss.Sprites;
@@ -84,7 +85,7 @@ namespace Abyss.Entities
         /// </summary>
         /// <param name="collision_layer"></param>
         /// <param name="delta"></param>
-        public void Move(Layer collision_layer, double delta)
+        public virtual void Move(Layer collision_layer, double delta)
         {
             // if the movement vector is not zero then the entity must be trying to move
             if (target_vector != Vector2.Zero)

@@ -85,6 +85,10 @@ namespace Abyss.Master
             levels[level_index].GetEnemies().RemoveAll(x => x.GetHealth() <= 0);
             foreach (Enemy enemy in levels[level_index].GetEnemies())
             {
+                // update the enemies
+                enemy.Update(delta, this);
+
+
                 // enemies take damage
                 for (int i = 0; i < 2; i++)
                 {
@@ -94,13 +98,6 @@ namespace Abyss.Master
                         Effect.BurstEffect(damager.position, this);
                         enemy.ReduceHealth(damager.damage);
                     }
-                }
-
-                // enemies deal damage
-                if (enemy.DealDamage(player) > 0 && enemy.attack_cooldown <= 0)
-                {
-                    player.ReduceHealth(enemy.DealDamage(player));
-                    enemy.attack_cooldown = enemy.attack_cooldown_max;
                 }
 
                 if (enemy.attack_cooldown > 0) enemy.attack_cooldown -= delta;

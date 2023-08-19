@@ -17,6 +17,9 @@ namespace Abyss.Utility
 
     internal class Math0
     {
+        private static Random random = new Random();
+
+
         /// <summary>
         /// converts the given coordinates to the tile coordinates, by default this will floor the coordinates
         /// </summary>
@@ -202,6 +205,17 @@ namespace Abyss.Utility
             float length = (float)Math.Sqrt(x * x + y * y);
 
             return new Vector2(x / length, y / length);
+        }
+
+
+
+        /// <summary>
+        /// returns a random angle
+        /// </summary>
+        /// <returns></returns>
+        public static double RandomAngle()
+        {
+            return random.NextDouble() * 2 * Math.PI;
         }
     }
 }
