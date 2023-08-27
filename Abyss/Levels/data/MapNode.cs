@@ -12,102 +12,162 @@ namespace Abyss.Levels.data
     internal class MapNode
     {
         /// <summary>
-        /// the position of the node
+        /// the position of the node on the node map
         /// </summary>
         internal Vector position;
 
 
         /// <summary>
-        /// whether or not the node is converged to the center
+        /// the path this node is in
         /// </summary>
-        internal bool converged;
+        internal byte path_id;
 
 
         /// <summary>
-        /// the type of room it is;
-        /// 0 = generic; 1 = entrance; 2 = midpoint; 3 = end; etc.
+        /// the map index of this node (*more like an ID)
         /// </summary>
-        internal byte type;
+        internal int map_index;
 
 
         /// <summary>
-        /// the adjacent nodes that they direct to; index of -1 means blocked off; index of -2 means open but disconnected
+        /// the next map nodes that his node is connected to (the index); north east south west
         /// </summary>
-        // bottom = 0; left = 1; right = 2; top = 3;
-        internal int[] next_nodes = new int[4];
+        internal int[] next_nodes;
+
+
+
+        private bool exists;
 
 
         /// <summary>
-        /// create a new map node
+        /// generates an empty map node
+        /// </summary>
+        public MapNode() { exists = false; }
+
+        /// <summary>
+        /// creates a new map node
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <param name="path_id"></param>
-        /// <param name="nodes"></param>
-        public MapNode(int x, int y, byte path_id, byte type, int path, Dungeon dungeon, MapNode previous = null)
+        /// <param name="last_index"></param>
+        /// <param name="previous"></param>
+        public MapNode(int x, int y, byte path_id, int last_index, MapNode previous)
         {
-            this.type = type;
-            position = new Vector(x, y);
+            this.next_nodes = new int[4] { -1, -1, -1, -1 };
+            this.position = new Vector(x, y);
+            this.path_id = path_id;
+            this.map_index = last_index;
 
-            if (previous == null)
-                next_nodes = new int[4] { -1, -2, -2, -2 };
-            else
-                next_nodes = Connect(previous, dungeon, path);
+            exists = true;
+
+            if (previous is not null)
+                this.Connect(previous);
+        }
+
+        /// <summary>
+        /// creates a new map node (used for cloning)
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="path_id"></param>
+        /// <param name="map_index"></param>
+        /// <param name="next_nodes"></param>
+        public MapNode(Vector position, byte path_id, int map_index, int[] next_nodes)
+        {
+            this.position = position;
+            this.path_id = path_id;
+            this.map_index = map_index;
+            this.next_nodes = next_nodes;
+
+            exists = true;
         }
 
 
 
-        /// <summary>
-        /// connects the map node to the previous and its surroundings
-        /// </summary>
-        /// <returns></returns>
-        private int[] Connect(MapNode builder, Dungeon dungeon, int path)
-        {
-            // completely open
-            next_nodes = new int[4] { -2, -2, -2, -2 };
-
-            // if there is a path to the left or right of the node; BLOCK IT
-            if (!converged)
-            {
-                MapNode[] adjacent_paths = dungeon.AdjacentPath(this, path);
-
-                // check the left side
-                if (adjacent_paths[0] is not null) next_nodes[1] = -1;
-
-                // check the right side
-                if (adjacent_paths[1] is not null) next_nodes[2] = -1;
-            }
-
-            // if the previous was next it;             BLOCK THE BOTTOM
-            if (builder.position.y == this.position.y)
-            {
-                next_nodes[0] = -1;
-
-                if (builder.position.x > this.position.x) next_nodes[2] = dungeon.IndexOf(builder);
-            }
-
-        }
-
-
 
         /// <summary>
-        /// returns which connection type the node is
+        /// connects the given node to this node
         /// </summary>
-        /// <returns></returns>
-        // 0 = all; 1 = bottom-left; 2 = bottom-right; 3 = bottom; 4 = end; 5 = left-right; 6 = midpoint; 7 = top-bottom; 8 = top-left; 9 = top-right; 10 = floating;
-        public int GetConnectionType()
+        /// <param name="node"></param>
+        internal void Connect(MapNode node)
         {
-            switch (type)
+            switch (GetDirection(node))
             {
-                case 0: // <---- placeholder
+                case 0: // LEFT
                     {
-                        return 1;
+                        next_nodes[3] = node.map_index;
+                        node.next_nodes[1] = this.map_index;
+                        break;
                     }
-                case 1: return 0;
-                case 2: return 6;
-                case 3: return 4;
+                case 1: // RIGHT
+                    {
+                        next_nodes[1] = node.map_index;
+                        node.next_nodes[3] = this.map_index;
+                        break;
+                    }
+                case 2: // DOWN
+                    {
+                        next_nodes[2] = node.map_index;
+                        node.next_nodes[0] = this.map_index;
+                        break;
+                    }
+                case 3: // UP
+                    {
+                        next_nodes[0] = node.map_index;
+                        node.next_nodes[2] = this.map_index;
+                        break;
+                    }
             }
-            return 10;
         }
+
+
+
+        /// <summary>
+        /// gets the direction the other node is in from this node
+        /// </summary>
+        /// <param name="node"></param>
+        private byte GetDirection(MapNode node)
+        {
+            if (node.position.x < this.position.x) // WEST
+                return 0;
+            else if (node.position.x > this.position.x) // EAST
+                return 1;
+            else if (node.position.y < this.position.y) // SOUTH
+                return 2;
+            else if (node.position.y > this.position.y) // NORTH
+                return 3;
+            return 0;
+        }
+
+
+        /// <summary>
+        /// determines if the given direction is closed or not
+        /// </summary>
+        /// <param name="direction_flag"></param>
+        /// <returns></returns>
+        public bool IsClosed(byte direction_flag)
+        {
+            switch (direction_flag)
+            {
+                case 0: return next_nodes[3] == -1; // left
+                case 1: return next_nodes[1] == -1; // right
+                case 2: return next_nodes[0] == -1; // up
+                case 3: return next_nodes[2] == -1; // down
+            }
+            return true;
+        }
+
+
+        /// <summary>
+        /// clones the node
+        /// </summary>
+        /// <returns></returns>
+        internal MapNode Clone()
+        {
+            return new MapNode(position, path_id, map_index, next_nodes);
+        }
+
+
+        internal bool Exists() { return exists; }
     }
 }

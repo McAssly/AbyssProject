@@ -1,4 +1,5 @@
 ﻿using Abyss.Globals;
+using Abyss.Levels.data;
 using Abyss.Sprites;
 using Abyss.UI;
 using Microsoft.Xna.Framework.Content;
@@ -48,6 +49,9 @@ namespace Abyss.Master
             Data.Load("save", game_state);
 
             ui_state.Setup(UiControllers.HUD);
+
+
+            Dungeon dungeon = new Dungeon(6, 12, 3, 0.7);
         }
     }
 }

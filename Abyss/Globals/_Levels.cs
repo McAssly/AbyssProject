@@ -1,4 +1,5 @@
 ﻿using Abyss.Levels;
+using Abyss.Levels.data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,14 @@ namespace Abyss.Globals
 
         // MAPS
         public static Level Eastwoods = new Level(Levels.overworld.Eastwoods.Maps, TS_EASTWOODS);
+    }
+
+    internal class _Dungeons
+    {
+        // TILESETS
+
+        // DUNGEON DATA
+
+        // DUNGEON PIECES
     }
 }
