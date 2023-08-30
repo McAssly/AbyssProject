@@ -32,7 +32,7 @@ namespace Abyss.Master
 
             _Sprites.BaseSpell = new AnimatedSprite(base_spell_texture, 20, 20, 71);
             _Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 19, 19, 71, 5);
-            _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 20, 20, 63, 9);
+            _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 25, 25, 61, 9);
 
             _Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19, 8);
 
@@ -49,9 +49,6 @@ namespace Abyss.Master
             Data.Load("save", game_state);
 
             ui_state.Setup(UiControllers.HUD);
-
-
-            Dungeon dungeon = new Dungeon(6, 12, 3, 0.7);
         }
     }
 }
