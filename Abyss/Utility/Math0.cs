@@ -1,9 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Abyss.Utility
 {
@@ -31,7 +27,7 @@ namespace Abyss.Utility
             Vector2 result = coords / 16;
             if (floor) result.Floor();
             else result.Round();
-            return Clamp(result);
+            return ClampToTileMap(result);
         }
 
 
@@ -40,9 +36,24 @@ namespace Abyss.Utility
         /// </summary>
         /// <param name="vector"></param>
         /// <returns></returns>
-        public static Vector Clamp(Vector2 vector)
+        public static Vector ClampToTileMap(Vector2 vector)
         {
             return Vector.Convert(Vector2.Clamp(vector, new Vector2(0,0), new Vector2(15, 15)));
+        }
+
+
+        /// <summary>
+        /// clamps the given vector to the given vector range (min to max) on both axis
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static Vector2 Clamp(Vector2 v, Vector2 r)
+        {
+            if (v.X > r.Y) return new Vector2(r.Y, v.Y);
+            if (v.X < r.X) return new Vector2(r.X, v.Y);
+            if (v.Y > r.Y) return new Vector2(v.X, r.Y);
+            if (v.Y < r.X) return new Vector2(v.X, r.X);
+            return v;
         }
 
 
@@ -80,6 +91,18 @@ namespace Abyss.Utility
                 return vec2;
             else // otherwise move in that direciton
                 return vec1 + direction * (float)delta;
+        }
+
+
+        /// <summary>
+        /// fixes the direction of a vector to a single axis based on which axis has more pull
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        public static Vector2 FixDirection(Vector2 v)
+        {
+            if (v.X * v.X > v.Y * v.Y) return new Vector2(v.X, 0);
+            else return new Vector2(0, v.Y);
         }
 
         /// <summary>
@@ -216,6 +239,26 @@ namespace Abyss.Utility
         public static double RandomAngle()
         {
             return random.NextDouble() * 2 * Math.PI;
+        }
+
+
+        /// <summary>
+        /// offsets the given vector's angle by a random angle
+        /// </summary>
+        /// <param name="velocity"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        internal static Vector2 OffsetDirection(Vector2 v, double angular_minmax)
+        {
+            double anglular_offset = random.NextDouble() * angular_minmax;
+            double current_angle = Math.Atan2(v.Y, v.X);
+            double new_angle = current_angle + anglular_offset;
+
+            float x = (float)(v.Length() * Math.Cos(new_angle));
+            float y = (float)(v.Length() * Math.Sin(new_angle));
+
+            return new Vector2(x, y);
         }
     }
 }

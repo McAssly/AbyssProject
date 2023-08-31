@@ -1,17 +1,11 @@
 ﻿using Abyss.Globals;
-using Abyss.Globals;
 using Abyss.Levels;
 using Abyss.Magic;
 using Abyss.Sprites;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Abyss.Entities
 {
@@ -119,7 +113,7 @@ namespace Abyss.Entities
             Vector[] tile_coords = AdjacentTiles();
             foreach (var corner in tile_coords)
             {
-                Vector tile_pos = Math0.Clamp(corner.To2() + offset.NormalizedCopy());
+                Vector tile_pos = Math0.ClampToTileMap(corner.To2() + offset.NormalizedCopy());
                 Tile target_tile = collision_layer.GetTiles()[tile_pos.y, tile_pos.x];
                 if (!target_tile.NULL && target_tile.Colliding(this, offset)) return true;
             }

@@ -7,14 +7,8 @@ using Abyss.Sprites;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Effect = Abyss.Magic.Effect;
 using Vector = Abyss.Utility.Vector;
 

@@ -1,16 +1,7 @@
-﻿using Abyss.Globals;
-using Abyss.Levels;
-using Abyss.Master;
+﻿using Abyss.Master;
 using Abyss.Sprites;
 using Abyss.Utility;
-using Microsoft.Xna.Framework;
 using MonoGame.Extended;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace Abyss.Entities

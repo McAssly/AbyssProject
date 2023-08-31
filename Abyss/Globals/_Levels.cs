@@ -1,10 +1,5 @@
 ﻿using Abyss.Levels;
-using Abyss.Levels.data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Abyss.Globals
 {
@@ -20,6 +15,7 @@ namespace Abyss.Globals
     internal class _Dungeons
     {
         // TILESETS
+        public static Texture2D TestDungeon;
 
         // DUNGEON DATA
 

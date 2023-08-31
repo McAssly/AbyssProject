@@ -1,18 +1,10 @@
-﻿using Abyss.Entities;
-using Abyss.Globals;
+﻿using Abyss.Globals;
 using Abyss.Master;
 using Abyss.Utility;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Abyss.UI
 {

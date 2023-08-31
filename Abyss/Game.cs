@@ -1,11 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using MonoGame.Extended;
-using MonoGame.Extended.ViewportAdapters;
 using System.Text;
-using System.Diagnostics;
 using System;
 using Abyss.Globals;
 using Abyss.Master;

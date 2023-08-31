@@ -1,11 +1,5 @@
 ﻿using Abyss.Utility;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Abyss.Levels.data
 {
@@ -38,12 +32,6 @@ namespace Abyss.Levels.data
 
         private bool exists;
 
-
-        /// <summary>
-        /// generates an empty map node
-        /// </summary>
-        public MapNode() { exists = false; }
-
         /// <summary>
         /// creates a new map node
         /// </summary>
@@ -52,7 +40,7 @@ namespace Abyss.Levels.data
         /// <param name="path_id"></param>
         /// <param name="last_index"></param>
         /// <param name="previous"></param>
-        public MapNode(int x, int y, byte path_id, int last_index, MapNode previous)
+        public MapNode(int x, int y, byte path_id, int last_index, MapNode? previous)
         {
             this.next_nodes = new int[4] { -1, -1, -1, -1 };
             this.position = new Vector(x, y);
@@ -61,7 +49,7 @@ namespace Abyss.Levels.data
 
             exists = true;
 
-            if (previous is not null)
+            if (previous != null)
                 this.Connect(previous);
         }
 
@@ -80,6 +68,19 @@ namespace Abyss.Levels.data
             this.next_nodes = next_nodes;
 
             exists = true;
+        }
+
+
+        internal Vector NextPosition(byte d)
+        {
+            switch (d)
+            {
+                case 0: return new Vector(this.position.x - 1, position.y);
+                case 1: return new Vector(this.position.x + 1, position.y);
+                case 2: return new Vector(this.position.x, position.y + 1);
+                case 3: return new Vector(this.position.x, position.y - 1);
+            }
+            return position;
         }
 
 
@@ -159,15 +160,34 @@ namespace Abyss.Levels.data
 
 
         /// <summary>
-        /// clones the node
+        /// Gets the directions that the node hasn't opened
         /// </summary>
         /// <returns></returns>
-        internal MapNode Clone()
+        internal List<byte> GetClosedDirections(bool exclude_south = false)
         {
-            return new MapNode(position, path_id, map_index, next_nodes);
+            List<byte> result = new List<byte>();
+            for (byte d = 0; d < 4; d++)
+            {
+                if (exclude_south && d == 3) continue;
+                if (this.IsClosed(d)) result.Add(d);
+            }
+            return result;
         }
 
 
-        internal bool Exists() { return exists; }
+        /// <summary>
+        /// clones the node
+        /// </summary>
+        /// <returns></returns>
+        internal MapNode Clone(byte? path_override = null)
+        {
+            if (path_override.HasValue) path_id = path_override.Value;
+            return new MapNode(position, path_id, map_index, next_nodes);
+        }
+
+        public override string ToString()
+        {
+            return $"{{{position.x}, {position.y}}}";
+        }
     }
 }

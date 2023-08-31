@@ -1,14 +1,8 @@
 ﻿using Abyss.Globals;
-using Abyss.Levels.data;
 using Abyss.Sprites;
 using Abyss.UI;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Abyss.Master
 {
@@ -44,6 +38,7 @@ namespace Abyss.Master
 
             // load the maps
             game_state.LoadLevels(Content);
+            _Dungeons.TestDungeon = Content.Load<Texture2D>("tilesets/dungeon0");
 
             // load save file  < ---- place holder
             Data.Load("save", game_state);

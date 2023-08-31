@@ -1,12 +1,6 @@
-﻿using Abyss.Magic;
-using Abyss.Sprites;
+﻿using Abyss.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Effect = Abyss.Magic.Effect;
 
 namespace Abyss.Draw
