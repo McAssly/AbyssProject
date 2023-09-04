@@ -148,8 +148,22 @@ namespace Abyss.Levels.data
                 }
             }
 
+            return ConvertToLinked(this.map);
+        }
 
-            return new MapNode[0];
+
+        private MapNode[] ConvertToLinked(MapNode[,] map)
+        {
+            MapNode[] array = new MapNode[map_length];
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    if (map[x, y] == null) continue;
+                    array[map[y,x].map_index] = map[x,y];
+                }
+            }
+            return array;
         }
 
 

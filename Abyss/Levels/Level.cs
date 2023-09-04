@@ -1,13 +1,19 @@
 ﻿using Abyss.Entities;
 using Abyss.Levels.data;
+using Abyss.Utility;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace Abyss.Levels
 {
     internal class Level
     {
+        // the levels connected to it
+        internal Vector[] map_connections; // x: prev_level, y: next_map
+
+
         // tile maps
         private protected Map[] maps;
         private protected readonly string tileset_location;
@@ -95,6 +101,23 @@ namespace Abyss.Levels
         public int GetIndex()
         {
             return map_index;
+        }
+
+
+        public int GetMapConnection(int prev_level)
+        {
+            foreach (Vector c in map_connections)
+            {
+                if (c.x == prev_level) return c.y;
+            }
+            return -1;
+        }
+
+
+
+        public static int ConvertToLevelIndex(int map_index)
+        {
+            return -(map_index + 2);
         }
     }
 }

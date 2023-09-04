@@ -21,6 +21,8 @@ namespace Abyss.Master
 
         // declare the levels and current level of the game state
         private protected Level[] levels;
+        private protected int last_map_index = -1;
+        private protected Level dungeon;
         private protected int level_index;
 
         // declare the player for the game state
@@ -116,6 +118,7 @@ namespace Abyss.Master
         {
             // get the next map in the level's linked map list
             int next_map_index = levels[level_index].GetCurrent().GetNext()[(int)exitting_from];
+
             // get the new position the player will take
             NullableVector new_possible_position = player.GetNextPosition(exitting_from);
 
@@ -125,19 +128,43 @@ namespace Abyss.Master
             // then turn it into the proper tile coordinates
             Vector tile_coords = Math0.CoordsToTileCoords(new_position);
 
-            // if the new position on the next map is not a collision tile then allow the player to move onto the next map
-            if (levels[level_index].GetMaps()[next_map_index].GetCollisionLayer().GetTiles()[tile_coords.y, tile_coords.x].NULL)
+            // change maps
+            if (next_map_index > -1)
             {
-                // change to the new map
-                var prev_map = levels[level_index].GetCurrent();
-                levels[level_index].SetCurrent(next_map_index);
-                if (levels[level_index].GetCurrent() != prev_map)
+                // if the new position on the next map is not a collision tile then allow the player to move onto the next map
+                if (levels[level_index].GetMaps()[next_map_index].GetCollisionLayer().GetTiles()[tile_coords.y, tile_coords.x].NULL)
                 {
-                    player.SetPosition(new_position);
-                    player.inventory.grimoires[0].Clear();
-                    player.inventory.grimoires[1].Clear();
-                    particle_fx.Clear();
+                    // change to the new map
+                    var prev_map = levels[level_index].GetCurrent();
+                    levels[level_index].SetCurrent(next_map_index);
+                    if (levels[level_index].GetCurrent() != prev_map)
+                    {
+                        player.SetPosition(new_position);
+                        player.inventory.grimoires[0].Clear();
+                        player.inventory.grimoires[1].Clear();
+                        particle_fx.Clear();
+                    }
                 }
+            }
+            // change levels, not map
+            else if (next_map_index < -1)
+            {
+                int next_level_index = Level.ConvertToLevelIndex(next_map_index);
+                if (last_map_index > -1)
+                {
+                    int prev_level = level_index;
+                    level_index = next_level_index;
+                    levels[level_index].SetCurrent(levels[level_index].GetMapConnection(prev_level)); // set to the start of the map
+                }
+                else
+                {
+                    level_index = next_level_index;
+                    levels[level_index].SetCurrent(last_map_index);
+                }
+                player.SetPosition(new_position);
+                player.inventory.grimoires[0].Clear();
+                player.inventory.grimoires[1].Clear();
+                particle_fx.Clear();
             }
         }
 
