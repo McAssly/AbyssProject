@@ -18,7 +18,7 @@ namespace Abyss.Entities
         // declare max values for the entity
         private protected readonly double max_speed = 2;
         private protected readonly double max_accel = 10;
-        private protected readonly double friction = 25;
+        private protected readonly double friction = 15;
 
         // declare the entity's stats
         private protected double speed = 1;

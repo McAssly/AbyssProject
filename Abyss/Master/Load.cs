@@ -32,7 +32,7 @@ namespace Abyss.Master
             _Sprites.FireBurstSpell = new AnimatedSprite(fire_burst_spell_texture, 37, 37, 71, 5);
             _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 25, 25, 61, 9);
             _Sprites.WindSpell = new AnimatedSprite(wind_spell_texture, 50, 50, 19, 10);
-            _Sprites.WindDashSpell = new AnimatedSprite(wind_dash_spell_texture, 80, 80, 80, 20);
+            _Sprites.WindDashSpell = new AnimatedSprite(wind_dash_spell_texture, 80, 80, 80, 40);
 
             _Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19, 8);
 

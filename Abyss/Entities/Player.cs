@@ -66,17 +66,14 @@ namespace Abyss.Entities
             // detect keyboard/mouse buttons, if the corresponding ones are pressed then active the corresponding grimoire and spell
             if (kb_atk_1 || InputUtility.IsClicked(ms, Controls.AttackMouseFlag_1))
             {
-                // there are secondary spells and to activate them the control sequence has to be pressed (default: l-shift)
-                if (kb.IsKeyDown(Controls.GrimoireSecondary_1))
-                    this.CastSpell(0, 2, delta); // secondary spell
-                else this.CastSpell(0, 1, delta); // primary spell
-            }
+                this.CastSpell(0, 1, delta); // primary spell
+            } else if (kb.IsKeyDown(Controls.GrimoireSecondary_1))
+                this.CastSpell(0, 2, delta); // secondary spell
             if (kb_atk_2 || InputUtility.IsClicked(ms, Controls.AttackMouseFlag_2))
             {
-                if (kb.IsKeyDown(Controls.GrimoireSecondary_2))
-                    this.CastSpell(1, 2, delta); // secondary spell
-                else this.CastSpell(1, 1, delta); // primary spell
-            }
+                this.CastSpell(1, 1, delta); // primary spell
+            } else if (kb.IsKeyDown(Controls.GrimoireSecondary_2))
+                this.CastSpell(1, 2, delta); // secondary spell
         }
 
 
