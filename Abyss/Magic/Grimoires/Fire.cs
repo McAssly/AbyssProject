@@ -11,15 +11,16 @@ namespace Abyss.Magic.Grimoires
         public Fire() : base()
         {
             primary = new ParticleController(Element.fire, 0.7, 0.1, 1.5, 0.5, 0.1, 0.05, true);
-            secondary = new ParticleController(Element.fire, 0.3, 0.5, 2, 1, 0.3, 0.05, true);
+            secondary = new ParticleController(Element.fire, 0.3, 5, 2, 10, 0.3, 1, true);
 
             sprite = _Sprites.FireSpell;
+            sprite_2 = _Sprites.FireBurstSpell;
         }
 
         public override void Primary(Entity parent, Vector2 target_pos)
         {
             Vector2 target = Math0.MoveToward(parent.GetPosition(), target_pos, primary.base_speed);
-            GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X));
+            GenerateParticle(parent, Math0.OffsetDirection(Vector2.Subtract(target, parent.GetPosition()), 0.174), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X), 8);
         }
 
         public override void Secondary(Entity parent, Vector2 target_pos)

@@ -20,13 +20,19 @@ namespace Abyss.Master
 
             Texture2D base_spell_texture = Content.Load<Texture2D>("spells/spell");
             Texture2D fire_spell_texture = Content.Load<Texture2D>("spells/fire");
+            Texture2D fire_burst_spell_texture = Content.Load<Texture2D>("spells/fire_burst");
             Texture2D water_spell_texture = Content.Load<Texture2D>("spells/water");
+            Texture2D wind_spell_texture = Content.Load<Texture2D>("spells/wind_slash");
+            Texture2D wind_dash_spell_texture = Content.Load<Texture2D>("spells/wind_dash");
             //Texture2D boil_spell_texture = Content.Load<Texture2D>("spells/boil");
             //Texture2D steam_spell_texture = Content.Load<Texture2D>("spells/steam");
 
-            _Sprites.BaseSpell = new AnimatedSprite(base_spell_texture, 20, 20, 71);
-            _Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 19, 19, 71, 5);
+            _Sprites.BaseSpell = new AnimatedSprite(base_spell_texture, 25, 25, 119, 10);
+            _Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 40, 40, 71, 5);
+            _Sprites.FireBurstSpell = new AnimatedSprite(fire_burst_spell_texture, 37, 37, 71, 5);
             _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 25, 25, 61, 9);
+            _Sprites.WindSpell = new AnimatedSprite(wind_spell_texture, 50, 50, 19, 10);
+            _Sprites.WindDashSpell = new AnimatedSprite(wind_dash_spell_texture, 80, 24, 19, 2);
 
             _Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19, 8);
 

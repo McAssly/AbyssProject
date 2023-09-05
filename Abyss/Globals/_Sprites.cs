@@ -14,7 +14,10 @@ namespace Abyss.Globals
         // spells
         public static AnimatedSprite BaseSpell;
         public static AnimatedSprite FireSpell;
+        public static AnimatedSprite FireBurstSpell;
         public static AnimatedSprite WaterSpell;
+        public static AnimatedSprite WindSpell;
+        public static AnimatedSprite WindDashSpell;
 
         // infused
         public static AnimatedSprite SteamSpell;

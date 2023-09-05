@@ -1,6 +1,8 @@
 ﻿using Abyss.Entities;
 using Abyss.Globals;
+using Abyss.Utility;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Abyss.Magic.Grimoires
 {
@@ -14,6 +16,14 @@ namespace Abyss.Magic.Grimoires
             secondary = new ParticleController(Element.water, 0, 0, 0, 10, 0, 1.0);
 
             sprite = _Sprites.WaterSpell;
+            sprite_2 = sprite;
+        }
+
+
+        public override void Primary(Entity parent, Vector2 target_pos)
+        {
+            Vector2 target = Math0.MoveToward(parent.GetPosition(), target_pos, primary.base_speed);
+            GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X), 3);
         }
 
 

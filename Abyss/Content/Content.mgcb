@@ -56,6 +56,18 @@
 /processorParam:TextureFormat=Color
 /build:spells/boil.png
 
+#begin spells/fire_burst.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:spells/fire_burst.png
+
 #begin spells/fire.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -103,6 +115,30 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:spells/water.png
+
+#begin spells/wind_dash.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:spells/wind_dash.png
+
+#begin spells/wind_slash.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:spells/wind_slash.png
 
 #begin testbox.png
 /importer:TextureImporter

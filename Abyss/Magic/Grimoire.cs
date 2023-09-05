@@ -20,6 +20,7 @@ namespace Abyss.Magic
         private protected ParticleController primary;
         private protected ParticleController secondary;
         private protected AnimatedSprite sprite;
+        private protected AnimatedSprite sprite_2;
 
         public Grimoire()
         {
@@ -27,6 +28,7 @@ namespace Abyss.Magic
             secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
 
             sprite = _Sprites.BaseSpell;
+            sprite_2 = sprite;
         }
 
         /**    ATTACK SEQUENCE    */
@@ -115,16 +117,16 @@ namespace Abyss.Magic
             return null;
         }
 
-        public void GenerateParticle(Entity parent, Vector2 velocity, byte type, double rotation)
+        public void GenerateParticle(Entity parent,Vector2 velocity, byte type, double rotation, float padding = 0)
         {
             if (parent == null) return;
             switch (type)
             {
                 case 0:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(8, 8), velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, sprite.Clone()));
+                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, sprite.Clone()));
                     break;
                 case 1:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2(8, 8), velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, sprite.Clone()));
+                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, sprite_2.Clone()));
                     break;
                 default: break;
             }
