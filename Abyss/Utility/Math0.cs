@@ -242,6 +242,12 @@ namespace Abyss.Utility
         }
 
 
+        internal static bool AngleInRange(double angle, double min, double max)
+        {
+            return angle >= min && angle <= max;
+        }
+
+
         /// <summary>
         /// offsets the given vector's angle by a random angle
         /// </summary>

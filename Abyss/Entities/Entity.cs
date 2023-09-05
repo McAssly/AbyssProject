@@ -5,6 +5,7 @@ using Abyss.Sprites;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using System;
 using System.Collections.Generic;
 
 namespace Abyss.Entities
@@ -21,6 +22,10 @@ namespace Abyss.Entities
 
         // declare the entity's stats
         private protected double speed = 1;
+        private protected double friction_;
+        private protected double friction_timer = 0;
+        private protected double max_speed_;
+        private protected double speed_timer = 0;
         private protected double max_health;
 
         // current stats
@@ -81,15 +86,20 @@ namespace Abyss.Entities
         /// <param name="delta"></param>
         public virtual void Move(Layer collision_layer, double delta)
         {
+            if (friction_timer <= 0) friction_ = friction;
+            else friction_timer -= delta * 2;
+            if (speed_timer <= 0) max_speed_ = max_speed;
+            else speed_timer -= delta * 2;
+
             // if the movement vector is not zero then the entity must be trying to move
             if (target_vector != Vector2.Zero)
             {
                 Vector2 target = target_vector * (float)max_speed * (float)speed;
                 velocity = Math0.MoveToward(velocity, target, max_accel * delta);
             }
-            else velocity = Math0.MoveToward(velocity, Vector2.Zero, friction * delta);
+            else velocity = Math0.MoveToward(velocity, Vector2.Zero, friction_ * delta);
 
-            Vector2 max_velocity = velocity.NormalizedCopy() * (float)max_speed * (float)speed;
+            Vector2 max_velocity = velocity.NormalizedCopy() * (float)max_speed_ * (float)speed;
             velocity = Vector2.Clamp(velocity, -Math0.Absolute(max_velocity), Math0.Absolute(max_velocity));
 
             //velocity = velocity_temp;
@@ -234,6 +244,29 @@ namespace Abyss.Entities
             return damage;
         }
 
+        public void AddVelocity(Vector2 velocity)
+        {
+            this.velocity += velocity;
+        }
+
+
+        public void SetTargetVector(Vector2 vector)
+        {
+            this.target_vector = vector;
+        }
+
+        public void SetFriction(float friction, double timer)
+        {
+            this.friction_ = friction;
+            this.friction_timer = timer;
+        }
+
+        public void SetMaxSpeed(double max_speed, double timer)
+        {
+            this.max_speed_ = max_speed;
+            this.speed_timer = timer;
+        }
+
         public void SetPosition(Vector2 _new)
         {
             this.position = _new;
@@ -263,6 +296,16 @@ namespace Abyss.Entities
         {
             Vector rounded_position = Vector.Convert(this.position, true);
             return new Rectangle(rounded_position.x, rounded_position.y, width, height);
+        }
+
+        internal SpriteSheet GetSprite()
+        {
+            return sprite;
+        }
+
+        internal Vector2 GetTargetVector()
+        {
+            return target_vector;
         }
     }
 }

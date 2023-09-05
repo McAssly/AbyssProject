@@ -29,8 +29,13 @@ namespace Abyss.Magic
         public readonly double cooldown_max;
         public double cooldown;
         public bool pierce;
+        public bool ignore_collision;
+        public bool lock_to_player;
 
-        public ParticleController(Element element, double lifetime, double base_damage, double base_speed, double mana_cost, double accel, double cooldown_max, bool pierce = false)
+        public ParticleController(Element element, 
+            double lifetime, double base_damage, double base_speed, 
+            double mana_cost, double accel, double cooldown_max, 
+            bool pierce = false, bool ignore_collision = false, bool lock_to_player = false)
         {
             this.element = element;
             this.lifetime = lifetime;
@@ -41,6 +46,8 @@ namespace Abyss.Magic
             this.cooldown_max = cooldown_max;
             this.cooldown = 0;
             this.pierce = pierce;
+            this.ignore_collision = ignore_collision;
+            this.lock_to_player = lock_to_player;
         }
     }
 
@@ -60,10 +67,14 @@ namespace Abyss.Magic
         public double damage;
         public double rotation;
         public bool pierce;
+        public bool ignore_collision;
+        public bool lock_to_player;
 
 
         /** PARTICLE CONSTRUCTOR */
-        public Particle(Entity parent, Vector2 position, Vector2 velocity, ParticleController pc, double damage, double rotation, AnimatedSprite sprite, Particle? connection_point = null)
+        public Particle(Entity parent, 
+            Vector2 position, Vector2 velocity, ParticleController pc, 
+            double damage, double rotation, AnimatedSprite sprite)
         {
             this.parent = parent;
             this.position = position;
@@ -75,6 +86,8 @@ namespace Abyss.Magic
             this.rotation = rotation;
             this.sprite = sprite;
             this.pierce = pc.pierce;
+            this.ignore_collision = pc.ignore_collision;
+            this.lock_to_player = pc.lock_to_player;
         }
 
 
@@ -129,8 +142,15 @@ namespace Abyss.Magic
         public void Update(double delta)
         {
             sprite.Update(delta);
-            velocity = Math0.ApplyAcceleration(velocity, accel * delta);
-            position += velocity * new Vector2((float)(delta * Variables.FRAME_FACTOR));
+            if (!lock_to_player)
+            {
+                velocity = Math0.ApplyAcceleration(velocity, accel * delta);
+                position += velocity * new Vector2((float)(delta * Variables.FRAME_FACTOR));
+            }
+            else
+            {
+                this.position = parent.GetPosition() + new Vector2(parent.sprite.width / 2, parent.sprite.height / 2);
+            }
             lifetime -= Variables.PARTICLE_SUBTRACTOR * delta;
         }
     }

@@ -40,14 +40,14 @@ namespace Abyss.Magic
         /// <param name="parent"></param>
         /// <param name="targetPos"></param>
         /// <param name="type"></param>
-        public virtual void Attack(Player parent, Vector2 targetPos, int type)
+        public virtual void Attack(Player parent, Vector2 targetPos, int type, double delta)
         {
             switch (type)
             {
                 case 1: // primary
                     if (primary.cooldown <= 0 && parent.GetMana() >= primary.mana_cost)
                     {
-                        Primary(parent, targetPos);
+                        Primary(parent, targetPos, delta);
                         parent.ReduceMana(primary.mana_cost);
                         primary.cooldown = primary.cooldown_max;
                     }
@@ -55,7 +55,7 @@ namespace Abyss.Magic
                 case 2: // secondary
                     if (secondary.cooldown <= 0 && parent.GetMana() >= secondary.mana_cost)
                     {
-                        Secondary(parent, targetPos);
+                        Secondary(parent, targetPos, delta);
                         parent.ReduceMana(secondary.mana_cost);
                         secondary.cooldown = secondary.cooldown_max;
                     }
@@ -69,7 +69,7 @@ namespace Abyss.Magic
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="target_pos"></param>
-        public virtual void Primary(Entity parent, Vector2 target_pos)
+        public virtual void Primary(Entity parent, Vector2 target_pos, double delta)
         {
             Vector2 target = Math0.MoveToward(parent.GetPosition(), target_pos, primary.base_speed);
             GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 0, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X));
@@ -80,7 +80,7 @@ namespace Abyss.Magic
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="target_pos"></param>
-        public virtual void Secondary(Entity parent, Vector2 target_pos)
+        public virtual void Secondary(Entity parent, Vector2 target_pos, double delta)
         {
             Vector2 position = parent.GetPosition();
             Vector2 target = Math0.MoveToward(parent.GetPosition(), target_pos, secondary.base_speed);
@@ -161,7 +161,7 @@ namespace Abyss.Magic
             {
                 Vector tile_pos = Math0.CoordsToTileCoords(particle.position, true);
                 Tile tile = game_state.GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
-                if (particle.IsColliding(tile) && !tile.NULL)
+                if (particle.IsColliding(tile) && !tile.NULL && !particle.ignore_collision)
                 {
                     Effect.BurstEffect(particle.position, game_state);
                     _particles.Add(particle);

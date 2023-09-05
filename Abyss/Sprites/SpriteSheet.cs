@@ -66,11 +66,15 @@ namespace Abyss.Sprites
         {
             if (this.playing) this.Update(delta);
 
+            this.UpdateDirection(target_vec);
+        }
+
+
+        public void UpdateDirection(Vector2 target_vec)
+        {
+            if (target_vec == Vector2.Zero) return;
             int direction = this.Direction(target_vec);
-            if (direction != -1)
-            {
-                this.sprite_index = direction;
-            }
+            if (direction != -1) this.sprite_index = direction;
         }
 
         public void AnimationReset()
@@ -154,6 +158,18 @@ namespace Abyss.Sprites
                 }
             }
             return -1;
+        }
+
+        public Vector2 DirectionToVector()
+        {
+            switch (sprite_index)
+            {
+                case 0: return new Vector2(0, 1);
+                case 1: return new Vector2(1, 0);
+                case 2: return new Vector2(0, -1);
+                case 3: return new Vector2(-1, 0);
+            }
+            return Vector2.Zero;
         }
 
         public Texture2D GetSheet()

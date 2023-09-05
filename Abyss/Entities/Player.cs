@@ -55,7 +55,7 @@ namespace Abyss.Entities
         /// </summary>
         /// <param name="kb"></param>
         /// <param name="ms"></param>
-        public void Attack(KeyboardState kb, MouseState ms)
+        public void Attack(KeyboardState kb, MouseState ms, double delta)
         {
             // get the keyboard controls (off by default)
             bool kb_atk_1 = false;
@@ -68,14 +68,14 @@ namespace Abyss.Entities
             {
                 // there are secondary spells and to activate them the control sequence has to be pressed (default: l-shift)
                 if (kb.IsKeyDown(Controls.GrimoireSecondary_1))
-                    this.CastSpell(0, 2); // secondary spell
-                else this.CastSpell(0, 1); // primary spell
+                    this.CastSpell(0, 2, delta); // secondary spell
+                else this.CastSpell(0, 1, delta); // primary spell
             }
             if (kb_atk_2 || InputUtility.IsClicked(ms, Controls.AttackMouseFlag_2))
             {
                 if (kb.IsKeyDown(Controls.GrimoireSecondary_2))
-                    this.CastSpell(1, 2); // secondary spell
-                else this.CastSpell(1, 1); // primary spell
+                    this.CastSpell(1, 2, delta); // secondary spell
+                else this.CastSpell(1, 1, delta); // primary spell
             }
         }
 
@@ -94,7 +94,7 @@ namespace Abyss.Entities
             ClampPosition();
 
             /* ATTACK DETECTION AND CASTING SPELLS */
-            game_state.player.Attack(kb, ms);
+            game_state.player.Attack(kb, ms, delta);
             if (time_elapsed >= 1 && game_state.player.GetMana() < game_state.player.GetMaxMana())
             {
                 game_state.player.RegenerateMana(1);
@@ -117,7 +117,6 @@ namespace Abyss.Entities
             time_elapsed += delta;
             regen_timer += delta;
 
-
             // handle animations
             switch (sprite.GetSection())
             {
@@ -129,8 +128,6 @@ namespace Abyss.Entities
                     sprite.Play(); sprite.UnLoop(); break;
                 default: sprite.Play(); break;
             }
-            
-
             sprite.Update(delta, target_vector);
         }
 
@@ -138,9 +135,9 @@ namespace Abyss.Entities
         /// <summary>
         /// attacks using the primary grimoire
         /// </summary>
-        public void CastSpell(int index, int type)
+        public void CastSpell(int index, int type, double delta)
         {
-            if (mana > 0) inventory.grimoires[index].Attack(this, InputUtility.MousePositionInGame(), type);
+            if (mana > 0) inventory.grimoires[index].Attack(this, InputUtility.MousePositionInGame(), type, delta);
         }
 
 
