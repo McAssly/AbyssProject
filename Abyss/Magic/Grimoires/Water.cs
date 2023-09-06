@@ -12,7 +12,7 @@ namespace Abyss.Magic.Grimoires
 
         public Water() : base()
         {
-            primary = new ParticleController(Element.water, 1.0, 3, 3, 3, 0.4, 0.7);
+            primary = new ParticleController(Element.water, 1.0, 3, 3, 3, 0.4, 0.7, 4);
             secondary = new ParticleController(Element.water, 0, 0, 0, 10, 0, 1.0);
 
             sprite = _Sprites.WaterSpell;

@@ -282,5 +282,10 @@ namespace Abyss.Entities
         public double GetMaxMana() { return max_mana; }
 
         public double GetMana() { return mana; }
+
+        internal void SetMana(double amount)
+        {
+            this.mana = amount;
+        }
     }
 }

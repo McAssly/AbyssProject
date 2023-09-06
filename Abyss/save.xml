@@ -5,7 +5,7 @@
 	<hp>100/100</hp>
 	<mana>100/100</mana>
 	<inventory>
-		<grim>wind,water</grim>
+		<grim>wind,fire</grim>
 		<cards>0,0,0,0,0,0</cards>
 		<regen>0,0</regen>
 		<instant>0,0</instant>

@@ -31,10 +31,12 @@ namespace Abyss.Magic
         public bool pierce;
         public bool ignore_collision;
         public bool lock_to_player;
+        public double radius;
 
         public ParticleController(Element element, 
             double lifetime, double base_damage, double base_speed, 
             double mana_cost, double accel, double cooldown_max, 
+            double radius = 1,
             bool pierce = false, bool ignore_collision = false, bool lock_to_player = false)
         {
             this.element = element;
@@ -48,6 +50,7 @@ namespace Abyss.Magic
             this.pierce = pierce;
             this.ignore_collision = ignore_collision;
             this.lock_to_player = lock_to_player;
+            this.radius = radius;
         }
     }
 
@@ -69,6 +72,7 @@ namespace Abyss.Magic
         public bool pierce;
         public bool ignore_collision;
         public bool lock_to_player;
+        public double radius;
 
 
         /** PARTICLE CONSTRUCTOR */
@@ -88,6 +92,7 @@ namespace Abyss.Magic
             this.pierce = pc.pierce;
             this.ignore_collision = pc.ignore_collision;
             this.lock_to_player = pc.lock_to_player;
+            this.radius = pc.radius;
         }
 
 
@@ -110,7 +115,10 @@ namespace Abyss.Magic
         /// <returns></returns>
         public bool IsColliding(Entity entity)
         {
-            return Math0.RectangleCollisionCheck(position, new Vector2(1, 1), entity.GetPosition(), entity.GetSize());
+            if (this.radius <= 1)
+                return Math0.RectangleCollisionCheck(position, new Vector2(1, 1), entity.GetPosition(), entity.GetSize());
+            else
+                return Math0.RectangleToCircleCollisionCheck(position, radius, entity.GetPosition(), entity.GetSize());
         }
 
         /// <summary>

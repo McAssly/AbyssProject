@@ -75,6 +75,8 @@ namespace Abyss.Draw
         /// <param name="particle"></param>
         public void Draw(Particle particle)
         {
+            if (Variables.DebugCollision)
+                this.DrawCircle(new CircleF(new Point2(particle.position.X, particle.position.Y), (float)particle.radius), 16, Color.LightBlue);
             this.Draw(particle.sprite, particle.position, Color.White, particle.rotation, 1, true);
         }
     }

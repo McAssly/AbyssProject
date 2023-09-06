@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Linq;
 using Effect = Abyss.Magic.Effect;
 using Vector = Abyss.Utility.Vector;
 
@@ -78,6 +79,9 @@ namespace Abyss.Master
 
 
             // update entities
+            int number_killed = levels[level_index].GetEnemies().FindAll(e => e.GetHealth() <= 0).Count;
+            player.RegenerateMana(number_killed * 5);
+            if (player.GetMana() > player.GetMaxMana()) player.SetMana(player.GetMaxMana());
             levels[level_index].GetEnemies().RemoveAll(x => x.GetHealth() <= 0);
             foreach (Enemy enemy in levels[level_index].GetEnemies())
             {
@@ -91,7 +95,7 @@ namespace Abyss.Master
                     Particle damager = player.inventory.grimoires[i].Hits(enemy);
                     if (damager != null)
                     {
-                        Effect.BurstEffect(damager.position, this);
+                        Effect.BurstEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), this);
                         enemy.ReduceHealth(damager.damage);
                     }
                 }

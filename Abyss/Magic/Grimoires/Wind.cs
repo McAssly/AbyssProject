@@ -3,9 +3,7 @@ using Abyss.Entities;
 using Abyss.Globals;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 using System;
-using System.Diagnostics;
 
 namespace Abyss.Magic.Grimoires
 {
@@ -13,8 +11,8 @@ namespace Abyss.Magic.Grimoires
     {
         public Wind() : base()
         {
-            primary = new ParticleController(Element.wind, 0.1, 2, 0.5, 7, 0, 0.2, true);
-            secondary = new ParticleController(Element.wind, 0.1, 1, 800, 5, 0, 0.3, true, true, true);
+            primary = new ParticleController(Element.wind, 0.1, 2, 0.5, 0, 0, 0.2, 16, true);
+            secondary = new ParticleController(Element.wind, 0.1, 1, 800, 0, 0, 0.3, 8, true, true, true);
 
             sprite = _Sprites.WindSpell;
             sprite_2 = _Sprites.WindDashSpell;

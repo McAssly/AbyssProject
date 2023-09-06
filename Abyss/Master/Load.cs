@@ -27,14 +27,14 @@ namespace Abyss.Master
             //Texture2D boil_spell_texture = Content.Load<Texture2D>("spells/boil");
             //Texture2D steam_spell_texture = Content.Load<Texture2D>("spells/steam");
 
-            _Sprites.BaseSpell = new AnimatedSprite(base_spell_texture, 20, 20, 69, 5);
-            _Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 40, 40, 71, 5);
-            _Sprites.FireBurstSpell = new AnimatedSprite(fire_burst_spell_texture, 37, 37, 71, 5);
-            _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 25, 25, 61, 9);
-            _Sprites.WindSpell = new AnimatedSprite(wind_spell_texture, 50, 50, 19, 10);
-            _Sprites.WindDashSpell = new AnimatedSprite(wind_dash_spell_texture, 80, 80, 80, 40);
+            _Sprites.BaseSpell = new AnimatedSprite(base_spell_texture, 30, 30, 45, 4);
+            _Sprites.FireSpell = new AnimatedSprite(fire_spell_texture, 40, 40, 72, 5);
+            _Sprites.FireBurstSpell = new AnimatedSprite(fire_burst_spell_texture, 37, 37, 72, 5);
+            _Sprites.WaterSpell = new AnimatedSprite(water_spell_texture, 25, 25, 62, 9);
+            _Sprites.WindSpell = new AnimatedSprite(wind_spell_texture, 50, 50, 20, 10);
+            _Sprites.WindDashSpell = new AnimatedSprite(wind_dash_spell_texture, 80, 80, 81, 40);
 
-            _Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 19, 8);
+            _Sprites.BurstEffect = new AnimatedSprite(burst_texture, 25, 25, 20, 8);
 
 
             // entity textures

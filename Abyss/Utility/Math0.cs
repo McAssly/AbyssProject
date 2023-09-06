@@ -266,5 +266,31 @@ namespace Abyss.Utility
 
             return new Vector2(x, y);
         }
+
+
+
+        /// <summary>
+        /// checks if the rectangle is colliding with the circle
+        /// </summary>
+        /// <param name="circ_pos"></param>
+        /// <param name="r"></param>
+        /// <param name="rect_pos"></param>
+        /// <param name="rect_size"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        internal static bool RectangleToCircleCollisionCheck(Vector2 circ_pos, double r, Vector2 rect_pos, Vector2 rect_size)
+        {
+            Vector2 close = ClosestPosition(rect_pos, rect_size, circ_pos);
+            return (circ_pos.X - close.X) * (circ_pos.X - close.X) + (circ_pos.Y - close.Y) * (circ_pos.Y - close.Y) < r * r;
+
+        }
+
+        internal static Vector2 ClosestPosition(Vector2 p1, Vector2 s1, Vector2 p2)
+        {
+            return new Vector2(
+                Math.Max(p1.X, Math.Min(p2.X, p1.X + s1.X)),
+                Math.Max(p1.Y, Math.Min(p2.Y, p1.Y + s1.Y))
+                );
+        }
     }
 }

@@ -36,7 +36,7 @@ namespace Abyss.Sprites
             if (frame_limit == 0)
                 this.frame_limit = frames.Count - 1;
             else
-                this.frame_limit = frame_limit;
+                this.frame_limit = frame_limit - 1;
 
             width = px_width;
             height = px_height;
