@@ -73,12 +73,13 @@ namespace Abyss.Magic
         public bool ignore_collision;
         public bool lock_to_player;
         public double radius;
+        public double damage_multiplier;
 
 
         /** PARTICLE CONSTRUCTOR */
         public Particle(Entity parent, 
             Vector2 position, Vector2 velocity, ParticleController pc, 
-            double damage, double rotation, AnimatedSprite sprite)
+            double damage, double rotation, AnimatedSprite sprite, double damage_mult)
         {
             this.parent = parent;
             this.position = position;
@@ -93,6 +94,13 @@ namespace Abyss.Magic
             this.ignore_collision = pc.ignore_collision;
             this.lock_to_player = pc.lock_to_player;
             this.radius = pc.radius;
+            this.damage_multiplier = damage_mult;
+        }
+
+
+        public double GetDamage()
+        {
+            return damage * damage_multiplier;
         }
 
 

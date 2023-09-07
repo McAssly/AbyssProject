@@ -19,6 +19,8 @@ namespace Abyss.Magic
         public List<Particle> Particles = new List<Particle>();
         private protected ParticleController primary;
         private protected ParticleController secondary;
+        private protected double dmg_multiplier_1 = 1;
+        private protected double dmg_multiplier_2 = 1;
         private protected AnimatedSprite sprite;
         private protected AnimatedSprite sprite_2;
 
@@ -45,7 +47,7 @@ namespace Abyss.Magic
             switch (type)
             {
                 case 1: // primary
-                    if (primary.cooldown <= 0 && parent.GetMana() >= primary.mana_cost)
+                    if (primary.cooldown <= 0 && parent.GetMana() >= primary.mana_cost && PrimaryCheck(parent))
                     {
                         Primary(parent, targetPos, delta);
                         parent.ReduceMana(primary.mana_cost);
@@ -53,7 +55,7 @@ namespace Abyss.Magic
                     }
                     break;
                 case 2: // secondary
-                    if (secondary.cooldown <= 0 && parent.GetMana() >= secondary.mana_cost)
+                    if (secondary.cooldown <= 0 && parent.GetMana() >= secondary.mana_cost && SecondaryCheck(parent))
                     {
                         Secondary(parent, targetPos, delta);
                         parent.ReduceMana(secondary.mana_cost);
@@ -100,6 +102,17 @@ namespace Abyss.Magic
         }
 
 
+        internal virtual bool PrimaryCheck(Player parent)
+        {
+            return true;
+        }
+
+        internal virtual bool SecondaryCheck(Player parent)
+        {
+            return true;
+        }
+
+
         /// <summary>
         /// Detects if the entity is hit by any particle the grimoire casted, and returns the damage that particle deals then removes said particle
         /// </summary>
@@ -123,10 +136,10 @@ namespace Abyss.Magic
             switch (type)
             {
                 case 0:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, sprite.Clone()));
+                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, sprite.Clone(), dmg_multiplier_1));
                     break;
                 case 1:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, sprite_2.Clone()));
+                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, sprite_2.Clone(), dmg_multiplier_2));
                     break;
                 default: break;
             }

@@ -96,7 +96,7 @@ namespace Abyss.Master
                     if (damager != null)
                     {
                         Effect.BurstEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), this);
-                        enemy.ReduceHealth(damager.damage);
+                        enemy.ReduceHealth(damager.GetDamage());
                     }
                 }
 

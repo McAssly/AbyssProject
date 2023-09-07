@@ -19,6 +19,8 @@ namespace Abyss.Entities
         private protected double crit_dmg; // percentage to increase damage by
         private protected double crit_rate; // between 0 and 1, a percentage value
 
+        internal double damage_mult = 1;
+
         // for crits
         private protected static readonly Random random = new Random();
 
@@ -274,7 +276,7 @@ namespace Abyss.Entities
                 damage = damage + (damage * crit_dmg / (iterations + 1));
                 iterations++;
             }
-            this.last_damage = damage;
+            this.last_damage = damage * damage_mult;
             return damage;
         }
 
