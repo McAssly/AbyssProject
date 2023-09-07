@@ -25,6 +25,8 @@ namespace Abyss.Globals
 
         // particle effects
         public static AnimatedSprite BurstEffect;
+        public static AnimatedSprite ExplosionEffect;
+        public static AnimatedSprite WindHitEffect;
 
 
         // players

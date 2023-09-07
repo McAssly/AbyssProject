@@ -95,7 +95,7 @@ namespace Abyss.Master
                     Particle damager = player.inventory.grimoires[i].Hits(enemy);
                     if (damager != null)
                     {
-                        Effect.BurstEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), this);
+                        Effect.HitEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), damager.rotation, damager.element, this);
                         enemy.ReduceHealth(damager.GetDamage());
                     }
                 }

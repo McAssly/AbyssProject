@@ -26,8 +26,8 @@ namespace Abyss.Magic
 
         public Grimoire()
         {
-            primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1, 2);
-            secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3, 2);
+            primary = new ParticleController(Element.NULL, 0.5, 1, 5, 1, 0.25, 0.1);
+            secondary = new ParticleController(Element.NULL, 0.4, 1, 5, 5, 0.25, 0.3);
 
             sprite = _Sprites.BaseSpell;
             sprite_2 = sprite;
@@ -176,7 +176,7 @@ namespace Abyss.Magic
                 Tile tile = game_state.GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
                 if (particle.IsColliding(tile) && !tile.NULL && !particle.ignore_collision)
                 {
-                    Effect.BurstEffect(particle.position, game_state);
+                    Effect.HitEffect(particle.position, particle.rotation, particle.element, game_state);
                     _particles.Add(particle);
                     break;
                 }

@@ -9,13 +9,15 @@ namespace Abyss.Magic
         public Vector2 position;
         public AnimatedSprite sprite;
         private protected double lifetime;
+        public double rotation;
 
 
-        public Effect(Vector2 position, AnimatedSprite sprite, double lifetime)
+        public Effect(Vector2 position, AnimatedSprite sprite, double lifetime, double rotation = 0)
         {
             this.position = position;
             this.sprite = sprite;
             this.lifetime = lifetime;
+            this.rotation = rotation;
         }
 
         public void Update(double delta)
@@ -29,9 +31,26 @@ namespace Abyss.Magic
             return lifetime <= 0;
         }
 
-        public static void BurstEffect(Vector2 position, GameState game_state)
+        public static void HitEffect(Vector2 position, double rotation, Element element, GameState game_state)
         {
-            game_state.particle_fx.Add(new Effect(position, _Sprites.BurstEffect.Clone(), 0.28));
+            switch (element)
+            {
+                case Element.fire:
+                    {
+                        game_state.particle_fx.Add(new Effect(position, _Sprites.ExplosionEffect.Clone(), 0.2, rotation));
+                        break;
+                    }
+                case Element.wind:
+                    {
+                        game_state.particle_fx.Add(new Effect(position, _Sprites.WindHitEffect.Clone(), 0.42, -rotation));
+                        break;
+                    }
+                default:
+                    {
+                        game_state.particle_fx.Add(new Effect(position, _Sprites.BurstEffect.Clone(), 0.28));
+                        break;
+                    }
+            }
         }
     }
 }

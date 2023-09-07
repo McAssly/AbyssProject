@@ -64,7 +64,7 @@ namespace Abyss.Draw
         /// <param name="fx"></param>
         public void Draw(Effect fx)
         {
-            this.Draw(fx.sprite, fx.position, Color.White, 0, 1, true);
+            this.Draw(fx.sprite, fx.position, Color.White, fx.rotation, 1, true);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Abyss.Magic.Grimoires
         public Fire() : base()
         {
             primary = new ParticleController(Element.fire, 0.7, 0.1, 1.5, 0.5, 0.1, 0.05, 3, true);
-            secondary = new ParticleController(Element.fire, 0.3, 5, 2, 10, 0.3, 0.25, 4, true);
+            secondary = new ParticleController(Element.fire, 0.3, 5, 2, 10, 0.3, 0.25, 9, true);
 
             sprite = _Sprites.FireSpell;
             sprite_2 = _Sprites.FireBurstSpell;
