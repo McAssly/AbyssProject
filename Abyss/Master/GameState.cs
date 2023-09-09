@@ -96,7 +96,7 @@ namespace Abyss.Master
                     if (damager != null)
                     {
                         Effect.HitEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), damager.rotation, damager.element, this);
-                        enemy.ReduceHealth(damager.GetDamage());
+                        enemy.TakeDamage(damager.GetDamage(), delta);
                     }
                 }
 

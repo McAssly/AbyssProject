@@ -28,6 +28,8 @@ namespace Abyss.Entities
         private protected double speed_timer = 0;
         private protected double max_health;
 
+        private protected double invulnerability = 0;
+
         // current stats
         private protected double health;
 
@@ -188,10 +190,14 @@ namespace Abyss.Entities
         /// reduces the entity's health by a given amount
         /// </summary>
         /// <param name="amount"></param>
-        public void ReduceHealth(double amount)
+        public void TakeDamage(double amount, double delta)
         {
-            health -= amount / defense;
-            if (health < 0) { health = 0; }
+            if (!IsInvulnerable(delta))
+            {
+                health -= amount / defense;
+                if (health < 0) { health = 0; }
+                invulnerability = 1;
+            }
         }
 
 
@@ -214,11 +220,24 @@ namespace Abyss.Entities
         public double DealDamage(Entity entity)
         {
             double damage = this.CalculateDamage();
-            if (entity.CollidesWith(this))
-            {
-                return damage;
-            }
+            if (entity.CollidesWith(this)) return damage;
             return 0;
+        }
+
+
+        /// <summary>
+        /// checks if the entity is invulnerable
+        /// </summary>
+        /// <param name="delta"></param>
+        /// <returns></returns>
+        public bool IsInvulnerable(double delta)
+        {
+            if (invulnerability > 0)
+            {
+                invulnerability -= delta;
+                return true;
+            }
+            return false;
         }
 
 

@@ -48,7 +48,7 @@ namespace Abyss.Entities.enemies
                 if (target_vector == Vector2.Zero)
                 {
                     target = Vector2.Zero;
-                    this.Attack(game_state);
+                    this.Attack(game_state, delta);
                 }
             }
             else

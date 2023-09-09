@@ -45,16 +45,16 @@ namespace Abyss.Entities
             else
                 this.target_vector = Math0.VectorAtAngle(Math0.RandomAngle());
 
-            this.Attack(game_state);
+            this.Attack(game_state, delta);
         }
 
 
-        public virtual void Attack(GameState game_state)
+        public virtual void Attack(GameState game_state, double delta)
         {
             // deal damage
             if (this.DealDamage(game_state.player) > 0 && this.attack_cooldown <= 0)
             {
-                game_state.player.ReduceHealth(this.DealDamage(game_state.player));
+                game_state.player.TakeDamage(this.DealDamage(game_state.player), delta);
                 this.attack_cooldown = this.attack_cooldown_max;
             }
         }
