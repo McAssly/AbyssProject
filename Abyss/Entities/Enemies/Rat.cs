@@ -30,6 +30,7 @@ namespace Abyss.Entities.enemies
 
         public override void Update(double delta, GameState game_state)
         {
+            this.UniversalUpdate(delta, game_state);
             this.ClampPosition();
             // move towards the player if they are in range
             if (IsInRange(game_state.player.GetPosition()))

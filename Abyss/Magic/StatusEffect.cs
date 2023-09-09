@@ -25,14 +25,14 @@ namespace Abyss.Magic
             this.application_id = id;
         }
 
-        public void Action(Entity parent, double delta)
+        public void Action(Entity parent)
         {
             if (parent.regen_timer >= 1)
             {
                 switch (application_id)
                 {
                     case 4:
-                        parent.TakeDamage(value, delta);
+                        parent.TakeDamage(value);
                         break;
                     case 5:
                         if (parent is Player) (parent as Player).ReduceMana(value);

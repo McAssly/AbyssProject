@@ -88,6 +88,8 @@ namespace Abyss.Entities
         /// <param name="game_state"></param>
         public void Update(double delta, KeyboardState kb, MouseState ms, GameState game_state)
         {
+            if (IsInvulnerable())
+                invulnerability -= delta;
             CalculateInputVector(kb);
             Move(game_state.GetCollisionLayer(), delta);
             ClampPosition();

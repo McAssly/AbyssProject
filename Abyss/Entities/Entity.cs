@@ -5,7 +5,6 @@ using Abyss.Sprites;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
-using System;
 using System.Collections.Generic;
 
 namespace Abyss.Entities
@@ -143,20 +142,6 @@ namespace Abyss.Entities
         /// <returns></returns>
         public Vector[] AdjacentTiles()
         {
-            /**
-            if (width < Globals.TILE_SIZE && height < Globals.TILE_SIZE)
-            {
-                Vector origin = MathUtil.CoordsToTileCoords(GetPosition() + new Vector2(width / 2, height / 2));
-                List<Vector> tile_positions = new List<Vector> { MathUtil.Clamp(origin.To2()) };
-                if (vel.X < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(-1, 0)));
-                if (vel.X > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(1, 0)));
-
-                if (vel.Y < 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, -1)));
-                if (vel.Y > 0) tile_positions.Add(MathUtil.Clamp(origin.To2() + new Vector2(0, 1)));
-
-                return tile_positions.ToArray();
-            }
-            */
             List<Vector> tile_positions = new List<Vector>();
             if (target_vector.X > 0)
             {
@@ -190,13 +175,13 @@ namespace Abyss.Entities
         /// reduces the entity's health by a given amount
         /// </summary>
         /// <param name="amount"></param>
-        public void TakeDamage(double amount, double delta)
+        public void TakeDamage(double amount)
         {
-            if (!IsInvulnerable(delta))
+            if (!IsInvulnerable())
             {
                 health -= amount / defense;
                 if (health < 0) { health = 0; }
-                invulnerability = 1;
+                invulnerability = 0.25;
             }
         }
 
@@ -228,16 +213,10 @@ namespace Abyss.Entities
         /// <summary>
         /// checks if the entity is invulnerable
         /// </summary>
-        /// <param name="delta"></param>
         /// <returns></returns>
-        public bool IsInvulnerable(double delta)
+        public bool IsInvulnerable()
         {
-            if (invulnerability > 0)
-            {
-                invulnerability -= delta;
-                return true;
-            }
-            return false;
+            return invulnerability > 0;
         }
 
 

@@ -38,6 +38,7 @@ namespace Abyss.Entities
         /// <param name="game_state"></param>
         public virtual void Update(double delta, GameState game_state)
         {
+            this.UniversalUpdate(delta, game_state);
             this.ClampPosition();
             this.Move(game_state.GetCollisionLayer(), delta);
             if (IsInRange(game_state.player.GetPosition()))
@@ -48,13 +49,20 @@ namespace Abyss.Entities
             this.Attack(game_state, delta);
         }
 
+        public void UniversalUpdate(double delta, GameState game_state)
+        {
+            if (IsInvulnerable())
+            {
+                this.invulnerability -= delta;
+            }
+        }
 
         public virtual void Attack(GameState game_state, double delta)
         {
             // deal damage
             if (this.DealDamage(game_state.player) > 0 && this.attack_cooldown <= 0)
             {
-                game_state.player.TakeDamage(this.DealDamage(game_state.player), delta);
+                game_state.player.TakeDamage(this.DealDamage(game_state.player));
                 this.attack_cooldown = this.attack_cooldown_max;
             }
         }
