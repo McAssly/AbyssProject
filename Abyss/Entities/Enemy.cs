@@ -26,10 +26,7 @@ namespace Abyss.Entities
         /// <summary>
         /// initialize the base stats of the enemy
         /// </summary>
-        public virtual void Initialize()
-        {
-
-        }
+        public virtual void Initialize() { }
 
         /// <summary>
         /// the default enemy AI simply moves and accelerates towards the player
@@ -51,20 +48,17 @@ namespace Abyss.Entities
 
         public void UniversalUpdate(double delta, GameState game_state)
         {
-            if (IsInvulnerable())
-            {
+            if (IsInvulnerable()) 
                 this.invulnerability -= delta;
-            }
+            if (attack_cooldown > 0)
+                this.attack_cooldown -= delta;
         }
 
         public virtual void Attack(GameState game_state, double delta)
         {
-            // deal damage
-            if (this.DealDamage(game_state.player) > 0 && this.attack_cooldown <= 0)
-            {
+            if (this.DealDamage(game_state.player) > 0)
                 game_state.player.TakeDamage(this.DealDamage(game_state.player));
-                this.attack_cooldown = this.attack_cooldown_max;
-            }
+            this.attack_cooldown = this.attack_cooldown_max;
         }
 
 

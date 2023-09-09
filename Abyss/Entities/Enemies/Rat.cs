@@ -33,7 +33,7 @@ namespace Abyss.Entities.enemies
             this.UniversalUpdate(delta, game_state);
             this.ClampPosition();
             // move towards the player if they are in range
-            if (IsInRange(game_state.player.GetPosition()))
+            if (IsInRange(game_state.player.GetPosition()) && attack_cooldown <= 0)
             {
                 // get the target position to lunge towards
                 if (target == Vector2.Zero) target = game_state.player.GetPosition();
@@ -62,7 +62,7 @@ namespace Abyss.Entities.enemies
 
         private void Charge(Layer collision_layer, double delta)
         {
-            velocity = target_vector * (float)max_speed * (float)speed;
+            velocity = target_vector * (float)max_speed * (float)speed * 2;
             if (velocity.X != 0 && this.CollisionCheck(collision_layer, new Vector2(velocity.X, 0)))
                 velocity.X = 0;
             if (velocity.Y != 0 && this.CollisionCheck(collision_layer, new Vector2(0, velocity.Y)))
