@@ -173,6 +173,7 @@ namespace Abyss.Magic
             foreach (Particle particle in Particles) particle.Update(delta);
             // remove all particles that have run out of life
             List<Particle> dead = Particles.FindAll(p => p.lifetime <= 0 || p.IsOutside());
+            // death not working???
             foreach (var p in dead)
                 OnDeath(game_state.player, p);
             Particles.RemoveAll(p => dead.Contains(p));
