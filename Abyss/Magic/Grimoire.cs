@@ -157,8 +157,10 @@ namespace Abyss.Magic
         /// <summary>
         /// clears the particles
         /// </summary>
-        public void Clear()
+        public void Clear(GameState game_state)
         {
+            foreach (var p in Particles)
+                this.OnDeath(game_state.player, p);
             Particles.Clear();
         }
 
@@ -181,6 +183,7 @@ namespace Abyss.Magic
             foreach (Particle particle in Particles)
             {
                 Vector tile_pos = Math0.CoordsToTileCoords(particle.position, true);
+                tile_pos = Math0.ClampToTileMap(tile_pos.To2());
                 Tile tile = game_state.GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
                 if (particle.IsColliding(tile) && !tile.NULL && !particle.ignore_collision)
                 {
@@ -191,6 +194,8 @@ namespace Abyss.Magic
             }
 
             // remove any colliding with a tile
+            foreach (var p in _particles)
+                OnDeath(game_state.player, p);
             Particles.RemoveAll(particle => _particles.Contains(particle));
 
             primary.cooldown.Update(Variables.PARTICLE_SUBTRACTOR * delta);

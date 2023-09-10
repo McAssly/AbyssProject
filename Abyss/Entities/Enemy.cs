@@ -34,7 +34,6 @@ namespace Abyss.Entities
         public virtual void Update(double delta, GameState game_state)
         {
             this.UniversalUpdate(delta, game_state);
-            this.ClampPosition();
             this.Move(game_state.GetCollisionLayer(), delta);
             if (IsInRange(game_state.player.GetPosition()))
                 this.target_vector = (game_state.player.GetPosition() - this.position).NormalizedCopy();
@@ -46,6 +45,7 @@ namespace Abyss.Entities
 
         public void UniversalUpdate(double delta, GameState game_state)
         {
+            this.Clamp();
             this.invulnerability.Update(delta);
             attack_cooldown.Update(delta);
         }

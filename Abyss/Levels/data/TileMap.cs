@@ -25,7 +25,7 @@ namespace Abyss.Levels.data
         /// <param name="east_index"></param>
         /// <param name="south_index"></param>
         /// <param name="west_index"></param>
-        public TileMap(TileLayer[] tile_layers, TileLayer collision_layer, Enemy[] enemies, int west_index = -1, int north_index = -1, int east_index = -1, int south_index = -1)
+        public TileMap(TileLayer[] tile_layers, TileLayer collision_layer, Enemy[] enemies, int west_index, int north_index, int east_index, int south_index)
         {
             this.tile_layers = tile_layers;
             this.collision_layer = collision_layer;

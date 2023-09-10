@@ -30,7 +30,6 @@ namespace Abyss.Entities.enemies
         public override void Update(double delta, GameState game_state)
         {
             this.UniversalUpdate(delta, game_state);
-            this.ClampPosition();
             // move towards the player if they are in range
             if (IsInRange(game_state.player.GetPosition()) && !attack_cooldown.IsRunning())
             {
@@ -62,10 +61,7 @@ namespace Abyss.Entities.enemies
         private void Charge(Layer collision_layer, double delta)
         {
             velocity = target_vector * (float)max_speed * (float)speed * 2;
-            if (velocity.X != 0 && this.CollisionCheck(collision_layer, new Vector2(velocity.X, 0)))
-                velocity.X = 0;
-            if (velocity.Y != 0 && this.CollisionCheck(collision_layer, new Vector2(0, velocity.Y)))
-                velocity.Y = 0;
+            this.Collide(collision_layer);
             position += velocity * new Vector2((float)(delta * Variables.FRAME_FACTOR));
         }
 

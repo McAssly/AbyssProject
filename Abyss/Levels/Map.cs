@@ -16,7 +16,7 @@ namespace Abyss.Levels
         // The width and height of the map (default: 1x1)
         private int width, height = 1;
         // map directions
-        private int[] next_maps;
+        private readonly int[] next_maps;
         // the entities on the map
         private protected readonly Enemy[] enemies;
 

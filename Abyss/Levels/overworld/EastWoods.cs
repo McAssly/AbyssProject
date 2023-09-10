@@ -75,7 +75,7 @@ namespace Abyss.Levels.overworld
                         new Rat(4, 12),
                         new Rat(10, 9)
                     },
-                    default, 1, default, default),
+                    -1, 1, -1, -1),
                 new TileMap(
                     new TileLayer[2]
                     {
@@ -138,7 +138,7 @@ namespace Abyss.Levels.overworld
                             {0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0}
                         }),
                     new Enemy[0]{},
-                    default, default, default, 0),
+                    -1, -1, -1, 0),
                 };
 };
 }

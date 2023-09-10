@@ -5,7 +5,9 @@ using Abyss.Sprites;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Abyss.Entities
 {
@@ -15,10 +17,10 @@ namespace Abyss.Entities
         private protected int width, height;
 
         // declare max values for the entity
-        private protected readonly double RESET_DELTA = 100;
-        private protected readonly double MAX_SPEED = 2;
-        private protected readonly double MAX_ACCEL = 10;
-        private protected readonly double FRICTION = 15;
+        private protected readonly double RESET_DELTA = 0;
+        private protected readonly int MAX_SPEED = 2;
+        private protected readonly int MAX_ACCEL = 10;
+        private protected readonly int FRICTION = 15;
 
         // declare the entity's stats
         private protected double speed_reset_delta;
@@ -88,19 +90,34 @@ namespace Abyss.Entities
 
         public void SetMovement()
         {
-            this.friction_reset_delta = RESET_DELTA;
-            this.speed_reset_delta = RESET_DELTA;
-            this.accel_reset_delta = RESET_DELTA;
+            ResetMovementDeltas();
             this.friction = FRICTION;
             this.max_speed = MAX_SPEED;
             this.max_accel = MAX_ACCEL;
         }
 
+        public void ResetMovementDeltas()
+        {
+            this.friction_reset_delta = RESET_DELTA;
+            this.speed_reset_delta = RESET_DELTA;
+            this.accel_reset_delta = RESET_DELTA;
+        }
+
         public void RevertMovement(double delta)
         {
-            this.friction = Math0.MoveToward0(friction, FRICTION, delta * friction_reset_delta);
-            this.max_speed = Math0.MoveToward0(max_speed, MAX_SPEED, delta * speed_reset_delta);
-            this.max_accel = Math0.MoveToward0(max_accel, MAX_ACCEL, delta * accel_reset_delta);
+            friction = RevertMovmentValue(friction, FRICTION, friction_reset_delta, delta);
+            max_speed = RevertMovmentValue(max_speed, MAX_SPEED, speed_reset_delta, delta);
+            max_accel = RevertMovmentValue(max_accel, MAX_ACCEL, accel_reset_delta, delta);
+        }
+
+        private double RevertMovmentValue(double value, double max, double reset_delta, double delta)
+        {
+            double result;
+            if (max == value) return max;
+            if (reset_delta != 0)
+                result = Math0.MoveToward0(value, max, delta * reset_delta);
+            else result = Math0.MoveToward0(value, max, delta * 100 * Math.Log(Math.Abs(max - value - 1)));
+            return result;
         }
 
 
@@ -111,7 +128,9 @@ namespace Abyss.Entities
         /// <param name="delta"></param>
         public virtual void Move(Layer collision_layer, double delta)
         {
+            if (this is Player) Debug.WriteLine(max_speed + ", " + speed_reset_delta);
             this.RevertMovement(delta);
+            Vector2 velocity = this.velocity;
             // if the movement vector is not zero then the entity must be trying to move
             if (target_vector != Vector2.Zero)
             {
@@ -120,16 +139,25 @@ namespace Abyss.Entities
             }
             else velocity = Math0.MoveToward(velocity, Vector2.Zero, friction * delta);
 
+            // clamp velocity to allowable max speed
             Vector2 max_velocity = velocity.NormalizedCopy() * (float)max_speed * (float)speed;
             velocity = Vector2.Clamp(velocity, -Math0.Absolute(max_velocity), Math0.Absolute(max_velocity));
+            this.velocity = velocity;
 
-            //velocity = velocity_temp;
+            Collide(collision_layer);
+
+            if (!this.CollisionCheck(collision_layer, true) && !this.CollisionCheck(collision_layer, false))
+                position += this.velocity * new Vector2((float)(delta * Variables.FRAME_FACTOR));
+        }
+
+
+        public void Collide(Layer collision_layer)
+        {
             // handle collision, if they are about to collide we must alter our velocity before we move forward
-            if (velocity.X != 0 && this.CollisionCheck(collision_layer, new Vector2(velocity.X, 0)))
+            if (velocity.X != 0 && this.CollisionCheck(collision_layer, true))
                 velocity.X = 0;
-            if (velocity.Y != 0 && this.CollisionCheck(collision_layer, new Vector2(0, velocity.Y)))
+            if (velocity.Y != 0 && this.CollisionCheck(collision_layer, false))
                 velocity.Y = 0;
-            position += velocity * new Vector2((float)(delta * Variables.FRAME_FACTOR));
         }
 
 
@@ -137,32 +165,81 @@ namespace Abyss.Entities
         /// determines if the entity is colliding with a collision tile
         /// </summary>
         /// <param name="collision_layer"></param>
-        /// <param name="offset"></param>
+        /// <param name="direction"></param>
         /// <returns></returns>
-        public bool CollisionCheck(Layer collision_layer, Vector2 offset)
+        public bool CollisionCheck(Layer collision_layer, bool x_axis)
         {
-            Vector[] tile_coords = AdjacentTiles();
-            foreach (var corner in tile_coords)
+            // loop through each corner of the entity
+            foreach (var tile_pos in GetNextTiles(x_axis))
             {
-                Vector tile_pos = Math0.ClampToTileMap(corner.To2() + offset.NormalizedCopy());
-                Tile target_tile = collision_layer.GetTiles()[tile_pos.y, tile_pos.x];
-                if (!target_tile.NULL && target_tile.Colliding(this, offset)) return true;
+                // get the tile at the target position
+                Vector tile_pos_ = Math0.ClampToTileMap(tile_pos.To2());
+                Tile target_tile = collision_layer.GetTiles()[tile_pos_.y, tile_pos_.x];
+
+                // if there is a collision tile preset, return true
+                if (!target_tile.NULL && target_tile.Colliding(this, velocity)) return true;
             }
+            // otherwise return false
             return false;
         }
 
-        public void ClampPosition()
+
+        public void Clamp()
         {
-            position = Vector2.Clamp(position, new Vector2(-1), new Vector2(16 * 16 - 16 + 1));
+            Vector2 position = new Vector2(this.position.X, this.position.Y);
+            position = Math0.Clamp(position, Vector2.Zero, new Vector2(240, 240));
+            this.position = new Vector2(position.X, position.Y);
+        }
+
+
+        /// <summary>
+        /// get the positions of tiles that the entity will run into
+        /// </summary>
+        /// <returns></returns>
+        public Vector[] GetNextTiles(bool x_axis)
+        {
+            List<Vector> next = new List<Vector>();
+
+            // set the direction to move in
+            Vector2 direction = velocity.NormalizedCopy();
+            if (x_axis) direction.Y = 0;
+            else direction.X = 0;
+            if (direction.X + direction.Y > 0) direction.Ceiling();
+            else direction.Floor();
+
+            // get the tile coordinates
+            foreach (var tile_pos in CurrentTilePositions(x_axis))
+                next.Add(Math0.ClampToTileMap(tile_pos.To2() + direction));
+            return next.ToArray();
         }
 
         /// <summary>
         /// generates a list of tiles the entity is on and adjacent to
         /// </summary>
         /// <returns></returns>
-        public Vector[] AdjacentTiles()
+        public Vector[] CurrentTilePositions(bool x_axis)
         {
-            List<Vector> tile_positions = new List<Vector>();
+            Vector2 position = new Vector2(this.position.X, this.position.Y);
+            position.Floor();
+            List<Vector> tile_positions = new List<Vector>() 
+            { 
+                Math0.CoordsToTileCoords(position + GetSize() / 2), // CENTRAL POSITION
+                Math0.CoordsToTileCoords(position + new Vector2(0, 0)), // TOP LEFT CORNER
+                Math0.CoordsToTileCoords(position + new Vector2(0, height)), // BOTTOM LEFT CORNER
+                Math0.CoordsToTileCoords(position + new Vector2(width, 0)), // TOP RIGHT CORNER
+                Math0.CoordsToTileCoords(position + new Vector2(width, height)) // BOTTOM RIGHT CORNER
+            };
+            if (x_axis) // get left/right positions
+            {
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, height / 2))); // LEFT CENTER
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width, height / 2))); // RIGHT CENTER
+            }
+            else // get top/bottom positions
+            {
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0))); // TOP CENTER
+                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height))); // BOTTOM CENTER
+            }
+            /*
             if (target_vector.X > 0)
             {
                 tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0)));
@@ -187,6 +264,7 @@ namespace Abyss.Entities
                 tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0)));
                 tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width, 0)));
             }
+            */
             return tile_positions.ToArray();
         }
 
@@ -329,13 +407,6 @@ namespace Abyss.Entities
         internal Vector2 GetTargetVector()
         {
             return target_vector;
-        }
-
-        internal void ResetResetDelta()
-        {
-            this.friction_reset_delta = RESET_DELTA;
-            this.speed_reset_delta = RESET_DELTA;
-            this.accel_reset_delta = RESET_DELTA;
         }
     }
 }

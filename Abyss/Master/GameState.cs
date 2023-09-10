@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Effect = Abyss.Magic.Effect;
 using Vector = Abyss.Utility.Vector;
@@ -66,8 +67,7 @@ namespace Abyss.Master
             player.Update(delta, kb, ms, this);
 
             // if the player leaves a side of the current map update the level's map index
-            if (player.ExittingSide().HasValue)
-                this.UpdateLevel(player.ExittingSide().Value);
+            if (player.ExittingSide().HasValue) this.UpdateLevel(player.ExittingSide().Value);
 
 
             // update particles
@@ -143,8 +143,8 @@ namespace Abyss.Master
                     if (levels[level_index].GetCurrent() != prev_map)
                     {
                         player.SetPosition(new_position);
-                        player.inventory.grimoires[0].Clear();
-                        player.inventory.grimoires[1].Clear();
+                        player.inventory.grimoires[0].Clear(this);
+                        player.inventory.grimoires[1].Clear(this);
                         particle_fx.Clear();
                     }
                 }
@@ -165,8 +165,8 @@ namespace Abyss.Master
                     levels[level_index].SetCurrent(last_map_index);
                 }
                 player.SetPosition(new_position);
-                player.inventory.grimoires[0].Clear();
-                player.inventory.grimoires[1].Clear();
+                player.inventory.grimoires[0].Clear(this);
+                player.inventory.grimoires[1].Clear(this);
                 particle_fx.Clear();
             }
         }

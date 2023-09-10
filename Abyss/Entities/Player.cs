@@ -92,7 +92,7 @@ namespace Abyss.Entities
             invulnerability.Update(delta);
             CalculateInputVector(kb);
             Move(game_state.GetCollisionLayer(), delta);
-            ClampPosition();
+            this.Clamp();
 
             /* ATTACK DETECTION AND CASTING SPELLS */
             game_state.player.Attack(kb, ms, delta);
@@ -166,20 +166,20 @@ namespace Abyss.Entities
         public Side? ExittingSide()
         {
             // Check on the x-axis, LEFT / RIGHT
-            switch (position.X)
+            switch ((int)position.X)
             {
-                case -1: // if they are just left of the game window
+                case 0: // if they are just left of the game window
                     return Side.LEFT; // left
-                case 16 * 16 - 16 + 1: // if they are just right of the game window
+                case 15 * 16: // if they are just right of the game window
                     return Side.RIGHT; // right
                 default: break;
             }
             // Check on the y-axis, TOP / BOTTOM
-            switch (position.Y)
+            switch ((int)position.Y)
             {
-                case -1: // if they are just above the game window (map)
+                case 0: // if they are just above the game window (map)
                     return Side.TOP; // then its the top
-                case 16 * 16 - 16 + 1: // if they are just below it
+                case 15 * 16: // if they are just below it
                     return Side.BOTTOM; // then its the bottom
                 default: break;
             }
@@ -197,10 +197,10 @@ namespace Abyss.Entities
         {
             switch (side)
             {
-                case Side.LEFT: return new NullableVector(16 * 16 - 16, null);
-                case Side.RIGHT: return new NullableVector(0, null);
-                case Side.TOP: return new NullableVector(null, 16 * 16 - 16);
-                case Side.BOTTOM: return new NullableVector(null, 0);
+                case Side.LEFT: return new NullableVector(15 * 16 - 1, null);
+                case Side.RIGHT: return new NullableVector(1, null);
+                case Side.TOP: return new NullableVector(null, 15 * 16 - 1);
+                case Side.BOTTOM: return new NullableVector(null, 1);
                 default: return new NullableVector();
             }
         }

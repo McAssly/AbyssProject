@@ -36,10 +36,12 @@ namespace Abyss.Draw
         {
             if (Variables.DebugCollision)
             {
-                Vector[] tile_positions = player.AdjacentTiles();
-                foreach (Vector tile_pos in tile_positions)
+                for (int i = 0; i < 2; i++)
                 {
-                    this.DrawRectangle(new Rectangle(tile_pos.x * 16, tile_pos.y * 16, 16, 16), Color.White);
+                    foreach (Vector tile_pos in player.CurrentTilePositions((i == 0) ? true : false))
+                        this.DrawRectangle(new Rectangle(tile_pos.x * 16, tile_pos.y * 16, 16, 16), Color.White);
+                    foreach (Vector tile_pos in player.GetNextTiles((i == 0) ? true : false))
+                        this.DrawRectangle(new Rectangle(tile_pos.x * 16, tile_pos.y * 16, 16, 16), (i == 0) ? Color.Yellow : Color.GreenYellow);
                 }
             }
             Draw(player.sprite, player.GetPosition(), Color.White);

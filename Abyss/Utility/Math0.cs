@@ -57,6 +57,16 @@ namespace Abyss.Utility
         }
 
 
+        public static Vector2 Clamp(Vector2 v, Vector2 min, Vector2 max)
+        {
+            if (v.X > max.X) v.X = max.X;
+            if (v.X < min.X) v.X = min.X;
+            if (v.Y > max.Y) v.Y = max.Y;
+            if (v.Y < min.Y) v.Y = min.Y;
+            return v;
+        }
+
+
 
         /// <summary>
         /// returns the absolute version of a vector
@@ -98,11 +108,21 @@ namespace Abyss.Utility
         /// fixes the direction of a vector to a single axis based on which axis has more pull
         /// </summary>
         /// <param name="v"></param>
+        /// <param name="axis">0 means all, 1 means x, 2 means y</param>
         /// <returns></returns>
-        public static Vector2 FixDirection(Vector2 v)
+        public static Vector2 FixDirection(Vector2 v, byte axis = 0, bool normalize = false)
         {
-            if (v.X * v.X > v.Y * v.Y) return new Vector2(v.X, 0);
-            else return new Vector2(0, v.Y);
+            Vector2 result;
+            if (axis == 1) result = new Vector2(v.X, 0);
+            else if (axis == 2) result = new Vector2(0, v.Y);
+            else
+            {
+                if (v.X * v.X > v.Y * v.Y) result = new Vector2(v.X, 0);
+                else result = new Vector2(0, v.Y);
+            }
+
+            if (normalize) result.Normalize();
+            return result;
         }
 
         /// <summary>
