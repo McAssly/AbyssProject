@@ -16,19 +16,10 @@ namespace Abyss.Entities
         public SpriteSheet sprite;
         private protected int width, height;
 
-        // declare max values for the entity
-        private protected readonly double RESET_DELTA = 0;
-        private protected readonly int MAX_SPEED = 2;
-        private protected readonly int MAX_ACCEL = 10;
-        private protected readonly int FRICTION = 15;
-
         // declare the entity's stats
-        private protected double speed_reset_delta;
-        private protected double accel_reset_delta;
-        private protected double friction_reset_delta;
-        private protected double max_speed;
-        private protected double max_accel;
-        private protected double friction;
+        private protected double max_speed = 2;
+        private protected double max_accel = 10;
+        private protected double friction = 10;
         private protected double speed = 1;
         private protected double max_health;
 
@@ -62,13 +53,11 @@ namespace Abyss.Entities
             this.width = sprite.width - 1;
             this.height = sprite.height - 1;
             this.position = new Vector2(x, y);
-            this.SetMovement();
         }
 
         public Entity(float x, float y)
         {
             this.position = new Vector2(x, y);
-            this.SetMovement();
         }
 
         public Entity(SpriteSheet sprite)
@@ -77,7 +66,6 @@ namespace Abyss.Entities
             this.sprite = sprite;
             this.width = this.sprite.width - 1;
             this.height = this.sprite.height - 1;
-            this.SetMovement();
         }
 
         public virtual void Load()
@@ -88,39 +76,6 @@ namespace Abyss.Entities
         }
 
 
-        public void SetMovement()
-        {
-            ResetMovementDeltas();
-            this.friction = FRICTION;
-            this.max_speed = MAX_SPEED;
-            this.max_accel = MAX_ACCEL;
-        }
-
-        public void ResetMovementDeltas()
-        {
-            this.friction_reset_delta = RESET_DELTA;
-            this.speed_reset_delta = RESET_DELTA;
-            this.accel_reset_delta = RESET_DELTA;
-        }
-
-        public void RevertMovement(double delta)
-        {
-            friction = RevertMovmentValue(friction, FRICTION, friction_reset_delta, delta);
-            max_speed = RevertMovmentValue(max_speed, MAX_SPEED, speed_reset_delta, delta);
-            max_accel = RevertMovmentValue(max_accel, MAX_ACCEL, accel_reset_delta, delta);
-        }
-
-        private double RevertMovmentValue(double value, double max, double reset_delta, double delta)
-        {
-            double result;
-            if (max == value) return max;
-            if (reset_delta != 0)
-                result = Math0.MoveToward0(value, max, delta * reset_delta);
-            else result = Math0.MoveToward0(value, max, delta * 100 * Math.Log(Math.Abs(max - value - 1)));
-            return result;
-        }
-
-
         /// <summary>
         /// moves the entity based on its target vector
         /// </summary>
@@ -128,20 +83,13 @@ namespace Abyss.Entities
         /// <param name="delta"></param>
         public virtual void Move(Layer collision_layer, double delta)
         {
-            if (this is Player) Debug.WriteLine(max_speed + ", " + speed_reset_delta);
-            this.RevertMovement(delta);
             Vector2 velocity = this.velocity;
             // if the movement vector is not zero then the entity must be trying to move
-            if (target_vector != Vector2.Zero)
-            {
-                Vector2 target = target_vector * (float)max_speed * (float)speed;
-                velocity = Math0.MoveToward(velocity, target, max_accel * delta);
-            }
-            else velocity = Math0.MoveToward(velocity, Vector2.Zero, friction * delta);
+            Vector2 target = target_vector * (float)max_speed * (float)speed;
+            if (Math.Abs(velocity.X) < Math.Abs(target.X)) velocity.X = (float)Math0.MoveToward0(velocity.X, target.X, delta * max_speed * max_accel * speed);
+            if (Math.Abs(velocity.Y) < Math.Abs(target.Y)) velocity.Y = (float)Math0.MoveToward0(velocity.Y, target.Y, delta * max_speed * max_accel * speed);
+            velocity = Math0.MoveToward(velocity, Vector2.Zero, friction * delta);
 
-            // clamp velocity to allowable max speed
-            Vector2 max_velocity = velocity.NormalizedCopy() * (float)max_speed * (float)speed;
-            velocity = Vector2.Clamp(velocity, -Math0.Absolute(max_velocity), Math0.Absolute(max_velocity));
             this.velocity = velocity;
 
             Collide(collision_layer);
@@ -349,18 +297,6 @@ namespace Abyss.Entities
         public void SetTargetVector(Vector2 vector)
         {
             this.target_vector = vector;
-        }
-
-        public void SetFriction(double friction, double reset_delta)
-        {
-            this.friction = friction;
-            this.friction_reset_delta = reset_delta;
-        }
-
-        public void SetMaxSpeed(double max_speed, double reset_delta)
-        {
-            this.max_speed = max_speed;
-            this.speed_reset_delta = reset_delta;
         }
 
         public double GetMaxSpeed()

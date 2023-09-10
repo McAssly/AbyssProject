@@ -34,7 +34,6 @@ namespace Abyss.Entities
             this.crit_rate = 0.05;
             this.damage = 1;
             this.defense = 1;
-            this.SetMovement();
         }
 
 

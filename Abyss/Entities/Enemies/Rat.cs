@@ -69,13 +69,11 @@ namespace Abyss.Entities.enemies
         public Rat(SpriteSheet sprite, float x, float y) : base(sprite, x, y)
         {
             this.Initialize();
-            this.SetMovement();
         }
 
         public Rat(float x, float y) : base(x, y)
         {
             this.Initialize();
-            this.SetMovement();
         }
 
         public override void Load()

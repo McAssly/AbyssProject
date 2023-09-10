@@ -68,13 +68,11 @@ namespace Abyss.Entities
         public Enemy(SpriteSheet sprite, float x, float y) : base(sprite, x, y)
         {
             this.Initialize();
-            this.SetMovement();
         }
 
         public Enemy(float x, float y) : base(x, y)
         {
             this.Initialize();
-            this.SetMovement();
         }
 
         public override Enemy Clone()
