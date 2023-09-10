@@ -80,7 +80,7 @@ namespace Abyss.Master
 
             // update entities
             int number_killed = levels[level_index].GetEnemies().FindAll(e => e.GetHealth() <= 0).Count;
-            player.RegenerateMana(number_killed * 5);
+            player.RegenerateMana(number_killed * 10);
             if (player.GetMana() > player.GetMaxMana()) player.SetMana(player.GetMaxMana());
             levels[level_index].GetEnemies().RemoveAll(x => x.GetHealth() <= 0);
             foreach (Enemy enemy in levels[level_index].GetEnemies())
@@ -100,8 +100,6 @@ namespace Abyss.Master
                         enemy.TakeDamage(damager.GetDamage());
                     }
                 }
-
-                if (enemy.attack_cooldown > 0) enemy.attack_cooldown -= delta;
             }
 
             // kill the player

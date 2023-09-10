@@ -38,8 +38,14 @@ namespace Abyss.Magic.Grimoires
             Vector2 velocity = Math0.MoveToward(parent.GetPosition(), target_pos, secondary.base_speed * delta);
             GenerateParticle(parent, Vector2.Subtract(target, parent.GetPosition()), 1, Math.Atan2(target.Y - parent.GetPosition().Y, target.X - parent.GetPosition().X));
             parent.AddVelocity(Vector2.Subtract(velocity, parent.GetPosition()));
-            parent.SetMaxSpeed(999, secondary.lifetime*6);
-            parent.SetFriction(0, secondary.lifetime*4);
+            parent.SetMaxSpeed(parent.GetMaxSpeed() * 2 + 1, 10);
+            parent.SetFriction(0, 10);
+        }
+
+        internal override void OnDeath(Player parent, Particle particle)
+        {
+            // reset movement settings
+            parent.ResetResetDelta();
         }
 
         public override string ToString()

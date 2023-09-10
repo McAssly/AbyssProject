@@ -26,8 +26,7 @@ namespace Abyss.Magic
         public readonly double base_damage;
         public readonly double base_speed;
         public readonly double mana_cost;
-        public readonly double cooldown_max;
-        public double cooldown;
+        public Timer cooldown;
         public bool pierce;
         public bool ignore_collision;
         public bool lock_to_player;
@@ -45,8 +44,7 @@ namespace Abyss.Magic
             this.base_speed = base_speed;
             this.mana_cost = mana_cost;
             this.accel = accel;
-            this.cooldown_max = cooldown_max;
-            this.cooldown = 0;
+            this.cooldown = new Timer(cooldown_max);
             this.pierce = pierce;
             this.ignore_collision = ignore_collision;
             this.lock_to_player = lock_to_player;

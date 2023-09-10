@@ -9,13 +9,11 @@ namespace Abyss.Entities
     internal class Enemy : Entity
     {
         // declare the enemy attack cooldown
-        public double attack_cooldown = 0;
-        public double attack_cooldown_max;
+        public Timer attack_cooldown;
 
 
         //declare movement cooldowns
-        public double move_cooldown = 0;
-        public double move_cooldown_max = 0;
+        public Timer move_cooldown;
 
         // declare the enemy's range
         public double range;
@@ -48,17 +46,15 @@ namespace Abyss.Entities
 
         public void UniversalUpdate(double delta, GameState game_state)
         {
-            if (IsInvulnerable()) 
-                this.invulnerability -= delta;
-            if (attack_cooldown > 0)
-                this.attack_cooldown -= delta;
+            this.invulnerability.Update(delta);
+            attack_cooldown.Update(delta);
         }
 
         public virtual void Attack(GameState game_state, double delta)
         {
             if (this.DealDamage(game_state.player) > 0)
                 game_state.player.TakeDamage(this.DealDamage(game_state.player));
-            this.attack_cooldown = this.attack_cooldown_max;
+            this.attack_cooldown.Start();
         }
 
 
@@ -72,11 +68,13 @@ namespace Abyss.Entities
         public Enemy(SpriteSheet sprite, float x, float y) : base(sprite, x, y)
         {
             this.Initialize();
+            this.SetMovement();
         }
 
         public Enemy(float x, float y) : base(x, y)
         {
             this.Initialize();
+            this.SetMovement();
         }
 
         public override Enemy Clone()

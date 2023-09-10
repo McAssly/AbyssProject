@@ -34,6 +34,7 @@ namespace Abyss.Entities
             this.crit_rate = 0.05;
             this.damage = 1;
             this.defense = 1;
+            this.SetMovement();
         }
 
 
@@ -88,8 +89,7 @@ namespace Abyss.Entities
         /// <param name="game_state"></param>
         public void Update(double delta, KeyboardState kb, MouseState ms, GameState game_state)
         {
-            if (IsInvulnerable())
-                invulnerability -= delta;
+            invulnerability.Update(delta);
             CalculateInputVector(kb);
             Move(game_state.GetCollisionLayer(), delta);
             ClampPosition();

@@ -19,10 +19,9 @@ namespace Abyss.Entities.enemies
             this.damage = 25;
             this.defense = 1;
 
-            this.attack_cooldown = 0;
-            this.attack_cooldown_max = 1;
+            this.attack_cooldown = new Timer(1);
 
-            this.move_cooldown_max = 10;
+            this.move_cooldown = new Timer(10);
 
             this.range = 70;
         }
@@ -33,7 +32,7 @@ namespace Abyss.Entities.enemies
             this.UniversalUpdate(delta, game_state);
             this.ClampPosition();
             // move towards the player if they are in range
-            if (IsInRange(game_state.player.GetPosition()) && attack_cooldown <= 0)
+            if (IsInRange(game_state.player.GetPosition()) && !attack_cooldown.IsRunning())
             {
                 // get the target position to lunge towards
                 if (target == Vector2.Zero) target = game_state.player.GetPosition();
@@ -74,11 +73,13 @@ namespace Abyss.Entities.enemies
         public Rat(SpriteSheet sprite, float x, float y) : base(sprite, x, y)
         {
             this.Initialize();
+            this.SetMovement();
         }
 
         public Rat(float x, float y) : base(x, y)
         {
             this.Initialize();
+            this.SetMovement();
         }
 
         public override void Load()

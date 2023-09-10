@@ -47,19 +47,19 @@ namespace Abyss.Magic
             switch (type)
             {
                 case 1: // primary
-                    if (primary.cooldown <= 0 && parent.GetMana() >= primary.mana_cost && PrimaryCheck(parent))
+                    if (!primary.cooldown.IsRunning() && parent.GetMana() >= primary.mana_cost && PrimaryCheck(parent))
                     {
                         Primary(parent, targetPos, delta);
                         parent.ReduceMana(primary.mana_cost);
-                        primary.cooldown = primary.cooldown_max;
+                        primary.cooldown.Start();
                     }
                     break;
                 case 2: // secondary
-                    if (secondary.cooldown <= 0 && parent.GetMana() >= secondary.mana_cost && SecondaryCheck(parent))
+                    if (!secondary.cooldown.IsRunning() && parent.GetMana() >= secondary.mana_cost && SecondaryCheck(parent))
                     {
                         Secondary(parent, targetPos, delta);
                         parent.ReduceMana(secondary.mana_cost);
-                        secondary.cooldown = secondary.cooldown_max;
+                        secondary.cooldown.Start();
                     }
                     break;
                 default: return;
@@ -110,6 +110,11 @@ namespace Abyss.Magic
         internal virtual bool SecondaryCheck(Player parent)
         {
             return true;
+        }
+
+        internal virtual void OnDeath(Player parent, Particle particle)
+        {
+            return;
         }
 
 
@@ -165,7 +170,10 @@ namespace Abyss.Magic
         {
             foreach (Particle particle in Particles) particle.Update(delta);
             // remove all particles that have run out of life
-            Particles.RemoveAll(particle => particle.lifetime <= 0 || particle.IsOutside());
+            List<Particle> dead = Particles.FindAll(p => p.lifetime <= 0 || p.IsOutside());
+            foreach (var p in dead)
+                OnDeath(game_state.player, p);
+            Particles.RemoveAll(p => dead.Contains(p));
 
             List<Particle> _particles = new List<Particle>();
 
@@ -185,8 +193,8 @@ namespace Abyss.Magic
             // remove any colliding with a tile
             Particles.RemoveAll(particle => _particles.Contains(particle));
 
-            if (primary.cooldown > 0) primary.cooldown -= Variables.PARTICLE_SUBTRACTOR * delta;
-            if (secondary.cooldown > 0) secondary.cooldown -= Variables.PARTICLE_SUBTRACTOR * delta;
+            primary.cooldown.Update(Variables.PARTICLE_SUBTRACTOR * delta);
+            secondary.cooldown.Update(Variables.PARTICLE_SUBTRACTOR * delta);
         }
 
 

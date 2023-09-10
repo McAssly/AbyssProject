@@ -15,19 +15,22 @@ namespace Abyss.Entities
         private protected int width, height;
 
         // declare max values for the entity
-        private protected readonly double max_speed = 2;
-        private protected readonly double max_accel = 10;
-        private protected readonly double friction = 15;
+        private protected readonly double RESET_DELTA = 100;
+        private protected readonly double MAX_SPEED = 2;
+        private protected readonly double MAX_ACCEL = 10;
+        private protected readonly double FRICTION = 15;
 
         // declare the entity's stats
+        private protected double speed_reset_delta;
+        private protected double accel_reset_delta;
+        private protected double friction_reset_delta;
+        private protected double max_speed;
+        private protected double max_accel;
+        private protected double friction;
         private protected double speed = 1;
-        private protected double friction_;
-        private protected double friction_timer = 0;
-        private protected double max_speed_;
-        private protected double speed_timer = 0;
         private protected double max_health;
 
-        private protected double invulnerability = 0;
+        private protected Timer invulnerability = new Timer(0.25);
 
         // current stats
         private protected double health;
@@ -57,11 +60,13 @@ namespace Abyss.Entities
             this.width = sprite.width - 1;
             this.height = sprite.height - 1;
             this.position = new Vector2(x, y);
+            this.SetMovement();
         }
 
         public Entity(float x, float y)
         {
             this.position = new Vector2(x, y);
+            this.SetMovement();
         }
 
         public Entity(SpriteSheet sprite)
@@ -70,6 +75,7 @@ namespace Abyss.Entities
             this.sprite = sprite;
             this.width = this.sprite.width - 1;
             this.height = this.sprite.height - 1;
+            this.SetMovement();
         }
 
         public virtual void Load()
@@ -80,6 +86,24 @@ namespace Abyss.Entities
         }
 
 
+        public void SetMovement()
+        {
+            this.friction_reset_delta = RESET_DELTA;
+            this.speed_reset_delta = RESET_DELTA;
+            this.accel_reset_delta = RESET_DELTA;
+            this.friction = FRICTION;
+            this.max_speed = MAX_SPEED;
+            this.max_accel = MAX_ACCEL;
+        }
+
+        public void RevertMovement(double delta)
+        {
+            this.friction = Math0.MoveToward0(friction, FRICTION, delta * friction_reset_delta);
+            this.max_speed = Math0.MoveToward0(max_speed, MAX_SPEED, delta * speed_reset_delta);
+            this.max_accel = Math0.MoveToward0(max_accel, MAX_ACCEL, delta * accel_reset_delta);
+        }
+
+
         /// <summary>
         /// moves the entity based on its target vector
         /// </summary>
@@ -87,20 +111,16 @@ namespace Abyss.Entities
         /// <param name="delta"></param>
         public virtual void Move(Layer collision_layer, double delta)
         {
-            if (friction_timer <= 0) friction_ = friction;
-            else friction_timer -= delta * 2;
-            if (speed_timer <= 0) max_speed_ = max_speed;
-            else speed_timer -= delta * 2;
-
+            this.RevertMovement(delta);
             // if the movement vector is not zero then the entity must be trying to move
             if (target_vector != Vector2.Zero)
             {
                 Vector2 target = target_vector * (float)max_speed * (float)speed;
                 velocity = Math0.MoveToward(velocity, target, max_accel * delta);
             }
-            else velocity = Math0.MoveToward(velocity, Vector2.Zero, friction_ * delta);
+            else velocity = Math0.MoveToward(velocity, Vector2.Zero, friction * delta);
 
-            Vector2 max_velocity = velocity.NormalizedCopy() * (float)max_speed_ * (float)speed;
+            Vector2 max_velocity = velocity.NormalizedCopy() * (float)max_speed * (float)speed;
             velocity = Vector2.Clamp(velocity, -Math0.Absolute(max_velocity), Math0.Absolute(max_velocity));
 
             //velocity = velocity_temp;
@@ -181,7 +201,7 @@ namespace Abyss.Entities
             {
                 health -= amount / defense;
                 if (health < 0) { health = 0; }
-                invulnerability = 0.25;
+                invulnerability.Start();
             }
         }
 
@@ -216,7 +236,7 @@ namespace Abyss.Entities
         /// <returns></returns>
         public bool IsInvulnerable()
         {
-            return invulnerability > 0;
+            return invulnerability.IsRunning();
         }
 
 
@@ -253,16 +273,21 @@ namespace Abyss.Entities
             this.target_vector = vector;
         }
 
-        public void SetFriction(float friction, double timer)
+        public void SetFriction(double friction, double reset_delta)
         {
-            this.friction_ = friction;
-            this.friction_timer = timer;
+            this.friction = friction;
+            this.friction_reset_delta = reset_delta;
         }
 
-        public void SetMaxSpeed(double max_speed, double timer)
+        public void SetMaxSpeed(double max_speed, double reset_delta)
         {
-            this.max_speed_ = max_speed;
-            this.speed_timer = timer;
+            this.max_speed = max_speed;
+            this.speed_reset_delta = reset_delta;
+        }
+
+        public double GetMaxSpeed()
+        {
+            return this.max_speed;
         }
 
         public void SetPosition(Vector2 _new)
@@ -304,6 +329,13 @@ namespace Abyss.Entities
         internal Vector2 GetTargetVector()
         {
             return target_vector;
+        }
+
+        internal void ResetResetDelta()
+        {
+            this.friction_reset_delta = RESET_DELTA;
+            this.speed_reset_delta = RESET_DELTA;
+            this.accel_reset_delta = RESET_DELTA;
         }
     }
 }

@@ -292,5 +292,20 @@ namespace Abyss.Utility
                 Math.Max(p1.Y, Math.Min(p2.Y, p1.Y + s1.Y))
                 );
         }
+
+        /// <summary>
+        /// moves the given x towards the given target x by delta
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="x2"></param>
+        /// <param name="delta"></param>
+        /// <returns></returns>
+        internal static double MoveToward0(double x, double tx, double delta)
+        {
+            double distance = tx - x;
+            double direction = (distance >= 0) ? 1 : -1;
+            if (delta * delta >= distance * distance) return tx;
+            return x + delta * direction;
+        }
     }
 }
