@@ -58,6 +58,7 @@ namespace Abyss.Draw
                 Draw(new Text("VEL: " + Math.Round(gs.player.GetVelocity().X, 2) + ", " + Math.Round(gs.player.GetVelocity().Y, 2), 16, 128, 0.3f));
                 Draw(new Text((int)gs.fps + " fps", (int)Variables.DrawPosition.X + 16 * 17, 16, 0.5f));
                 Draw(new Text(1 / gs.fps + "", (int)Variables.DrawPosition.X + 16 * 17, 32, 0.5f));
+                Draw(new Text("CG: " + gs.player.current_grimoire, 16, 104, 0.3f));
                 // draw the status effects on the player
                 for (int i = 0; i < gs.player.statuses.Count; i++)
                 {

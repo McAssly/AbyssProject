@@ -17,7 +17,7 @@ namespace Abyss.Utility
             i = 0;
         }
 
-        public void Start(int _override = 0) 
+        public void Start(double _override = 0) 
         {
             if (_override == 0)
                 i = max;

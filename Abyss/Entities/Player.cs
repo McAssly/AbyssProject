@@ -11,6 +11,8 @@ namespace Abyss.Entities
 {
     internal class Player : Entity
     {
+        internal int current_grimoire = 0;
+        private Timer swap_cooldown = new Timer(0.2);
         public Inventory inventory;
 
         // stats
@@ -59,23 +61,32 @@ namespace Abyss.Entities
         /// <param name="ms"></param>
         public void Attack(KeyboardState kb, MouseState ms, double delta)
         {
+            swap_cooldown.Update(delta);
+            // swap the current grimoire if swap key is pressed
+            if (kb.IsKeyDown(Controls.SwapGrimoire) && !swap_cooldown.IsRunning())
+            {
+                switch (current_grimoire)
+                {
+                    case 0: current_grimoire = 1; swap_cooldown.Start(); break;
+                    case 1: current_grimoire = 0; swap_cooldown.Start(); break;
+                }
+            }
+
             // get the keyboard controls (off by default)
             bool kb_atk_1 = false;
             bool kb_atk_2 = false;
-            if (Controls.AttackKey_1.HasValue) kb_atk_1 = kb.IsKeyDown(Controls.AttackKey_1.Value);
-            if (Controls.AttackKey_2.HasValue) kb_atk_2 = kb.IsKeyDown(Controls.AttackKey_2.Value);
+            if (Controls.PrimaryKey.HasValue) kb_atk_1 = kb.IsKeyDown(Controls.PrimaryKey.Value);
+            if (Controls.SecondaryKey.HasValue) kb_atk_2 = kb.IsKeyDown(Controls.SecondaryKey.Value);
 
             // detect keyboard/mouse buttons, if the corresponding ones are pressed then active the corresponding grimoire and spell
-            if (kb_atk_1 || InputUtility.IsClicked(ms, Controls.AttackMouseFlag_1))
+            if (kb_atk_1 || InputUtility.IsClicked(ms, Controls.Primary))
             {
-                this.CastSpell(0, 1, delta); // primary spell
-            } else if (kb.IsKeyDown(Controls.GrimoireSecondary_1))
-                this.CastSpell(0, 2, delta); // secondary spell
-            if (kb_atk_2 || InputUtility.IsClicked(ms, Controls.AttackMouseFlag_2))
+                this.CastSpell(current_grimoire, 1, delta); // primary spell
+            }
+            else if (kb_atk_2 || InputUtility.IsClicked(ms, Controls.Secondary))
             {
-                this.CastSpell(1, 1, delta); // primary spell
-            } else if (kb.IsKeyDown(Controls.GrimoireSecondary_2))
-                this.CastSpell(1, 2, delta); // secondary spell
+                this.CastSpell(current_grimoire, 2, delta); // secondary spell
+            }
         }
 
 

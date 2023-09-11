@@ -11,12 +11,11 @@ namespace Abyss.Globals
         public static Keys Right = Keys.D;
 
         // attack controls
-        public static Keys GrimoireSecondary_1 = Keys.Space;
-        public static Keys GrimoireSecondary_2 = Keys.Tab;
-        public static Keys? AttackKey_1 = null;
-        public static Keys? AttackKey_2 = null;
-        public static uint AttackMouseFlag_1 = 1; // flags can either be 1 or 2; 1 = LeftClick; 2 = RightClick
-        public static uint AttackMouseFlag_2 = 2;
+        public static Keys SwapGrimoire = Keys.Tab;
+        public static Keys? PrimaryKey = null;
+        public static Keys? SecondaryKey = Keys.Space;
+        public static uint Primary = 1; // flags can either be 1 or 2; 1 = LeftClick; 2 = RightClick
+        public static uint Secondary = 2;
 
 
         // Master Controls
