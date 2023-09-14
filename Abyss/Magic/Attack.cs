@@ -13,9 +13,8 @@ using System.Threading.Tasks;
 
 namespace Abyss.Magic
 {
-    internal class Attack
+    internal class Attack : Magic
     {
-        public List<Particle> particles = new List<Particle>();
         private protected ParticleController controller;
         private protected double dmg_multiplier = 1;
         private protected AnimatedSprite sprite;
@@ -31,19 +30,6 @@ namespace Abyss.Magic
                 this.sprite = sprite;
                 this.draw_sprite = true;
             }
-        }
-
-
-        public Particle Hits(Entity entity)
-        {
-            Particle dealer = particles.Find(p => p.IsColliding(entity));
-            if (dealer != null)
-            {
-                if (!dealer.pierce) particles.Remove(dealer);
-                if (dealer.pierce) dealer.ReduceDamage();
-                return dealer;
-            }
-            return null;
         }
 
 
@@ -81,28 +67,7 @@ namespace Abyss.Magic
 
         public void AddParticle(Entity parent, Vector2 velocity, double rotation, float padding = 0)
         {
-            if (this.draw_sprite)
-                particles.Add(
-                    new Particle(
-                        parent, 
-                        parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, 
-                        (parent.sprite.height + 1) / 2) + padding * velocity, velocity, 
-                        controller, 
-                        parent.CalculateDamage(controller.base_damage), 
-                        rotation, 
-                        sprite.Clone(), 
-                        dmg_multiplier));
-            else
-                particles.Add(
-                    new Particle(
-                        parent,
-                        parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2,
-                        (parent.sprite.height + 1) / 2) + padding * velocity, velocity,
-                        controller,
-                        parent.CalculateDamage(controller.base_damage),
-                        rotation,
-                        null,
-                        dmg_multiplier));
+            Add(controller, sprite, parent, velocity, rotation, dmg_multiplier, padding);
         }
     }
 }

@@ -76,7 +76,7 @@ namespace Abyss.Draw
         public void Draw(Grimoire grimoire)
         {
             if (_Sprites.BaseSpell == null) return;
-            foreach (var particle in grimoire.Particles)
+            foreach (var particle in grimoire.particles)
                 Draw(particle);
         }
 

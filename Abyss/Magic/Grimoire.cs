@@ -14,9 +14,8 @@ namespace Abyss.Magic
     /// <summary>
     /// This is the base grimoire its nothing special but it works
     /// </summary>
-    internal class Grimoire
+    internal class Grimoire : Magic
     {
-        public List<Particle> Particles = new List<Particle>();
         private protected ParticleController primary;
         private protected ParticleController secondary;
         private protected double dmg_multiplier_1 = 1;
@@ -117,34 +116,16 @@ namespace Abyss.Magic
             return;
         }
 
-
-        /// <summary>
-        /// Detects if the entity is hit by any particle the grimoire casted, and returns the damage that particle deals then removes said particle
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public Particle Hits(Entity entity)
-        {
-            Particle dealer = Particles.Find(x => x.IsColliding(entity));
-            if (dealer != null)
-            {
-                if (!dealer.pierce) Particles.Remove(dealer);
-                if (dealer.pierce) dealer.ReduceDamage();
-                return dealer;
-            }
-            return null;
-        }
-
         public void GenerateParticle(Entity parent,Vector2 velocity, byte type, double rotation, float padding = 0)
         {
             if (parent == null) return;
             switch (type)
             {
                 case 0:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, primary, parent.CalculateDamage(primary.base_damage), rotation, sprite.Clone(), dmg_multiplier_1));
+                    Add(primary, sprite, parent, velocity, rotation, dmg_multiplier_1, padding);
                     break;
                 case 1:
-                    Particles.Add(new Particle(parent, parent.GetPosition() + new Vector2((parent.sprite.width + 1) / 2, (parent.sprite.height + 1) / 2) + padding * velocity, velocity, secondary, parent.CalculateDamage(secondary.base_damage), rotation, sprite_2.Clone(), dmg_multiplier_2));
+                    Add(secondary, sprite_2, parent, velocity, rotation, dmg_multiplier_2, padding);
                     break;
                 default: break;
             }
@@ -159,9 +140,9 @@ namespace Abyss.Magic
         /// </summary>
         public void Clear(GameState game_state)
         {
-            foreach (var p in Particles)
+            foreach (var p in particles)
                 this.OnDeath(game_state.player, p);
-            Particles.Clear();
+            particles.Clear();
         }
 
         /// <summary>
@@ -170,18 +151,18 @@ namespace Abyss.Magic
         /// <param name="delta"></param>
         public void Update(double delta, GameState game_state)
         {
-            foreach (Particle particle in Particles) particle.Update(delta);
+            foreach (Particle particle in particles) particle.Update(delta);
             // remove all particles that have run out of life
-            List<Particle> dead = Particles.FindAll(p => p.lifetime <= 0 || p.IsOutside());
+            List<Particle> dead = particles.FindAll(p => p.lifetime <= 0 || p.IsOutside());
             // death not working???
             foreach (var p in dead)
                 OnDeath(game_state.player, p);
-            Particles.RemoveAll(p => dead.Contains(p));
+            particles.RemoveAll(p => dead.Contains(p));
 
             List<Particle> _particles = new List<Particle>();
 
             // get adjacent collision tiles
-            foreach (Particle particle in Particles)
+            foreach (Particle particle in particles)
             {
                 Vector tile_pos = Math0.CoordsToTileCoords(particle.position, true);
                 tile_pos = Math0.ClampToTileMap(tile_pos.To2());
@@ -197,7 +178,7 @@ namespace Abyss.Magic
             // remove any colliding with a tile
             foreach (var p in _particles)
                 OnDeath(game_state.player, p);
-            Particles.RemoveAll(particle => _particles.Contains(particle));
+            particles.RemoveAll(particle => _particles.Contains(particle));
 
             primary.cooldown.Update(Variables.PARTICLE_SUBTRACTOR * delta);
             secondary.cooldown.Update(Variables.PARTICLE_SUBTRACTOR * delta);
