@@ -250,6 +250,18 @@ namespace Abyss.Utility
             return new Vector2(x / length, y / length);
         }
 
+        public static double AngleAtVector(Vector2 v)
+        {
+            double angle = Math.Atan2(v.X, v.Y);
+            if (angle < 0) angle += Math.PI * 2;
+            return angle;
+        }
+
+        public static double AngleBetweenVectors(Vector2 v1, Vector2 v2)
+        {
+            return Math.Acos((v1.X * v2.X + v1.Y * v2.Y) * (v1.X * v2.X + v1.Y * v2.Y) / (v2.LengthSquared() * v1.LengthSquared()));
+        }
+
 
 
         /// <summary>

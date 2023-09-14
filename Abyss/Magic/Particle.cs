@@ -155,7 +155,7 @@ namespace Abyss.Magic
         /// <param name="delta"></param>
         public void Update(double delta)
         {
-            sprite.Update(delta);
+            if (sprite != null) sprite.Update(delta);
             if (!lock_to_player)
             {
                 velocity = Math0.ApplyAcceleration(velocity, accel * delta);

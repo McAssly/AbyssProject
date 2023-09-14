@@ -5,6 +5,7 @@ using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using System.Diagnostics;
 
 namespace Abyss.Draw
 {
@@ -25,7 +26,13 @@ namespace Abyss.Draw
         /// <param name="enemy"></param>
         public void Draw(Enemy enemy)
         {
-            Draw(enemy.sprite, enemy.GetPosition(), Color.Red);
+            if (Variables.DebugCollision)
+                this.DrawRectangle(new Rectangle(
+                    (int)(enemy.GetPosition().X + enemy.GetTargetVector().X * 2),
+                    (int)(enemy.GetPosition().Y + enemy.GetTargetVector().Y * 2),
+                    16, 16), Color.White);
+            if (!enemy.alerted) Draw(enemy.sprite, enemy.GetPosition(), Color.Red);
+            else Draw(enemy.sprite, enemy.GetPosition(), Color.Magenta);
         }
 
         /// <summary>
@@ -55,7 +62,10 @@ namespace Abyss.Draw
         public void Draw(Enemy[] enemies)
         {
             foreach (Enemy enemy in enemies)
+            {
                 Draw(enemy);
+                Draw(enemy.attack);
+            }
         }
 
 
@@ -68,6 +78,17 @@ namespace Abyss.Draw
             if (_Sprites.BaseSpell == null) return;
             foreach (var particle in grimoire.Particles)
                 Draw(particle);
+        }
+
+
+        public void Draw(Attack attack)
+        {
+            if (attack.draw_sprite)
+                foreach (Particle p in attack.particles)
+                    Draw(p);
+            if (Variables.DebugCollision)
+                foreach (Particle p in attack.particles)
+                    this.DrawCircle(new CircleF(new Point2(p.position.X, p.position.Y), (float)p.radius), 16, Color.LightPink);
         }
 
 

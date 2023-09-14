@@ -27,6 +27,8 @@ namespace Abyss.Master
         private protected Level dungeon;
         private protected int level_index;
 
+        private protected List<Enemy> add_enemies = new List<Enemy>();
+
         // declare the player for the game state
         protected internal Player player;
 
@@ -96,10 +98,32 @@ namespace Abyss.Master
                     if (damager != null)
                     {
                         if (!enemy.IsInvulnerable())
+                        {
                             Effect.HitEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), damager.rotation, damager.element, this);
-                        enemy.TakeDamage(damager.GetDamage());
+                            enemy.TakeDamage(damager.GetDamage());
+                        }
                     }
                 }
+
+
+                // damage the player
+                Particle _damager = enemy.attack.Hits(player);
+                if (_damager != null)
+                {
+                    if (!player.IsInvulnerable())
+                    {
+                        Effect.HitEffect(Math0.ClosestPosition(player.GetPosition(), player.GetSize(), _damager.position), _damager.rotation, _damager.element, this);
+                        player.TakeDamage(_damager.GetDamage());
+                    }
+                }
+            }
+
+
+            // add summoned enemies
+            if (this.add_enemies.Count > 0)
+            {
+                this.levels[level_index].GetEnemies().AddRange(add_enemies);
+                this.add_enemies.Clear();
             }
 
             // kill the player
@@ -169,6 +193,16 @@ namespace Abyss.Master
                 player.inventory.grimoires[1].Clear(this);
                 particle_fx.Clear();
             }
+        }
+
+        public Level GetLevel()
+        {
+            return levels[level_index];
+        }
+
+        public void AddEnemies(List<Enemy> enemies)
+        {
+            this.add_enemies.AddRange(enemies);
         }
 
 

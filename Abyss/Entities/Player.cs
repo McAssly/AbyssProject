@@ -103,6 +103,8 @@ namespace Abyss.Entities
             CalculateInputVector(kb);
             Move(game_state.GetCollisionLayer(), delta);
             this.Clamp();
+            if (this.target_vector != Vector2.Zero)
+                this.angle = Math0.AngleAtVector(target_vector);
 
             /* ATTACK DETECTION AND CASTING SPELLS */
             game_state.player.Attack(kb, ms, delta);

@@ -32,6 +32,9 @@ namespace Abyss.Entities
         private protected double damage;
         private protected double defense;
 
+        // the angle in which the entity is facing
+        private protected double angle;
+
         // declare position variables
         private protected Vector2 target_vector = Vector2.Zero;
         private protected Vector2 position;
@@ -187,32 +190,6 @@ namespace Abyss.Entities
                 tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0))); // TOP CENTER
                 tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height))); // BOTTOM CENTER
             }
-            /*
-            if (target_vector.X > 0)
-            {
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height / 2)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height)));
-            }
-            if (target_vector.X < 0)
-            {
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, 0)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, height / 2)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, height)));
-            }
-            if (target_vector.Y > 0)
-            {
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, height / 2)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, height / 2)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width, height / 2)));
-            }
-            if (target_vector.Y < 0)
-            {
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(0, 0)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width / 2, 0)));
-                tile_positions.Add(Math0.CoordsToTileCoords(position + new Vector2(width, 0)));
-            }
-            */
             return tile_positions.ToArray();
         }
 
@@ -221,7 +198,7 @@ namespace Abyss.Entities
         /// reduces the entity's health by a given amount
         /// </summary>
         /// <param name="amount"></param>
-        public void TakeDamage(double amount)
+        public virtual void TakeDamage(double amount)
         {
             if (!IsInvulnerable())
             {
@@ -229,6 +206,12 @@ namespace Abyss.Entities
                 if (health < 0) { health = 0; }
                 invulnerability.Start();
             }
+        }
+
+
+        public double FacingAngle()
+        {
+            return this.angle;
         }
 
 
