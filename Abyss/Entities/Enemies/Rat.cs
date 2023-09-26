@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace Abyss.Entities.enemies
+namespace Abyss.Entities.Enemies
 {
     internal class Rat : Enemy
     {
@@ -20,16 +20,18 @@ namespace Abyss.Entities.enemies
                 new ParticleController(Element.NULL, 0.25, 1, 0, 0, 0, 0, 10, false, true, true)
                 );
 
-            this.max_health = 5;
+            this.max_health = 3;
             this.health = this.max_health;
             this.damage = 25;
             this.defense = 1;
             this.alerted = false;
+            this.asleep = false;
+            this.speed = 0.5;
 
             this.attack_cooldown = new Timer(1);
 
             this.move_cooldown = new Timer(1);
-            this.wander_cooldown = new Timer(0.2);
+            this.wander_cooldown = new Timer(0.7);
 
             this.range = 70;
             this.sight_range = 1.18;
@@ -79,12 +81,12 @@ namespace Abyss.Entities.enemies
             base.TakeDamage(amount);
             // add extra functionality
             // took damage:
-            if (!this.alerted) // if the rat was unalert at the time of taking damage
+            if (!this.alerted && !attack_cooldown.IsRunning()) // if the rat was unalert at the time of taking damage
             {
                 // summon a new rat with the same health and stats
                 Rat new_rat = this.Clone();
                 new_rat.SetPosition(this.position - Math0.VectorAtAngle(Math0.RandomAngle()) * 3);
-                new_rat.health /= 4;
+                new_rat.health = new_rat.health / 4 - 1;
                 swarmed.Add(new_rat);
             }
         }

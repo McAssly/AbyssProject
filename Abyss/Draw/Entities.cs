@@ -31,7 +31,11 @@ namespace Abyss.Draw
                     (int)(enemy.GetPosition().X + enemy.GetTargetVector().X * 2),
                     (int)(enemy.GetPosition().Y + enemy.GetTargetVector().Y * 2),
                     16, 16), Color.White);
-            if (!enemy.alerted) Draw(enemy.sprite, enemy.GetPosition(), Color.Red);
+            if (!enemy.alerted && !enemy.attack_cooldown.IsRunning())
+            {
+                Draw(enemy.sprite, enemy.GetPosition(), (enemy.asleep) ? Color.Blue : Color.Red);
+            }
+            else if (enemy.attack_cooldown.IsRunning() && !enemy.alerted) Draw(enemy.sprite, enemy.GetPosition(), Color.Yellow);
             else Draw(enemy.sprite, enemy.GetPosition(), Color.Magenta);
         }
 

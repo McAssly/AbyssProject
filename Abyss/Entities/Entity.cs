@@ -8,6 +8,7 @@ using MonoGame.Extended;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Transactions;
 
 namespace Abyss.Entities
 {
@@ -275,7 +276,6 @@ namespace Abyss.Entities
         {
             this.velocity += velocity;
         }
-
 
         public void SetTargetVector(Vector2 vector)
         {

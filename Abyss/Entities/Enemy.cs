@@ -22,6 +22,9 @@ namespace Abyss.Entities
         // declare if the enemy is alerted of the player
         public bool alerted;
 
+        // declare if the enemy is asleep or not
+        public bool asleep;
+
         // declare the range in which the enemy can see
         public double sight_range;
 
@@ -45,7 +48,7 @@ namespace Abyss.Entities
         /// </summary>
         /// <param name="delta"></param>
         /// <param name="game_state"></param>
-        public void Update(double delta, GameState game_state)
+        public virtual void Update(double delta, GameState game_state)
         {
             this.attack.Update(delta, game_state);
             this.Clamp();
@@ -79,13 +82,16 @@ namespace Abyss.Entities
 
         public virtual void UnAlert(double delta, GameState game_state)
         {
-            this.Move(game_state.GetCollisionLayer(), delta);
-            if (!this.wander_cooldown.IsRunning())
+            if (!asleep)
             {
-                target_vector = Math0.VectorAtAngle(Math0.RandomAngle());
-                this.wander_cooldown.Start();
+                this.Move(game_state.GetCollisionLayer(), delta);
+                if (!this.wander_cooldown.IsRunning())
+                {
+                    target_vector = Math0.VectorAtAngle(Math0.RandomAngle());
+                    this.wander_cooldown.Start();
+                }
+                this.wander_cooldown.Update(delta);
             }
-            this.wander_cooldown.Update(delta);
         }
 
         public virtual void Attack(GameState game_state, double delta)
@@ -98,8 +104,12 @@ namespace Abyss.Entities
 
         public bool IsInRange(Vector2 position)
         {
-            return ((position - this.position).LengthSquared() <= range * range) 
-                && Math0.AngleInRange(Math0.AngleBetweenVectors(this.position, position), FacingAngle() - sight_range, FacingAngle() + sight_range);
+            if (sight_range != 0)
+            {
+                return ((position - this.position).LengthSquared() <= range * range)
+                    && Math0.AngleInRange(Math0.AngleBetweenVectors(this.position, position), FacingAngle() - sight_range, FacingAngle() + sight_range);
+            }
+            return ((position - this.position).LengthSquared() <= range * range);
         }
 
 

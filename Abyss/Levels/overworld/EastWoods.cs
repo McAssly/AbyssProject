@@ -1,6 +1,6 @@
 ﻿
 using Abyss.Entities;
-using Abyss.Entities.enemies;
+using Abyss.Entities.Enemies;
 using Abyss.Levels.data;
 
 namespace Abyss.Levels.overworld
@@ -70,10 +70,8 @@ namespace Abyss.Levels.overworld
                             {1,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0},
                             {0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0}
                         }),
-                    new Enemy[3]{
-                        new Rat(5, 7),
-                        new Rat(4, 12),
-                        new Rat(10, 9)
+                    new Enemy[1]{
+                        new KnightStatue(5, 7)
                     },
                     -1, 1, -1, -1),
                 new TileMap(
