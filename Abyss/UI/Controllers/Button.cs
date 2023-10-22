@@ -2,18 +2,17 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
-namespace Abyss.UI
+namespace Abyss.UI.Controllers
 {
-    public delegate void ButtonAction();
-
-    internal class Button
+    internal class Button : IController
     {
         private protected Text label;
         private protected Rectangle bounds;
         public bool hovered;
         public bool enabled;
+        public bool visible;
 
-        public event ButtonAction Action;
+        public event ControllerAction Action;
 
         /// <summary>
         /// Makes a button with a given action
@@ -25,10 +24,11 @@ namespace Abyss.UI
         /// <param name="height"></param>
         public Button(string label, int x, int y, int width, int height)
         {
-            this.bounds = new Rectangle(x, y, width, height);
-            this.label = Button.MakeCenteredLabel(label, bounds);
-            this.enabled = false;
-            this.hovered = false;
+            bounds = new Rectangle(x, y, width, height);
+            this.label = MakeCenteredLabel(label, bounds);
+            enabled = false;
+            hovered = false;
+            visible = true;
         }
 
 
@@ -38,7 +38,7 @@ namespace Abyss.UI
         /// <param name="ms"></param>
         public void Update(MouseState ms)
         {
-            Press(ms, InputUtility.MousePosition());
+            Press(ms);
             if (enabled)
             {
                 Action?.Invoke();
@@ -53,9 +53,9 @@ namespace Abyss.UI
         /// <param name="ms"></param>
         /// <param name="mouse_position"></param>
         /// <param name="output"></param>
-        public void Press(MouseState ms, Vector2 mouse_position, bool output = true)
+        public void Press(MouseState ms, bool output = true)
         {
-            if (Math0.WithinRectangle(mouse_position, bounds)) // hovering over the checkbox
+            if (Math0.WithinRectangle(InputUtility.MousePosition(), bounds)) // hovering over the checkbox
             {
                 hovered = output;
                 if (InputUtility.IsClicked(ms, 1)) enabled = output;
@@ -69,7 +69,7 @@ namespace Abyss.UI
             return hovered;
         }
 
-        public RectangleF GetDrawBackground()
+        public RectangleF GetDrawBox()
         {
             return new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height);
         }
@@ -79,7 +79,15 @@ namespace Abyss.UI
             return label;
         }
 
+        bool IController.IsVisible()
+        {
+            return visible;
+        }
 
+        bool IController.IsPressed()
+        {
+            throw new System.NotImplementedException();
+        }
 
 
 

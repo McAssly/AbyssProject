@@ -1,6 +1,7 @@
 ﻿using Abyss.Draw;
 using Abyss.Globals;
 using Abyss.Master;
+using Abyss.UI.Menus;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
@@ -24,12 +25,9 @@ namespace Abyss.UI
         // --------------------------------------------------------------------------------------------------------------------------
 
 
-        private Ui current_ui;
+        private IGui current_ui;
 
-        public UiState()
-        {
-
-        }
+        public UiState() { }
 
         /// <summary>
         /// Updates the UI state
@@ -43,10 +41,10 @@ namespace Abyss.UI
         {
             // update the current ui state, close it if it needs to close
             Close(game_state);
-            Ui previous_ui = current_ui;
+            IGui previous_ui = current_ui;
 
             // open the debug menu
-            if (Game._KeyInput == Controls.DebugMenu && !(current_ui is UI.Console))
+            if (Game._KeyInput == Controls.DebugMenu && !(current_ui is DebugConsole))
             {
                 // Hook the text input function to the game window
                 Window.TextInput += InputUtility.RegisterInput;
@@ -54,9 +52,9 @@ namespace Abyss.UI
             }
 
             // open the options menu
-            if (Game._KeyInput == Controls.Options && !(current_ui is UI.Console))
+            if (Game._KeyInput == Controls.Options && !(current_ui is DebugConsole))
             {
-                if (!(current_ui is UI.Options))
+                if (!(current_ui is Menu))
                     Open(UiControllers.Options, game_state, false);
                 else
                     CloseCurrent();
@@ -64,7 +62,7 @@ namespace Abyss.UI
 
 
             // CONSOLE PROCESS              CONSOLE     < --- (debug menu)
-            if (current_ui is UI.Console)
+            if (current_ui is DebugConsole)
                 if (InputUtility.HandleInput(kb))
                 {
                     CloseCurrent(); // force close the current ui
@@ -91,7 +89,7 @@ namespace Abyss.UI
         /// Setup the current ui of the game 
         /// </summary>
         /// <param name="ui"></param>
-        public void Setup(Ui ui)
+        public void Setup(IGui ui)
         {
             this.current_ui = ui;
         }
@@ -100,7 +98,7 @@ namespace Abyss.UI
         /// Opens the given UI, sets the current UI to the given
         /// </summary>
         /// <param name="ui"></param>
-        public void Open(Ui ui, GameState game_state, bool visibility = true) 
+        public void Open(IGui ui, GameState game_state, bool visibility = true) 
         {
             this.current_ui = ui;
             game_state.SetVisible(visibility);
@@ -128,7 +126,7 @@ namespace Abyss.UI
         {
             if (this.current_ui.IsClosed())
             {
-                if (this.current_ui is UI.Console)
+                if (this.current_ui is DebugConsole)
                 {
                     Game.GameWindow.TextInput -= InputUtility.RegisterInput;
                 }
@@ -152,6 +150,6 @@ namespace Abyss.UI
         /// Grabs the current ui the game state is running
         /// </summary>
         /// <returns>the game state's current ui state</returns>
-        public Ui CurrentUi() { return current_ui; }
+        public IGui CurrentUi() { return current_ui; }
     }
 }

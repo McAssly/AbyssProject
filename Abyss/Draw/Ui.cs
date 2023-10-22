@@ -2,6 +2,8 @@
 using Abyss.Magic;
 using Abyss.Master;
 using Abyss.UI;
+using Abyss.UI.Controllers;
+using Abyss.UI.Menus;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -30,12 +32,12 @@ namespace Abyss.Draw
         {
             if (button.IsHovered())
             {
-                this.FillRectangle(button.GetDrawBackground(), Color.White);
+                this.FillRectangle(button.GetDrawBox(), Color.White);
                 this.Draw(button.GetLabel(), Color.Black);
             }
             else
             {
-                this.DrawRectangle(button.GetDrawBackground(), Color.White);
+                this.DrawRectangle(button.GetDrawBox(), Color.White);
                 this.Draw(button.GetLabel());
             }
 
@@ -72,7 +74,7 @@ namespace Abyss.Draw
             }
         }
 
-        public void Draw(UI.Console console)
+        public void Draw(DebugConsole console)
         {
             this.FillRectangle(new RectangleF(0, 0, Variables.WindowW, 16 * 2), Color.Black);
             DrawString(_Sprites.Font, Game._TextInput.ToString(), new Vector2(8, 8), Color.White, 0, Vector2.Zero, 0.4f, SpriteEffects.None, 0);
@@ -87,35 +89,35 @@ namespace Abyss.Draw
                     this.Draw(option);
         }
 
-        public void Draw(UI.Interaction interaction)
+        public void Draw(Interaction interaction)
         {
             this.Draw(interaction.GetDialogue());
         }
 
-        public void Draw(UI.Options options)
+        public void Draw(Menu options)
         {
             this.DrawRectangle(new RectangleF(options.origin.x, options.origin.y, 384, Variables.WindowH), Color.LimeGreen);
             Draw(options.fullscreen);
             Draw(options.close_button);
         }
 
-        public void Draw(Ui ui, GameState gs)
+        public void Draw(IGui ui, GameState gs)
         {
             if (ui is Hud)
             {
                 Draw(ui as Hud, gs);
             }
-            else if (ui is UI.Console)
+            else if (ui is DebugConsole)
             {
-                Draw(ui as UI.Console);
+                Draw(ui as DebugConsole);
             }
-            else if (ui is UI.Interaction)
+            else if (ui is Interaction)
             {
-                Draw(ui as UI.Interaction);
+                Draw(ui as Interaction);
             }
-            else if (ui is UI.Options)
+            else if (ui is Menu)
             {
-                Draw(ui as UI.Options);
+                Draw(ui as Menu);
             }
         }
     }

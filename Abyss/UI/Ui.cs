@@ -1,5 +1,7 @@
 ﻿using Abyss.Globals;
 using Abyss.Master;
+using Abyss.UI.Controllers;
+using Abyss.UI.Menus;
 using Abyss.Utility;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -12,11 +14,11 @@ namespace Abyss.UI
     {
         // Declare every single UI menu in the game
         public static Interaction Dialogue = new Interaction();
-        public static Console _Debug = new Console();
-        public static Inventory Invenetory = new Inventory();
+        public static DebugConsole _Debug = new DebugConsole();
+        public static PlayerMenu Invenetory = new PlayerMenu();
         public static Interaction Shop = new Interaction();
         public static Menu Main = new Menu();
-        public static Options Options = new Options();
+        public static Menu Options = new Menu();
 
         // in game HUD
         public static Hud HUD = new Hud();
@@ -50,7 +52,6 @@ namespace Abyss.UI
             }
         }
 
-
         /// <summary>
         /// opens a ui element
         /// </summary>
@@ -67,9 +68,6 @@ namespace Abyss.UI
             }
         }
 
-
-
-
         public static void CommandSet(List<string> args)
         {
             if (args.Count <= 1) { Debug.WriteLine("No arguments found"); return; }
@@ -82,198 +80,5 @@ namespace Abyss.UI
                 default: break;
             }
         }
-    }
-
-    internal interface Ui
-    {
-        public void Close();
-        public bool IsClosed();
-        public void UnClose();
-        public void Update(KeyboardState KB, MouseState MS);
-    }
-
-    internal class Hud : Ui
-    {
-        public bool close = false;
-
-        public void Close() { close = true; }
-        public bool IsClosed() { return close; }
-        public void UnClose() { close = false; }
-        public Hud() { }
-
-        public void Update(KeyboardState KB, MouseState MS) { }
-    }
-
-    internal class Interaction : Ui
-    {
-        public bool close = false;
-
-        /**
-         * 
-         * 
-         * WHERE I LEFT OFF WORKING ON DIALOGUE MENUS
-         * WORK WITH HOVERING TEXT AND MOVING THROUGH A DIALOGUE TREE
-         * 
-         * 
-         * 
-         */
-        private Dialogue dialogue;
-
-        public Dialogue GetDialogue() { return dialogue; }
-
-        public void SetDialogue(Dialogue dialogue)
-        {
-            this.dialogue = dialogue;
-        }
-
-        public void Close() { close = true; }
-        public bool IsClosed() { return close; }
-        public void UnClose() { close = false; }
-        public void Update(KeyboardState KB, MouseState MS) { }
-
-    }
-
-    internal class Console : Ui
-    {
-        public bool close = false;
-        public void Close() { close = true; }
-        public bool IsClosed() { return close; }
-        public void UnClose() { close = false; }
-        public Console() { }
-
-        public void Update(KeyboardState KB, MouseState MS) { }
-
-        public void ProcessCommand(UiState ui_state, GameState game_state)
-        {
-            // first conver the text input to a readable string
-            string input = Game._TextInput.Append("\n").ToString();
-            Debug.WriteLine(input);
-
-            // next create a list of arguments that were passed into the console
-            List<string> args = new List<string>();
-            // need to build this list, by first starting with each argument
-            StringBuilder arg = new StringBuilder();
-            foreach (char c in input)
-            {
-                // add the current char in the input to the argument
-                if (c == ' ' || c == '\n') // if we are at the next argument as defined by each delimeter (space or newline)
-                {
-                    // add the finished argument to the arguements list
-                    args.Add(arg.ToString());
-                    arg = new StringBuilder(); // reset the arguemnt builder to build more
-                }
-                else
-                    arg.Append(c);
-            }
-
-            // if no command was passed then return as nothing happend
-            if (args.Count <= 0)
-            { Debug.WriteLine("No arguments found"); return; }
-
-            // every command has a starting argument, the primary command
-            /**
-             * List of primary commands
-             * 
-             * enable       - enables a hud element
-             * disable      - disables a hud element
-             * set          - sets a value to an entity
-             * save         - saves the game in its current state (prototype)
-             * open         - opens a ui element
-             */
-            string primary = args[0];
-            switch (primary)
-            {
-                case "enable":
-                    UiControllers.EnableDebugHUD(args, true); break;
-                case "disable":
-                    UiControllers.EnableDebugHUD(args, false); break;
-                case "open":
-                    UiControllers.CommandOpen(args, ui_state); break;
-                case "save":
-                    game_state.Save(); break;
-                case "set":
-                    UiControllers.CommandSet(args); break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    internal class Inventory : Ui
-    {
-        public bool close = false;
-        public void Close() { close = true; }
-        public bool IsClosed() { return close; }
-        public void UnClose() { close = false; }
-        public void Update(KeyboardState KB, MouseState MS) { }
-    }
-
-    internal class Options : Ui
-    {
-        public bool close = false;
-
-        private readonly int ui_width = 384;
-        private readonly int box_width = 8;
-        private readonly int padding = 16;
-        public Vector origin;
-
-        public byte previous;
-
-        public Button close_button;
-        public Slider volume;
-        public Slider window_scale;
-        public Button fullscreen;
-        public Slider framerate;
-
-
-        public void Initialize(GameState game_state, UiState ui_state)
-        {
-            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
-
-            fullscreen = new Button("fullscreen", origin.x + padding, origin.y, (int)(ui_width * Variables.GameScale) / box_width, 16);
-            close_button = new Button("close", origin.x + padding, origin.y + 16 * 4, (int)(ui_width * Variables.GameScale) / box_width, 16);
-
-
-
-            fullscreen.Action += () =>
-            {
-                Config.ToggleFullscreen();
-            };
-
-            close_button.Action += () =>
-            {
-                this.close = true;
-            };
-        }
-
-        public void UpdateOrigin()
-        {
-            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
-        }
-
-        public void Close() { close = true; }
-        public bool IsClosed() { return close; }
-        public void UnClose() { close = false; }
-        public void Update(KeyboardState KB, MouseState MS) 
-        {
-            UpdateOrigin();
-
-            fullscreen.Update(MS);
-            close_button.Update(MS);
-        }
-    }
-
-    internal class Menu : Ui
-    {
-        public bool close = false;
-
-        public bool is_main;
-        public Button[] main;
-        public Button[] game;
-
-        public void Close() { close = true; }
-        public bool IsClosed() { return close; }
-        public void UnClose() { close = false; }
-        public void Update(KeyboardState KB, MouseState MS) { }
     }
 }
