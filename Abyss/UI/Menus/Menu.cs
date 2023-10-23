@@ -24,6 +24,7 @@ namespace Abyss.UI.Menus
         }
 
 
+        /*
         public void Initialize(GameState game_state, UiState ui_state)
         {
             this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
@@ -41,10 +42,11 @@ namespace Abyss.UI.Menus
                 this.close = true;
             };
         }
+        */
 
         public void UpdateOrigin()
         {
-            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
+            //this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
         }
 
         public void Close() { close = true; }
@@ -54,8 +56,8 @@ namespace Abyss.UI.Menus
         {
             UpdateOrigin();
 
-            fullscreen.Update(MS);
-            close_button.Update(MS);
+            //fullscreen.Update(MS);
+            //close_button.Update(MS);
         }
     }
 }

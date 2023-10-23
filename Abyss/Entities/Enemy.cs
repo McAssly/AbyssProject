@@ -127,5 +127,10 @@ namespace Abyss.Entities
         {
             return new Enemy(this.sprite, this.position.X * 16, this.position.Y * 16);
         }
+
+        internal byte GetElement()
+        {
+            return this.attack.GetElement();
+        }
     }
 }

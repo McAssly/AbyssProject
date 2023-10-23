@@ -52,7 +52,7 @@ namespace Abyss.Magic
                 Tile tile = game_state.GetCollisionLayer().GetTiles()[tile_pos.y, tile_pos.x];
                 if (particle.IsColliding(tile) && !tile.NULL && !particle.ignore_collision)
                 {
-                    Effect.HitEffect(particle.position, particle.rotation, particle.element, game_state);
+                    Effect.HitEffect(particle.position, particle.rotation, this.elemental_type, game_state);
                     dead.Add(particle);
                     break;
                 }

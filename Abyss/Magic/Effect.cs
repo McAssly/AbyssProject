@@ -31,18 +31,13 @@ namespace Abyss.Magic
             return lifetime <= 0;
         }
 
-        public static void HitEffect(Vector2 position, double rotation, Element element, GameState game_state)
+        public static void HitEffect(Vector2 position, double rotation, byte element, GameState game_state)
         {
             switch (element)
             {
-                case Element.fire:
+                case 1: // fire effect
                     {
                         game_state.particle_fx.Add(new Effect(position, _Sprites.ExplosionEffect.Clone(), 0.2, rotation));
-                        break;
-                    }
-                case Element.wind:
-                    {
-                        game_state.particle_fx.Add(new Effect(position, _Sprites.WindHitEffect.Clone(), 0.42, -rotation));
                         break;
                     }
                 default:

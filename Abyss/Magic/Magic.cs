@@ -8,6 +8,7 @@ namespace Abyss.Magic
     internal class Magic
     {
         public List<Particle> particles = new List<Particle>();
+        private protected byte elemental_type = 0;
 
         public Particle Hits(Entity entity)
         {
@@ -39,6 +40,11 @@ namespace Abyss.Magic
         public void Clear()
         {
             particles.Clear();
+        }
+
+        public byte GetElement()
+        {
+            return this.elemental_type;
         }
     }
 }

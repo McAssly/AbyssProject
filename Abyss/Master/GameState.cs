@@ -99,7 +99,7 @@ namespace Abyss.Master
                     {
                         if (!enemy.IsInvulnerable())
                         {
-                            Effect.HitEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), damager.rotation, damager.element, this);
+                            Effect.HitEffect(Math0.ClosestPosition(enemy.GetPosition(), enemy.GetSize(), damager.position), damager.rotation, player.GetCurrentGrimoire().GetElement(), this);
                             enemy.TakeDamage(damager.GetDamage());
                         }
                     }
@@ -112,7 +112,7 @@ namespace Abyss.Master
                 {
                     if (!player.IsInvulnerable())
                     {
-                        Effect.HitEffect(Math0.ClosestPosition(player.GetPosition(), player.GetSize(), _damager.position), _damager.rotation, _damager.element, this);
+                        Effect.HitEffect(Math0.ClosestPosition(player.GetPosition(), player.GetSize(), _damager.position), _damager.rotation, enemy.GetElement(), this);
                         player.TakeDamage(_damager.GetDamage());
                     }
                 }

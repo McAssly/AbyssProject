@@ -108,27 +108,13 @@ namespace Abyss.Entities
 
             /* ATTACK DETECTION AND CASTING SPELLS */
             game_state.player.Attack(kb, ms, delta);
-            if (time_elapsed >= 1 && game_state.player.GetMana() < game_state.player.GetMaxMana())
-            {
-                game_state.player.RegenerateMana(1);
-                time_elapsed = 0;
+            if (!regen.IsRunning() && this.mana < this.max_mana) {
+                this.RegenerateMana(1);
+                this.regen.Start();
             }
 
-            // if the player has any status effects update their statuses
-            if (statuses.Count > 0)
-            {
-                // iterate through each status and apply each of them
-                for (int i = 0; i < statuses.Count; i++)
-                {
-                    // create a copy of the status
-                    StatusEffect status_copy = statuses[i];
-                    status_copy.timer -= delta;
-                    statuses[i] = status_copy;
-                }
-                statuses.RemoveAll(effect => effect.timer <= 0);
-            }
-            time_elapsed += delta;
-            regen_timer += delta;
+            // update the status effects on the player
+            this.ApplyStatuses(delta);
 
             // handle animations
             switch (sprite.GetSection())
@@ -302,6 +288,11 @@ namespace Abyss.Entities
         internal void SetMana(double amount)
         {
             this.mana = amount;
+        }
+
+        internal Grimoire GetCurrentGrimoire()
+        {
+            return this.inventory.grimoires[current_grimoire];
         }
     }
 }

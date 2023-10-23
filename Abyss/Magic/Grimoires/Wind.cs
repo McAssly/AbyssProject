@@ -12,8 +12,8 @@ namespace Abyss.Magic.Grimoires
     {
         public Wind() : base()
         {
-            primary = new ParticleController(Element.wind, 0.1, 2, 0.5, 0, 0, 0.2, 16, true, true, true);
-            secondary = new ParticleController(Element.wind, 0.1, 0.25, 400, 0, 0, 0.1, 8, false, true, true);
+            primary = new ParticleController(0.1, 2, 0.5, 0, 0, 0.2, 16, true, true, true);
+            secondary = new ParticleController(0.1, 0.25, 400, 0, 0, 0.1, 8, false, true, true);
 
             sprite = _Sprites.WindSpell;
             sprite_2 = _Sprites.WindDashSpell;

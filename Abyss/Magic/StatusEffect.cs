@@ -1,24 +1,28 @@
 ﻿using Abyss.Entities;
+using Abyss.Utility;
+using System;
 
 namespace Abyss.Magic
 {
     internal struct StatusEffect
     {
         public double value;
-        public double timer;
+        public Timer timer;
 
         /*
-          0 = crit_rate                         ONLY EFFECTS PLAYER
-          1 = crit_dmg                          ONLY EFFECTS PLAYER
-          2 = base_dmg
-          3 = base_spd
-          4 = regen_hp      // action based
-          5 = regen_mana    // action based     ONLY EFFECTS PLAYER
-          6 = friction
+          0 = crit_rate         PLAYER ONLY
+          1 = burn              DOT type effect
          */
         public byte application_id;
 
-        public StatusEffect(double value, double timer, byte id)
+        public StatusEffect(double value, double duration, byte id)
+        {
+            this.value = value;
+            this.timer = new Timer(duration);
+            this.application_id = id;
+        }
+
+        public StatusEffect(double value, Timer timer, byte id)
         {
             this.value = value;
             this.timer = timer;
@@ -27,25 +31,21 @@ namespace Abyss.Magic
 
         public void Action(Entity parent)
         {
-            if (parent.regen_timer >= 1)
+            switch (application_id)
             {
-                switch (application_id)
-                {
-                    case 4:
+                case 0: break;
+                case 1: // apply the DOT effect to the entity
+                    if (!parent.regen.IsRunning()) { // regen timer is on a 1 second timer
+                        // apply DOT based on the 1 second regen timer
                         parent.TakeDamage(value);
-                        break;
-                    case 5:
-                        if (parent is Player) (parent as Player).ReduceMana(value);
-                        break;
-                    default: break;
-                }
-                parent.regen_timer = 0;
+                    }
+                    break;
             }
         }
 
-        public void LowerTimer(double delta)
+        public void SetValue(double new_value)
         {
-            this.timer -= delta;
+            this.value = new_value;
         }
 
         public readonly override string ToString()
@@ -55,19 +55,15 @@ namespace Abyss.Magic
                 case 0:
                     return "crit_rate: " + value + " : " + timer;
                 case 1:
-                    return "crit_dmg: " + value + " : " + timer;
-                case 2:
-                    return "damage: " + value + " : " + timer;
-                case 3:
-                    return "speed: " + value + " : " + timer;
-                case 4:
-                    return "regen_hp: " + value + " : " + timer;
-                case 5:
-                    return "regen_mn: " + value + " : " + timer;
-                case 6:
-                    return "friction: " + value + " : " + timer;
-                default: return "";
+                    return "burn: " + value + " : " + timer;
+                default:
+                    return "status not implemented : " + value + " : " + timer;
             }
+        }
+
+        internal StatusEffect Clone()
+        {
+            return new StatusEffect(value, timer, application_id);
         }
     }
 }

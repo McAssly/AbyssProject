@@ -17,7 +17,7 @@ namespace Abyss.Entities.Enemies
         public override void Initialize()
         {
             this.attack = new Attack(
-                new ParticleController(Element.NULL, 0.25, 1, 0, 0, 0, 0, 10, false, true, true)
+                new ParticleController(0.25, 1, 0, 0, 0, 0, 10, false, true, true)
                 );
 
             this.max_health = 3;

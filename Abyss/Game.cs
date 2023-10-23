@@ -67,7 +67,7 @@ namespace Abyss
             _TextInput = new StringBuilder();
             _KeyInput = Keys.None;
 
-            UiControllers.Options.Initialize(game_state, ui_state);
+            //UiControllers.Options.Initialize(game_state, ui_state);
 
             base.Initialize();
         }

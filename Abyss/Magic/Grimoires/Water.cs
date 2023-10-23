@@ -12,8 +12,8 @@ namespace Abyss.Magic.Grimoires
 
         public Water() : base()
         {
-            primary = new ParticleController(Element.water, 1.0, 3, 3, 3, 0.4, 0.25, 4);
-            secondary = new ParticleController(Element.water, 0, 0, 0, 10, 0, 1.0);
+            primary = new ParticleController(1.0, 3, 3, 3, 0.4, 0.25, 4);
+            secondary = new ParticleController(0, 0, 0, 10, 0, 1.0);
 
             sprite = _Sprites.WaterSpell;
             sprite_2 = sprite;
@@ -30,7 +30,7 @@ namespace Abyss.Magic.Grimoires
 
         public override void Secondary(Entity parent, Vector2 target_pos, double delta)
         {
-            parent.statuses.Add(secondary_status);
+            parent.AddStatus(secondary_status);
         }
 
 

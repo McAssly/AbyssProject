@@ -3,17 +3,32 @@ using Abyss.Globals;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Abyss.Magic.Grimoires
 {
     internal class Fire : Grimoire
     {
+        private protected StatusEffect burn_effect = new StatusEffect(1.3, 4, 1);
+        /// <summary>
+        /// links to the enemies burned and determines the actual DOT damage, for updating
+        /// should be optimized later ;p
+        /// </summary>
+        private protected Dictionary<Entity, StatusEffect> burned = new Dictionary<Entity, StatusEffect>();
+
+        private protected ParticleController burn_extension = new ParticleController(0.25, 0, 0, 0, 0, 0, 5, true);
+
         public Fire() : base()
         {
-            primary = new ParticleController(Element.fire, 0.7, 0.1, 1.5, 0.5, 0.1, 0.05, 3, true);
-            secondary = new ParticleController(Element.fire, 0.3, 5, 2, 10, 0.3, 0.25, 9, true);
+            primary = new ParticleController(1, 0, 2, 5, 0.25, 0.5, 2, true);
+            
+            // used for burst radius
+            secondary = new ParticleController(0.25, 5, 0, 10, 0, 4, 8, true);
 
-            sprite = _Sprites.FireSpell;
+            this.elemental_type = 1; // set to fire type
+
+            sprite = _Sprites.FireSpell; // need to be updated (but for now I will leave them the same)
             sprite_2 = _Sprites.FireBurstSpell;
         }
 

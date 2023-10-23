@@ -96,9 +96,9 @@ namespace Abyss.Draw
 
         public void Draw(Menu options)
         {
-            this.DrawRectangle(new RectangleF(options.origin.x, options.origin.y, 384, Variables.WindowH), Color.LimeGreen);
-            Draw(options.fullscreen);
-            Draw(options.close_button);
+            //this.DrawRectangle(new RectangleF(options.origin.x, options.origin.y, 384, Variables.WindowH), Color.LimeGreen);
+            //Draw(options.fullscreen);
+            //Draw(options.close_button);
         }
 
         public void Draw(IGui ui, GameState gs)

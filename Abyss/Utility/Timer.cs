@@ -28,5 +28,18 @@ namespace Abyss.Utility
         public void Update(double delta) { if (i > 0) i -= delta; }
 
         public bool IsRunning() { return i > 0; }
+
+        public override string ToString()
+        {
+            return i + "";
+        }
+
+        internal void Add(double v)
+        {
+            if (this.IsRunning())
+            {
+                this.i += v;
+            }
+        }
     }
 }

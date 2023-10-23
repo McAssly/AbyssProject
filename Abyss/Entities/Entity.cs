@@ -1,6 +1,7 @@
 ﻿using Abyss.Globals;
 using Abyss.Levels;
 using Abyss.Magic;
+using Abyss.Master;
 using Abyss.Sprites;
 using Abyss.Utility;
 using Microsoft.Xna.Framework;
@@ -45,8 +46,7 @@ namespace Abyss.Entities
         public List<StatusEffect> statuses;
 
         // time elapsed
-        private protected double time_elapsed = 0;
-        public double regen_timer = 0;
+        public Timer regen = new Timer(1);
 
         // last damage applied
         public double last_damage = 0;
@@ -272,6 +272,17 @@ namespace Abyss.Entities
             return damage;
         }
 
+        public void ApplyStatuses(double delta)
+        {
+            if (statuses.Count > 0) {
+                foreach (StatusEffect status in statuses) {
+                    status.timer.Update(delta);
+                    status.Action(this);
+                }
+                statuses.RemoveAll(status => !status.timer.IsRunning());
+            }
+        }
+
         public void AddVelocity(Vector2 velocity)
         {
             this.velocity += velocity;
@@ -326,6 +337,12 @@ namespace Abyss.Entities
         internal Vector2 GetTargetVector()
         {
             return target_vector;
+        }
+
+        internal void AddStatus(StatusEffect status)
+        {
+            statuses.Add(status);
+            statuses[statuses.Count - 1].timer.Start();
         }
     }
 }

@@ -8,21 +8,12 @@ using Microsoft.Xna.Framework;
 namespace Abyss.Magic
 {
     /// <summary>
-    /// The elemental type of a particle
-    /// </summary>
-    internal enum Element
-    {
-        NULL = 0, water = 1, fire = 2, earth = 3, wind = 4, lightning = 5
-    }
-
-    /// <summary>
     /// Allows for global particle constructor control within each grimoire
     /// </summary>
     internal struct ParticleController
     {
         public readonly double accel;
         public readonly double lifetime;
-        public readonly Element element;
         public readonly double base_damage;
         public readonly double base_speed;
         public readonly double mana_cost;
@@ -32,13 +23,12 @@ namespace Abyss.Magic
         public bool lock_to_player;
         public double radius;
 
-        public ParticleController(Element element, 
-            double lifetime, double base_damage, double base_speed, 
-            double mana_cost, double accel, double cooldown_max, 
+        public ParticleController(
+            double lifetime, double base_damage, double base_speed,
+            double mana_cost, double accel, double cooldown_max,
             double radius = 1,
             bool pierce = false, bool ignore_collision = false, bool lock_to_player = false)
         {
-            this.element = element;
             this.lifetime = lifetime;
             this.base_damage = base_damage;
             this.base_speed = base_speed;
@@ -64,7 +54,6 @@ namespace Abyss.Magic
         public Vector2 velocity;
         public double accel;
         public double lifetime;
-        public readonly Element element;
         public double damage;
         public double rotation;
         public bool pierce;
@@ -84,7 +73,6 @@ namespace Abyss.Magic
             this.velocity = velocity;
             accel = pc.accel;
             lifetime = pc.lifetime;
-            element = pc.element;
             this.damage = damage;
             this.rotation = rotation;
             this.sprite = sprite;
