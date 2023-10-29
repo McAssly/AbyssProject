@@ -46,16 +46,22 @@ namespace Abyss.Utility
         /// <param name="ms"></param>
         /// <param name="flag"></param>
         /// <returns></returns>
-        public static bool IsClicked(MouseState ms, uint flag)
+        public static bool IsClicked(MouseState ms, uint flag, bool check_delay = false)
         {
-            switch (flag)
+            if (!Controls.ClickTimer.IsRunning() || !check_delay)
             {
-                case 1:
-                    return ms.LeftButton == ButtonState.Pressed;
-                case 2:
-                    return ms.RightButton == ButtonState.Pressed;
-                default: return false;
+                switch (flag)
+                {
+                    case 1:
+                        if (check_delay) Controls.ClickTimer.Start();
+                        return ms.LeftButton == ButtonState.Pressed;
+                    case 2:
+                        if (check_delay) Controls.ClickTimer.Start();
+                        return ms.RightButton == ButtonState.Pressed;
+                    default: return false;
+                }
             }
+            return false;
         }
 
 

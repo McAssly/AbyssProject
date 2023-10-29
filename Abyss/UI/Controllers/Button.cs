@@ -2,6 +2,9 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using System;
+using System.Diagnostics;
+
 namespace Abyss.UI.Controllers
 {
     internal class Button : IController
@@ -12,7 +15,7 @@ namespace Abyss.UI.Controllers
         public bool enabled;
         public bool visible;
 
-        public event ControllerAction Action;
+        internal Action action;
 
         /// <summary>
         /// Makes a button with a given action
@@ -31,6 +34,15 @@ namespace Abyss.UI.Controllers
             visible = true;
         }
 
+        public Button(string label)
+        {
+            this.bounds = new Rectangle(0, 0, 0, 0);
+            this.label = new Text(label, new Vector2(0, 0), 1);
+            this.enabled = false;
+            this.hovered = false;
+            this.visible = true;
+        }
+
 
         /// <summary>
         /// updates the button's state
@@ -39,10 +51,11 @@ namespace Abyss.UI.Controllers
         public void Update(MouseState ms)
         {
             Press(ms);
-            if (enabled)
+            if (this.enabled)
             {
-                Action?.Invoke();
-                enabled = false;
+                action?.Invoke();
+                this.enabled = false;
+                return;
             }
         }
 
@@ -53,15 +66,18 @@ namespace Abyss.UI.Controllers
         /// <param name="ms"></param>
         /// <param name="mouse_position"></param>
         /// <param name="output"></param>
-        public void Press(MouseState ms, bool output = true)
+        public void Press(MouseState ms, bool hoverstate = true)
         {
             if (Math0.WithinRectangle(InputUtility.MousePosition(), bounds)) // hovering over the checkbox
             {
-                hovered = output;
-                if (InputUtility.IsClicked(ms, 1)) enabled = output;
+                hovered = hoverstate;
+                if (InputUtility.IsClicked(ms, 1, true))
+                { // if the user clicked within bounds
+                    this.enabled = true;
+                    return;
+                }
             }
-            else
-                hovered = !output;
+            else hovered = !hoverstate;
         }
 
         public bool IsHovered()
@@ -69,13 +85,16 @@ namespace Abyss.UI.Controllers
             return hovered;
         }
 
-        public RectangleF GetDrawBox()
+        public RectangleF GetDrawBox(float y_offset = 0)
         {
             return new RectangleF(bounds.X, bounds.Y, bounds.Width, bounds.Height);
         }
 
-        public Text GetLabel()
+        public Text GetLabel(float y_offset = 0)
         {
+            if (y_offset > 0) {
+                return label.CreateAtOffset(0, y_offset);
+            }
             return label;
         }
 
@@ -89,7 +108,21 @@ namespace Abyss.UI.Controllers
             throw new System.NotImplementedException();
         }
 
+        public void SetHovered(bool hovered)
+        {
+            this.hovered = hovered;
+        }
 
+        public void Set(float x, float y, float w, float h)
+        {
+            this.bounds = new Rectangle((int)x, (int)y, (int)w, (int)h);
+            this.label = MakeCenteredLabel(label.GetText(), this.bounds);
+        }
+
+        public void SetAction(Action action)
+        {
+            this.action += action;
+        }
 
         /// <summary>
         /// makes a label positioned within the given bounds (formatted)

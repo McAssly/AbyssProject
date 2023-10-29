@@ -28,22 +28,6 @@ namespace Abyss.Draw
         }
 
 
-        public void Draw(Button button)
-        {
-            if (button.IsHovered())
-            {
-                this.FillRectangle(button.GetDrawBox(), Color.White);
-                this.Draw(button.GetLabel(), Color.Black);
-            }
-            else
-            {
-                this.DrawRectangle(button.GetDrawBox(), Color.White);
-                this.Draw(button.GetLabel());
-            }
-
-        }
-
-
         public void Draw(Hud hud, GameState gs)
         {
             // draw the debug HUD on screen
@@ -94,11 +78,9 @@ namespace Abyss.Draw
             this.Draw(interaction.GetDialogue());
         }
 
-        public void Draw(Menu options)
+        public void Draw(Option options)
         {
-            //this.DrawRectangle(new RectangleF(options.origin.x, options.origin.y, 384, Variables.WindowH), Color.LimeGreen);
-            //Draw(options.fullscreen);
-            //Draw(options.close_button);
+            Draw(options.controls);
         }
 
         public void Draw(IGui ui, GameState gs)
@@ -115,9 +97,41 @@ namespace Abyss.Draw
             {
                 Draw(ui as Interaction);
             }
-            else if (ui is Menu)
+            else if (ui is Option)
             {
-                Draw(ui as Menu);
+                Draw(ui as Option);
+            }
+        }
+
+        public void Draw(ListController controls)
+        {
+            for (int i = controls.TopIndex(); i < controls.Size(); i++)
+            {
+                // move all y values back by the top item (top should be y: 0)
+                // so modify by (i - topindex)
+                Draw(controls.Get(i), -(i - controls.TopIndex()) * controls.GetItemHeight());
+            }
+        }
+
+        public void Draw(IController control, float y_offset)
+        {
+            if (control is Button)
+            {
+                Draw(control as Button, y_offset);
+            }
+        }
+
+        public void Draw(Button button, float y_offset=0)
+        {
+            if (button.IsHovered())
+            {
+                this.FillRectangle(button.GetDrawBox(y_offset), Color.White); // draw background
+                this.Draw(button.GetLabel(y_offset), Color.Black); // draw label
+            }
+            else
+            {
+                this.DrawRectangle(button.GetDrawBox(y_offset), Color.White); // draw outline
+                this.Draw(button.GetLabel(y_offset)); // draw label
             }
         }
     }

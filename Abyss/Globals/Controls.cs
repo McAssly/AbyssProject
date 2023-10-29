@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Abyss.Utility;
+using Microsoft.Xna.Framework.Input;
 
 namespace Abyss.Globals
 {
@@ -21,5 +22,8 @@ namespace Abyss.Globals
         // Master Controls
         public static Keys DebugMenu = Keys.OemTilde;
         public static Keys Options = Keys.Escape;
+
+        // Delay between click actions
+        public static Timer ClickTimer = new Timer(0.1);
     }
 }

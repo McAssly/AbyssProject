@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 namespace Abyss.UI
 {
-    public delegate void ControllerAction();
-
     internal interface IGui
     {
         public void Close();

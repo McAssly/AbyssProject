@@ -54,14 +54,12 @@ namespace Abyss.UI
             // open the options menu
             if (Game._KeyInput == Controls.Options && !(current_ui is DebugConsole))
             {
-                if (!(current_ui is Menu))
+                if (!(current_ui is Option))
                     Open(UiControllers.Options, game_state, false);
                 else
                     CloseCurrent();
             }
             
-
-
             // CONSOLE PROCESS              CONSOLE     < --- (debug menu)
             if (current_ui is DebugConsole)
                 if (InputUtility.HandleInput(kb))

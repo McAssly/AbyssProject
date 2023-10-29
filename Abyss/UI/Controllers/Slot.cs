@@ -10,12 +10,12 @@ namespace Abyss.UI.Controllers
 {
     internal class Slot : IController
     {
-        public RectangleF GetDrawBox()
+        public RectangleF GetDrawBox(float y_offset)
         {
             throw new NotImplementedException();
         }
 
-        public Text GetLabel()
+        public Text GetLabel(float y_offset)
         {
             throw new NotImplementedException();
         }
@@ -31,6 +31,16 @@ namespace Abyss.UI.Controllers
         }
 
         public bool IsVisible()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Set(float x, float y, float w, float h)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetAction(Action action) 
         {
             throw new NotImplementedException();
         }

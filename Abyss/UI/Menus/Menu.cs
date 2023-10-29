@@ -18,31 +18,13 @@ namespace Abyss.UI.Menus
 
         public ListController controls;
 
-        public Menu(ListController controls)
-        {
+        public Menu() {
 
         }
 
-
-        /*
         public void Initialize(GameState game_state, UiState ui_state)
         {
-            this.origin = Math0.CenterWithinRectangle(Variables.WindowW, Variables.WindowH, ui_width, Variables.WindowH - padding, Variables.GameScale, 1);
-
-            fullscreen = new Button("fullscreen", origin.x + padding, origin.y, (int)(ui_width * Variables.GameScale) / box_width, 16);
-            close_button = new Button("close", origin.x + padding, origin.y + 16 * 4, (int)(ui_width * Variables.GameScale) / box_width, 16);
-
-            fullscreen.Action += () =>
-            {
-                Config.ToggleFullscreen();
-            };
-
-            close_button.Action += () =>
-            {
-                this.close = true;
-            };
         }
-        */
 
         public void UpdateOrigin()
         {

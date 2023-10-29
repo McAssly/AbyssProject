@@ -1,5 +1,7 @@
 ﻿using Abyss.Globals;
 using Microsoft.Xna.Framework;
+using System;
+using System.Reflection.Emit;
 using System.Text;
 
 namespace Abyss.UI
@@ -148,6 +150,10 @@ namespace Abyss.UI
                 text = new_text;
         }
 
+        public void SetPosition(float x, float y)
+        {
+            this.position = new Vector2(x, y);
+        }
         public float GetWidth() { return width; }
         public float GetHeight() { return height; }
         public float GetX() { return position.X; }
@@ -155,5 +161,10 @@ namespace Abyss.UI
         public Vector2 GetPosition() { return position; }
         public float GetScale() { return scale; }
         public string GetText() { return text; }
+
+        internal Text CreateAtOffset(float x_offset, float y_offset)
+        {
+            return new Text(this.text, (int)(this.position.X + x_offset), (int)(this.position.Y + y_offset), this.scale);
+        }
     }
 }

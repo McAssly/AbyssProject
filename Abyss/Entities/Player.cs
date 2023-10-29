@@ -79,7 +79,7 @@ namespace Abyss.Entities
             if (Controls.SecondaryKey.HasValue) kb_atk_2 = kb.IsKeyDown(Controls.SecondaryKey.Value);
 
             // detect keyboard/mouse buttons, if the corresponding ones are pressed then active the corresponding grimoire and spell
-            if (kb_atk_1 || InputUtility.IsClicked(ms, Controls.Primary))
+            if (kb_atk_1 || InputUtility.IsClicked(ms, Controls.Primary, false))
             {
                 this.CastSpell(current_grimoire, 1, delta); // primary spell
             }

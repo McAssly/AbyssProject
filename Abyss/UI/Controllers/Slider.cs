@@ -1,43 +1,68 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Abyss.Utility;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using System;
 
 namespace Abyss.UI.Controllers
 {
+    internal delegate void SliderAction(float value);
     internal class Slider : IController
     {
-        public RectangleF GetDrawBox()
+        private Text label;
+        private Vector2 position;
+        private bool vertical;
+        private float length;
+        private float width;
+        private float value;
+        private bool hovered;
+        private bool pressed;
+        internal Action action;
+        private bool visible;
+
+        public Slider(bool vertical, string label, float x, float y, float length, float width, float value, bool visible)
         {
-            throw new System.NotImplementedException();
+            this.vertical = vertical;
+            this.position = new Vector2(x, y);
+            this.label = new Text(label, position, 1);
+            this.length = length;
+            this.width = width;
+            this.value = value;
+            this.visible = visible;
         }
 
-        public Text GetLabel()
+        RectangleF IController.GetDrawBox(float y_offset)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public bool IsHovered()
+        internal float GetValue() { return this.value; }
+
+        Text IController.GetLabel(float y_offset) { return label; }
+        bool IController.IsHovered() { return hovered; }
+        bool IController.IsPressed() { return pressed; }
+        bool IController.IsVisible() { return visible; }
+
+        void IController.Press(MouseState ms, bool output)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
-        public bool IsPressed()
+        public void Set(float x, float y, float w, float l)
         {
-            throw new System.NotImplementedException();
+            this.position = new Vector2(x, y);
+            this.width = w;
+            this.length = l;
         }
 
-        public bool IsVisible()
+        void IController.SetAction(Action action)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException("Slider does not contain a basic action.");
         }
 
-        public void Press(MouseState ms, bool output = true)
+        void IController.Update(MouseState ms)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void Update(MouseState ms)
-        {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

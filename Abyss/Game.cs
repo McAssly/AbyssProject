@@ -52,6 +52,7 @@ namespace Abyss
             // Set screen size
             _graphics.PreferredBackBufferWidth = Variables.WindowW;
             _graphics.PreferredBackBufferHeight = Variables.WindowH;
+            _graphics.HardwareModeSwitch = false;
             _graphics.ApplyChanges(); // apply changes to the screen
 
             Window.AllowUserResizing = false;
@@ -67,7 +68,8 @@ namespace Abyss
             _TextInput = new StringBuilder();
             _KeyInput = Keys.None;
 
-            //UiControllers.Options.Initialize(game_state, ui_state);
+            UiControllers.Main.Initialize(game_state, ui_state);
+            UiControllers.Options.Initialize(game_state, ui_state);
 
             base.Initialize();
         }
@@ -84,6 +86,7 @@ namespace Abyss
 
         protected override void Update(GameTime gameTime)
         {
+            if (Config.ExitStatus) this.Exit();
             KeyboardState KB = Keyboard.GetState();
             _MouseState = Mouse.GetState();
             double delta = gameTime.ElapsedGameTime.TotalSeconds * Variables.FRAME_SPEED;
@@ -107,7 +110,7 @@ namespace Abyss
                 Variables.ShiftingTimer = 0;
             }
 
-
+            Controls.ClickTimer.Update(delta);
             Config.Update(_graphics);
 
             _prevKeyboardState = KB;

@@ -18,7 +18,7 @@ namespace Abyss.UI
         public static PlayerMenu Invenetory = new PlayerMenu();
         public static Interaction Shop = new Interaction();
         public static Menu Main = new Menu();
-        public static Menu Options = new Menu();
+        public static Option Options = new Option();
 
         // in game HUD
         public static Hud HUD = new Hud();
