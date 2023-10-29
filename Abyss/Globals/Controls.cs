@@ -24,6 +24,6 @@ namespace Abyss.Globals
         public static Keys Options = Keys.Escape;
 
         // Delay between click actions
-        public static Timer ClickTimer = new Timer(0.1);
+        public static Timer ClickTimer = new Timer(0.08);
     }
 }
